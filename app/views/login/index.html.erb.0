@@ -1,0 +1,125 @@
+<!-- START index.html.erb -->
+<!-- 
+HISTORY
+Mon Jul 15 15:34:26 UTC 2013 BFH v0.2, single page which morphs for login, home & logout
+Sun Jul 14 14:01:13 UTC 2013 BFH v0.1, clone http://info.deterlab.net
+-->
+
+<div id="header">
+  <div class="wrapper">
+    <div id="headerinner">
+      <div id="headercontent">
+        <h1 id="site-name"><a href="/" title="Home" rel="home" id="masthead_link"></a></h1>
+        <div id="headerlinks">
+          <div class="block top-region menu-block clear-block" id="block-menu-menu-header-links">
+            <ul class="menu">
+              <li class="leaf last"><a href="http://info.deterlab.net/contact_deterlab" title="">Contact</a></li>
+              <li class="leaf"><a href="http://deter-project.org/" title="">DETER Project</a></li>
+              <li class="leaf"><a href="/login/new" title="">Login</a></li>
+            </ul>
+          </div>
+        </div> <!-- end sitename --> <!-- END SLOGAN -->
+      </div>
+    </div><!-- END HEADERINNER -->
+    <div id="navigation">
+      <del class="wrap">
+        <ul>
+	  <li class="leaf first active-trail"><a href="/login" title="About DeterLab" class="active">About</a></li>
+          <li class="leaf"><a href="/get_started_deterlab" title="Get Started in DeterLab">Get Started in DeterLab</a></li>
+          <li class="leaf"><a href="/support" title="Support">Support</a></li>
+          <li class="leaf"><a href="/documentation" title="Documentation">Documentation</a></li>
+          <li class="leaf last"><a href="/contact_deterlab" title="Contact DeterLab">Contact</a></li>
+        </ul>
+      </del>
+    </div><!-- END NAVIGATION -->
+  </div><!-- END WRAPPER -->
+</div><!-- END HEADER -->
+<div id="maincontent">
+  <div class="wrapper"><!-- END LEFT SIDEBAR -->
+    <div id="main">
+      <h2 class="title" id="page-title">About DeterLab (DBI)</h2>
+      <div id="node-1" class="page-ntype published not-promoted not-sticky full-view author-admin clear-block">
+        <div class="content">
+          <p>
+            <strong>Welcome to DeterLab</strong> -- the shared facility for scientists engaged in research discovery, development, 
+	    experimentation, and testing of new cyber-security technology.
+	  </p>
+          <p>
+	    Over 200 organizations are using DeterLab for cyber-security experimentation and education. Registered users have remote 
+	    access to their DeterLab workbench, by <a href="https://www.isi.deterlab.net/login.php">logging into the experimenter interface,</a>
+	    a Web-based system that DeterLab experimenters use to develop, configure, operate, and observe their experiments.<br />
+	    &nbsp;<br />
+	    DeterLab is operated by the <a href="http://deter-project.org/">DETER Project</a> team, whose research results and lab 
+	    infrastructure innovations -- used by DeterLab&#39;s worldwide research community -- advance the scale, pace, and power of security 
+	    technology development. Please <a href="http://www.deter-project.org/participate-deter-research-community">contact us</a> to learn 
+	    more about using DeterLab.<br />
+	    &nbsp;<br />
+	    To become a new user of DeterLab, first <a href="https://www.isi.deterlab.net/newproject.php">register</a> to create a new 
+	    DeterLab project, or <a href="https://www.isi.deterlab.net/joinproject.php">join</a> an existing project -- or 
+	    <a href="http://deter-project.org/contact-deter-project-cyber-security-research">contact us</a> to learn more about how to get started.
+	    More information on DeterLab&#39;s overall mission and facilities is available on the
+	    <a href="http://www.deter-project.org/deterlab-cyber-security-science-facility">DETER Project web site</a>.
+	    Specific information for current DeterLab users is available via the following links:</p>
+            <ul>
+              <li><a href="https://trac.deterlab.net/wiki/TechnicalSupport">Support</a> for DeterLab experimenters</li>
+              <li><a href="https://trac.deterlab.net/">Documentation</a> of DeterLab facilities and tools</li>
+              <li><a href="https://trac.deterlab.net/wiki/OSImages">Overview of Supported Software</a>, the operating systems available to experimenters</li>
+              <li><a href="https://trac.deterlab.net/wiki/NodeTypes">Overview of Installed Hardware</a> available for experimenters to use</li>
+              <li><a href="http://montage.deterlab.net/magi">MAGI</a>: DeterLab's scalable workflow management system, to provide deterministic control over the various components in an experiment.</li>
+              <li><a href="http://seer.deterlab.net/trac">SEER</a> toolkit for DeterLab experimenters</li>
+              <li><a href="http://fedd.deterlab.net/">FEDD</a>, the framework for federation between DeterLab and other testbeds</li>
+              <li><a href="http://containers.deterlab.net/">Containers</a>, the infrastructure for creating large scale experiments through virtualization.</li>
+              <li><a href="http://abac.deterlab.net/">ABAC</a>, the facility for Attribute Based Access Control</li>
+              <li><a href="http://deter-project.org/tools">DeterLab Tools</a>, a guide to several tools for experiment development, operation, and control.</li>
+            </ul>
+            <p>&nbsp;</p>
+          </div>
+          <div class="submitted">
+          </div>
+          <div class="links">
+          </div>
+        </div>          <!-- END MAIN CONTENT -->
+      </div><!-- END MAIN -->
+      <div id="sidebar-right" class="sidebar">
+        <div class="block right-region deter-block clear-block" id="block-deter-1">
+          <h3>Right Gutter #1</h3>
+          <div class="item-list">
+          </div>
+        </div>
+        <div class="block right-region deter-block clear-block" id="block-deter-0">
+          <h3>Right Gutter #2</h3>
+          <div class="item-list">
+	  </div>
+        </div>
+      </div><!-- END SIDEBAR RIGHT -->
+    <div class="clear">
+    </div>
+  </div><!-- END WRAPPER -->
+  <div id="footer">
+    <div class="block contentfooter-region menu-block clear-block" id="block-menu-menu-footer-links">
+      <ul class="menu">
+        <li class="leaf first active-trail"><a href="/login" title="" class="active">Home</a></li>
+        <li class="leaf"><a href="http://info.deterlab.net/privacy" title="">Privacy</a></li>
+        <li class="leaf last"><a href="http://info.deterlab.net/contact_deterlab" title="">Contact</a></li>
+      </ul>
+    </div>
+  </div>
+</div><!-- END MAINCONTENT-->
+<script type="text/javascript">
+
+			 var _gaq = _gaq || [];
+			 _gaq.push(['_setAccount', 'UA-27587204-1']);
+			 _gaq.push(['_trackPageview']);
+		
+			 (function() {
+				 var ga = document.createElement('script'); ga.type =
+		'text/javascript'; ga.async = true;
+				 ga.src = ('https:' == document.location.protocol ? 'https://ssl' :
+		'http://www') + '.google-analytics.com/ga.js';
+				 var s = document.getElementsByTagName('script')[0];
+		s.parentNode.insertBefore(ga, s);
+			 })();
+		
+</script>
+
+<!-- END index.html.erb -->

@@ -1,0 +1,37 @@
+# Tue Jul 16 13:46:55 UTC 2013 BFH first cut, to match John's en.yml
+
+common: &common
+  site_name: "DETERLAB Beginner Interface"
+  contact_email: "webmaster@deterlab.net"
+
+  headlinenav:
+    deterprojecturl: "http://deter-project.org/"
+    contacturl: "http://info.deterlab.net/contact_deterlab"
+
+  mainnav:
+    supporturl: "http://info.deterlab.net/support"
+
+  footer:
+    deterlablogo: "https://www.isi.deterlab.net/masthead.jpg"
+    emulablogo: "https://www.isi.deterlab.net/fancy-builtwith.png"
+    privacyurl: "http://info.deterlab.net/privacy"
+    usageurl: "https://trac.deterlab.net/wiki/Policy"
+    contacturl: "http://info.deterlab.net/contact_deterlab"
+
+  rightgutter:
+    docsurl: "http://info.deterlab.net/documentation"
+    docseduurl: "http://www.deter-project.org/deterlab-cyber-security-education"
+    supporturl: "http://info.deterlab.net/support"
+
+  front:
+    url1: "http://www.isi.edu/deter/docs/DETER_Tutorial-TF-Jan2011.pdf"
+    url2: "https://www.isi.deterlab.net/reqaccount.php3"
+
+development:
+  <<: *common
+
+test:
+  <<: *common
+
+production:
+  <<: *common

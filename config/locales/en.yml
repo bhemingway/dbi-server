@@ -1,0 +1,91 @@
+# Tue Jul 16 13:45:57 UTC 2013 BFH fill in blanks
+# Mon Jul 16 01:57:00 UTC EJS first cut
+en:
+
+  headerlinenav:
+
+    login: Login
+    logout: Logout
+    # pair with headerlinenav.deterprojecturl in config.yml
+    deterproject: "DETER Project"
+    # pair with headerlinenav.contacturl in config.yml
+    contact: Contact
+
+
+  mainnav:
+    # also requires mainnav.banner in config.yml
+
+    mydeterlab: "MY DETERLAB"
+    experiments: "EXPERIMENTS"
+    projects: "PROJECTS"
+    profile: "PROFILE"
+    # pair with mainnav.supporturl in config.yml
+    SUPPORT: "SUPPORT"
+
+  footer:
+    # also requires footer.deterlablogo and footer.emulablogo in config.yml
+    copyright: "Copyright © 2000-2012 USC Information Sciences Institute and University of Utah"
+    homelinktext: Home
+    # pair with footer.privacyurl in config.yml
+    privacypolicylinktest: "Privacy Policy"
+    # pair with footer.usageurl in config.yml
+    usagepolicylinktest: "Usage Policy"
+    # pair with footer.contacturl in config.yml
+    contact: "Contact Us"
+
+  rightgutter:
+    loggedin: "Logged in."
+    usage: "Current Usage Statistics"
+    news: "Recent Announcements from DeterLab Operations"
+    downtime: "Regularly Scheduled downtime: Wednesdays: 5PM-7PM, Saturdays: 10AM-1PM Pacific Time."
+    # pair with mainnav.deterprojecturl in config.yml
+    contact: "Contact DeterLab"
+    # pair with rightgutter.docsurl in config.yml
+    docs: "Documentation for DeterLab Experimenters"
+    # pair with rightgutter.docseduurl in config.yml
+    docsedu: "Documentation for DeterLab Educators and Students"
+    # pair with rightgutter.supporturl in config.yml
+    support: "DeterLab Technical Support"
+    
+
+  front:
+
+    title: "Welcome to DeterLab"
+
+    para1: "Login to access your DeterLab account"
+    loginbox:
+
+      user: "Username:"
+
+      pwd: "Password:"
+      login: LOGIN
+
+    para2: "If you do not have a DeterLab account, then please learn more about DeterLab:"
+    # pair with front.url1 in config.yml
+    url1linktext: "Introduction to DeterLab"
+    # pair with front.url2 in config.yml
+    url2linktext: "Applying for a DeterLab Account"
+
+  loggedinsubheader:
+    title: "MyDeterLab"
+
+  loginlanding:
+     title: "Welcome to DeterLab"
+     para1: "You can see a summary of your projects and experiments below. You can view your projects in detail, view your experiments in detail, view and update uour DeterLab user profile, and view the DeterLab Library of general-use experiements."
+     projects: "Projects"
+     experiments: "Experiments"
+     profile: "Profile"
+     library: "Library"
+
+  projectsdetail:
+     title: "Projects"
+     para1: "You are a member of the following projects:"
+
+
+
+
+
+
+
+
+

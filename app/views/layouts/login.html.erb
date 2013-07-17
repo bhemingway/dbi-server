@@ -1,0 +1,36 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+  <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+<head>
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="http://info.deterlab.net/blogapi/rsd" />
+  <%= favicon_link_tag 'favicon.ico' %>
+  <title><%= AppConfig.site_name %></title>
+    <link type="text/css" rel="stylesheet" media="all" href="http://info.deterlab.net/modules/node/node.css?Y" />
+<link type="text/css" rel="stylesheet" media="all" href="http://info.deterlab.net/modules/system/defaults.css?Y" />
+<link type="text/css" rel="stylesheet" media="all" href="http://info.deterlab.net/modules/system/system.css?Y" />
+<link type="text/css" rel="stylesheet" media="all" href="http://info.deterlab.net/modules/user/user.css?Y" />
+<link type="text/css" rel="stylesheet" media="all" href="http://info.deterlab.net/sites/all/modules/cck/theme/content-module.css?Y" />
+<link type="text/css" rel="stylesheet" media="all" href="http://info.deterlab.net/sites/all/modules/ckeditor/ckeditor.css?Y" />
+<link type="text/css" rel="stylesheet" media="all" href="http://info.deterlab.net/sites/all/modules/cck/modules/fieldgroup/fieldgroup.css?Y" />
+<link type="text/css" rel="stylesheet" media="all" href="http://info.deterlab.net/sites/info.deterlab.net/themes/agua/css/style.css?Y" />
+    
+<!--[if lt IE 7.0]><link rel="stylesheet" href="http://info.deterlab.net/sites/info.deterlab.net/themes/agua/css/ie-6.css" type="text/css" media="all" charset="utf-8" /><![endif]-->
+<!--[if IE 7.0]><link rel="stylesheet" href="http://info.deterlab.net/sites/info.deterlab.net/themes/agua/css/ie-7.css" type="text/css" media="all" charset="utf-8" /><![endif]-->
+    <script type="text/javascript" src="http://info.deterlab.net/misc/jquery.js?Y"></script>
+<script type="text/javascript" src="http://info.deterlab.net/misc/drupal.js?Y"></script>
+<script type="text/javascript" src="http://info.deterlab.net/sites/info.deterlab.net/themes/agua/js/superfish.js?Y"></script>
+<script type="text/javascript" src="http://info.deterlab.net/sites/info.deterlab.net/themes/agua/js/agua.js?Y"></script>
+<script type="text/javascript">
+<!--//--><![CDATA[//><!--
+jQuery.extend(Drupal.settings, { "basePath": "/" });
+//--><!]]>
+</script>
+    <script type="text/javascript"> </script>
+  <%= csrf_meta_tags %>
+</head>
+<body class="page-node page-page page-node-view anonymous-user right">
+
+<%= yield %>
+
+</body>
+</html>
