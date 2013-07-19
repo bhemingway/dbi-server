@@ -21,6 +21,21 @@ group :assets do
   gem 'uglifier', '>= 1.0.3'
 end
 
+# BFH ---
+gem 'rspec'
+gem 'nokogiri', '< 1.6'
+gem 'simplecov'
+gem 'coveralls'
+gem 'savon'
+gem 'equivalent-xml'
+
+gem 'sass-rails',   '~> 3.2.3'
+gem 'coffee-rails', '~> 3.2.1'
+# See https://github.com/sstephenson/execjs#readme for more supported runtimes
+gem 'therubyracer', :platforms => :ruby
+#gem 'mocha'
+# BFH ---
+
 gem 'jquery-rails'
 
 # To use ActiveModel has_secure_password

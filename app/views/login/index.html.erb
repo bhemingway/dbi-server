@@ -1,6 +1,8 @@
 <!-- START new.html.erb -->
 <!-- 
 HISTORY
+Fri Jul 19 13:22:13 UTC 2013 BFH v0.2, try a SOAP transaction
+Thu Jul 18 15:40:08 UTC 2013 BFH v0.2, moving to partial views to reflect state
 Wed Jul 17 13:43:54 UTC 2013 BFH v0.2, more localization
 Tue Jul 16 14:02:06 UTC 2013 BFH v0.2, moving toward single, stateful page & localization
 Sun Jul 14 16:16:58 UTC 2013 BFH v0.1, adapt http://info.deterlab.net
@@ -26,51 +28,23 @@ Sun Jul 14 16:16:58 UTC 2013 BFH v0.1, adapt http://info.deterlab.net
 <div id="maincontent">
   <div class="wrapper"><!-- END LEFT SIDEBAR -->
     <div id="main">
-      <h2 class="title" id="page-title"><%= t('front.title') %></h2>
-      <div id="node-1" class="page-ntype published not-promoted not-sticky full-view author-admin clear-block">
-        <p><%= t('front.para1') %></p>
-
-        <!-- login form definition begins -->
-        <%= form_tag("/login", :method=>'post', :multipart=>true)  do %> 
-        <table>
-          <tr>
-            <td><%= t('front.loginbox.user') %></td>
-            <td>
-              <%= text_field_tag 'uid', '', :maxlength => 16, :size => 16 %> 
-            </td>
-          </tr>
-          <tr>
-            <td><%= t('front.loginbox.pwd') %></td> 
-            <td>
-              <%= password_field_tag 'password', '', :maxlength => 16, :size => 16, :disabled => true %>
-	    </td>
-          </tr>
-          <tr>
-            <td colspan="2" align="center">
-              <b> <%= submit_tag "Login" %> </b>
-            </td>
-          </tr>
-        </table>
-        <% end %>                 
-        <!-- form definition ends -->
-      <p>
-        <%= t('front.para2') %>
-	<ul>
-	  <li>
-	    <a href="<%=AppConfig.front['url1']%>"><%= t('front.url1linktext') %></a>
-	  </li>
-	  <li>
-	    <a href="<%=AppConfig.front['url2']%>"><%= t('front.url2linktext') %></a>
-          </li>
-	</ul>
-      </p>
-
-    </div> <!-- end of node-1 -->
-  </div>
+      <%=
+       rc = loginStatus
+       if rc == 0
+         render 'login'
+       elsif rc == 1
+         render 'login_verify'
+       elsif rc == 2
+         render 'login_ok'
+       elsif rc == 3
+         render 'login_failed'
+       end
+      %>
+    </div>
 
   <div id="sidebar-right" class="sidebar">
     <div class="block right-region deter-block clear-block" id="block-deter-1">
-      <h3><%= loginstatus %> </h3>
+      <h3><%= loginStatusText %> </h3>
     </div>
     <div class="block right-region deter-block clear-block" id="block-deter-1">
       <h3><%=t('rightgutter.usage')%></h3>
@@ -112,7 +86,8 @@ Sun Jul 14 16:16:58 UTC 2013 BFH v0.1, adapt http://info.deterlab.net
         <ul class="menu">
           <li class="leaf first active-trail"><a href="<%=AppConfig.footer['usageurl']%>" class="active"><%=t('footer.usage')%></a></li>
           <li class="leaf"><a href="<%= AppConfig.footer['privacyurl'] %>"><%= t('footer.privacy')%></a></li>
-          <li class="leaf last"><a href="<%= AppConfig.footer['contacturl'] %>"><%= t('footer.contact')%></a></li>
+          <li class="leaf"><a href="<%= AppConfig.footer['contacturl'] %>"><%= t('footer.contact')%></a></li>
+	  <li class="leaf last"><%= deterVersion %></li>
         </ul>
 <!--
         <div class="footer_logo">
