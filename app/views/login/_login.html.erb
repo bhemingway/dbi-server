@@ -1,0 +1,48 @@
+<!-- START _login.html.erb -->
+<!-- 
+HISTORY
+Sun Jul 21 14:31:10 UTC 2013 BFH v0.2, try a SOAP transaction: echo, with args
+Thu Jul 18 15:44:18 UTC 2013 BFH v0.2 moving to partial views for flexibility
+-->
+      <h2 class="title" id="page-title"><%= t('front.title') %></h2>
+      <div id="node-1" class="page-ntype published not-promoted not-sticky full-view author-admin clear-block">
+        <p><%= t('front.para1') %></p>
+
+        <!-- login form definition begins -->
+        <%= form_tag("/login", :method=>'post', :multipart=>true)  do %> 
+        <table>
+          <tr>
+            <td><%= t('front.loginbox.user') %></td>
+            <td>
+              <%= text_field_tag 'uid', '', :maxlength => 16, :size => 16 %> 
+            </td>
+          </tr>
+          <tr>
+            <td><%= t('front.loginbox.pwd') %></td> 
+            <td>
+              <%= password_field_tag 'password', '', :maxlength => 16, :size => 16 %>
+	    </td>
+          </tr>
+          <tr>
+            <td colspan="2" align="center">
+              <b> <%= submit_tag "Login" %> </b>
+            </td>
+          </tr>
+        </table>
+        <% end %>                 
+        <!-- form definition ends -->
+      <p>
+        <%= t('front.para2') %>
+	<ul>
+	  <li>
+	    <a href="<%=AppConfig.front['url1']%>"><%= t('front.url1linktext') %></a>
+	  </li>
+	  <li>
+	    <a href="<%=AppConfig.front['url2']%>"><%= t('front.url2linktext') %></a>
+          </li>
+	</ul>
+      </p>
+
+    </div> <!-- end of node-1 -->
+
+<!-- END _login.html.erb -->

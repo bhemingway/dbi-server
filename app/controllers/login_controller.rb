@@ -1,7 +1,8 @@
 class LoginController < ApplicationController
   def new
+    render :index
   end
   def create
-    render :new
+    render :index
   end
 end

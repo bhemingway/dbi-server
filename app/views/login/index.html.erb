@@ -1,7 +1,8 @@
 <!-- START new.html.erb -->
 <!-- 
 HISTORY
-Fri Jul 19 13:22:13 UTC 2013 BFH v0.2, try a SOAP transaction
+Sun Jul 21 14:31:10 UTC 2013 BFH v0.2, try a SOAP transaction: echo, with args
+Fri Jul 19 13:22:13 UTC 2013 BFH v0.2, try a SOAP transaction: getVersion, no args
 Thu Jul 18 15:40:08 UTC 2013 BFH v0.2, moving to partial views to reflect state
 Wed Jul 17 13:43:54 UTC 2013 BFH v0.2, more localization
 Tue Jul 16 14:02:06 UTC 2013 BFH v0.2, moving toward single, stateful page & localization
@@ -87,7 +88,7 @@ Sun Jul 14 16:16:58 UTC 2013 BFH v0.1, adapt http://info.deterlab.net
           <li class="leaf first active-trail"><a href="<%=AppConfig.footer['usageurl']%>" class="active"><%=t('footer.usage')%></a></li>
           <li class="leaf"><a href="<%= AppConfig.footer['privacyurl'] %>"><%= t('footer.privacy')%></a></li>
           <li class="leaf"><a href="<%= AppConfig.footer['contacturl'] %>"><%= t('footer.contact')%></a></li>
-	  <li class="leaf last"><%= deterVersion %></li>
+	  <li class="leaf last"> DeterLab Version <%= deterVersion %></li>
         </ul>
 <!--
         <div class="footer_logo">
