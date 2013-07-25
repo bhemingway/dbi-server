@@ -17,13 +17,11 @@ module ApplicationHelper
   # are we logged in or not? return a human-readable string to that effect
   def loginStatusText
     status = loginStatus
-    a = 'You Are'
-    b = ''
-    c = t('rightgutter.loggedin');
-
-    b = 'Not' if status != 2
-
-    [a,b,c].join(' ').squeeze(' ')
+    if status == 2
+       'Log Out'
+    else
+       'Log In'
+    end
   end
 
   # get the current DeterLab version for display via a SOAP transaction
@@ -109,7 +107,9 @@ module ApplicationHelper
 
     end # if no current user
 
-    status.push('Done')
+    time = Time.new
+    status.push('Done at ' + time.strftime("%Y-%m-%d %H:%M:%S") + ' UTC')
+
     status_string = '<ul><li>' + status.join("</li>\n<li>") + "</li>\n</ul>" 
     raw(status_string)
   end # loginValidate

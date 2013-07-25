@@ -1,5 +1,6 @@
+# Thu Jul 25 14:15:43 UTC 2013 BFH polishing the UI
 # Tue Jul 16 13:45:57 UTC 2013 BFH fill in blanks
-# Mon Jul 16 01:57:00 UTC EJS first cut
+# Mon Jul 16 01:57:00 UTC 2013 EJS first cut
 en:
 
   headerlinenav:
@@ -22,22 +23,31 @@ en:
     # pair with mainnav.supporturl in config.yml
     SUPPORT: "SUPPORT"
 
+    main_nav_option1_name: "MyDeterLab"
+    main_nav_option2_name: "Projects"
+    main_nav_option3_name: "Experiments"
+    main_nav_option4_name: "Library"
+    main_nav_option5_name: "Technical Support"
+
   footer:
     # also requires footer.deterlablogo and footer.emulablogo in config.yml
     copyright: "Copyright © 2000-2012 USC Information Sciences Institute and University of Utah"
     homelinktext: Home
     # pair with footer.privacyurl in config.yml
-    privacypolicylinktest: "Privacy Policy"
+    privacypolicylinktext: "Privacy Policy"
     # pair with footer.usageurl in config.yml
-    usagepolicylinktest: "Usage Policy"
+    usagepolicylinktext: "Usage Policy"
     # pair with footer.contacturl in config.yml
     contact: "Contact Us"
+    # pair with footer.deterprojecturl in config.yml
+    deterprojectlinktext: "DETER Project"
 
   rightgutter:
     loggedin: "Logged in."
     usage: "Current Usage Statistics"
     news: "Recent Announcements from DeterLab Operations"
-    downtime: "Regularly Scheduled downtime: Wednesdays: 5PM-7PM, Saturdays: 10AM-1PM Pacific Time."
+    downtime: "Downtime"
+    downtimetext: "Regularly Scheduled downtime: Wednesdays: 5PM-7PM, Saturdays: 10AM-1PM Pacific Time."
     # pair with mainnav.deterprojecturl in config.yml
     contact: "Contact DeterLab"
     # pair with rightgutter.docsurl in config.yml

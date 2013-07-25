@@ -1,3 +1,4 @@
+# Thu Jul 25 14:21:14 UTC 2013 BFH polishing UI, especially mainnav
 # Tue Jul 16 13:46:55 UTC 2013 BFH first cut, to match John's en.yml
 
 common: &common
@@ -11,12 +12,19 @@ common: &common
   mainnav:
     supporturl: "http://info.deterlab.net/support"
 
+    main_nav_option1_link: "/"
+    main_nav_option2_link: "/"
+    main_nav_option3_link: "/"
+    main_nav_option4_link: "/"
+    main_nav_option5_link: "/"
+
   footer:
-    deterlablogo: "https://www.isi.deterlab.net/masthead.jpg"
-    emulablogo: "https://www.isi.deterlab.net/fancy-builtwith.png"
+    deterlablogo: "masthead.jpg"
+    emulablogo: "fancy-builtwith.png"
     privacyurl: "http://info.deterlab.net/privacy"
     usageurl: "https://trac.deterlab.net/wiki/Policy"
     contacturl: "http://info.deterlab.net/contact_deterlab"
+    deterprojecturl: "http://deter-project.org/"
 
   rightgutter:
     docsurl: "http://info.deterlab.net/documentation"
