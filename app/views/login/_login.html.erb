@@ -6,7 +6,7 @@ Thu Jul 18 15:44:18 UTC 2013 BFH v0.2 moving to partial views for flexibility
 -->
       <h2 class="title" id="page-title"><%= t('front.title') %></h2>
       <div id="node-1" class="page-ntype published not-promoted not-sticky full-view author-admin clear-block">
-        <p><%= t('front.para1') %></p>
+        <p><%= t('front.para1') %> <%= loginMessage %> </p>
 
         <!-- login form definition begins -->
         <%= form_tag("/login", :method=>'post', :multipart=>true)  do %> 
@@ -14,13 +14,13 @@ Thu Jul 18 15:44:18 UTC 2013 BFH v0.2 moving to partial views for flexibility
           <tr>
             <td><%= t('front.loginbox.user') %></td>
             <td>
-              <%= text_field_tag 'uid', '', :maxlength => 16, :size => 16 %> 
+              <%= text_field_tag 'uid', params[:uid], :maxlength => 16, :size => 16 %> 
             </td>
           </tr>
           <tr>
             <td><%= t('front.loginbox.pwd') %></td> 
             <td>
-              <%= password_field_tag 'password', '', :maxlength => 16, :size => 16 %>
+              <%= password_field_tag 'password', nil, :maxlength => 16, :size => 16 %>
 	    </td>
           </tr>
           <tr>

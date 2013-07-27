@@ -61,5 +61,5 @@ Dbi::Application.routes.draw do
   # BFH: this is my starting point
   root :to => "login#index"
   # BFH: actually, it turns out that this is my only point
-  match '*path' => 'login#index'
+  #match '*path' => 'login#index'
 end

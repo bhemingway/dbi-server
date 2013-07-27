@@ -1,28 +1,6 @@
 require 'base64'
 
 module ApplicationHelper
-  # are we logged in or not? return a state as a code: 0=initial, 1=trying, 2=worked, 3=failed
-  def loginStatus
-      rc = 0
-      if @current_user.blank?  # some flavor of not logged in
-          if params['uid'].blank? == false && params['password'].blank? == false # trying to log in
-              rc = 1
-          end
-      else
-          rc = 2
-      end
-      rc
-  end
-
-  # are we logged in or not? return a human-readable string to that effect
-  def loginStatusText
-    status = loginStatus
-    if status == 2
-       'Log Out'
-    else
-       'Log In'
-    end
-  end
 
   # get the current DeterLab version for display via a SOAP transaction
   def deterVersion
@@ -44,21 +22,53 @@ module ApplicationHelper
     session[:deter_version]
   end
 
+  # are we logged in or not? return a state as a code: 0=initial, 1=trying, 2=worked, 3=failed
+  def loginStatus
+      rc = 0
+      if @_current_user.blank?  # some flavor of not logged in
+          session[:deterLoginStatus] = 'None'
+          if params['uid'].blank? == false && params['password'].blank? == false # trying to log in
+	      rc = loginValidate
+          end
+      else
+          rc = 2
+      end
+      rc
+  end
+
+  # are we logged in or not? return a human-readable string to that effect
+  def loginStatusText
+    status = loginStatus
+    text = ''
+    if status == 2
+       text = link_to('Log Out', "login", { :confirm => "#{translate( :are_you_sure )}", :method => :delete, :class => 'action' } )
+    else
+       text = link_to("Log In", "login", :method => :create, :class => 'action')
+    end
+    raw(text)
+  end
+
+  # what do we want to tell the user about logging in?
+  def loginMessage
+    status = loginStatus
+    if status != 2 and status != 0
+	message = '<span style="color: red">' + t('front.loginbox.loginfail') + '</span>'
+	message = message + ' <cite>' + session[:deterLoginStatus] + '</cite>'
+	raw(message)
+    end
+  end
+
   # validate the credentials supplied by the user via a SOAP transaction
   def loginValidate
-    status = Array.new
-    if @current_user.blank?
-	status.push('No user ID, logging in...')
-
+    session[:deterLoginStatus] = 'Unset'
+    if @_current_user.blank?
 	uid = params['uid']
 	password = params['password']
 	encoded_data = Base64.encode64(password)
-	status.push('user ID=(' + uid + ')')
-	status.push('password=(' + password + ')')
-	status.push('encoded password=(' + encoded_data + ')')
+
+        session[:deterLoginStatus] = 'Logging in...'
 
 	# build a SOAP transaction pathway
-	status.push('firing up the SOAP client to verify credentials...')
         client = Savon.client(
           :wsdl => "https://users.isi.deterlab.net:52323/axis2/services/Users?wsdl",
           :log_level => :debug, 
@@ -70,47 +80,64 @@ module ApplicationHelper
           :filters => :password,
 	  :raise_errors => false
           )
+        session[:deterLoginStatus] = 'SOAP client...'
 
+	#
 	# two step process: requestChallenge, then challengeResponse
+	#
 
 	#requestChallenge, uid={value} types={'clear'}; response has type={'clear'}, validity={stuff}
-	status.push('requestChallenge...')
+        session[:deterLoginStatus] = 'requestChallenge...'
         response = client.call(
 	             :request_challenge, 
-		     "message" => {'uid' => uid, 'types' => 'clear' } 
+		     "message" => {'uid' => uid, 'types' => 'clear', :order! => [:uid, :types] }
 		   )
 	logger.debug response.to_hash.inspect
 	if response.success? == true
-	    status.push('requestChallenge...OK')
+            session[:deterLoginStatus] = 'requestChallenge...OK'
 	    id = response.to_hash[:request_challenge_response][:return][:challenge_id]
 
 	    #challengeResponse, challengeID={validity}, responseData={base64-encoded-password}
-	    status.push('challengeResponse...')
-            response = client.call(:challenge_response, "message" => {'challengeID' => id, 'responseData' => encoded_data } )
+            session[:deterLoginStatus] = 'challengeResponse...'
+            response = client.call(
+	                   :challenge_response,
+			   "message" => {'challengeID' => id, 'responseData' => encoded_data,:order! => [:responseData, :challengeID] }
+			)
 	    logger.debug response.to_hash.inspect
 	    if response.success? == true
-		#status.push(debug(response.to_hash))
+                session[:deterLoginStatus] = 'challengeResponse...OK'
 	        sslCert = Base64.decode64(response.to_hash[:challenge_response_response][:return])
-	        status.push('challengResponse: Security payload...',sslCert)
+        	rc = 2
+		session[:deterLoginStatus] = 'Login OK'
+		if session[:current_user_id].blank?
+	    	    session[:current_user_id] = uid
+		end
 	    else 
-	        status.push('challengeResponse failed...')
+                session[:deterLoginStatus] = 'challengeResponse...FAIL'
+		rc = 1
+		session[:deterLoginStatus] = 'Login failed: bad credentials'
 	    end
 	else
-	    status.push('requestChallenge failed...')
+	    rc = 1
+	    session[:deterLoginStatus] = 'requestChallenge...FAIL: '
 	    if response.to_hash[:fault][:reason][:text].nil? == false
-	        status.push('requestChallenge Generic SOAP fault...',response.to_hash[:fault][:reason][:text]);
+	        session[:deterLoginStatus] = session[:deterLoginStatus] + 
+		                             'requestChallenge Generic SOAP fault...' + 
+					     response.to_hash[:fault][:reason][:text]
 	    else
-	        status.push('requestChallenge' + response.to_hash[:fault][:detail][:users_deter_fault][:deter_fault][:error_message]);
+	        session[:deterLoginStatus] = session[:deterLoginStatus] + 
+		                             'requestChallenge' + 
+		                             response.to_hash[:fault][:detail][:users_deter_fault][:deter_fault][:error_message]
 	    end
-	    status.push('giving up.')
 	end
-
+    else
+        rc = 2
+	session[:deterLoginStatus] = 'Login OK'
+	if session[:current_user_id].blank?
+	    session[:current_user_id] = uid
+	end
     end # if no current user
-
-    time = Time.new
-    status.push('Done at ' + time.strftime("%Y-%m-%d %H:%M:%S") + ' UTC')
-
-    status_string = '<ul><li>' + status.join("</li>\n<li>") + "</li>\n</ul>" 
-    raw(status_string)
+    rc
   end # loginValidate
+
 end # module ApplicationHelper

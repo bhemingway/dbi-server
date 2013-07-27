@@ -1,6 +1,7 @@
 <!-- START new.html.erb -->
 <!-- 
 HISTORY
+Sat Jul 27 18:46:26 UTC 2013 BFH v0.3, start to enforce logged-in-ness
 Thu Jul 25 14:13:21 UTC 2013 BFH v0.2, polish UI for review
 Sun Jul 21 14:31:10 UTC 2013 BFH v0.2, try a SOAP transaction: echo, with args
 Fri Jul 19 13:22:13 UTC 2013 BFH v0.2, try a SOAP transaction: getVersion, no args
@@ -52,22 +53,28 @@ Sun Jul 14 16:16:58 UTC 2013 BFH v0.1, adapt http://info.deterlab.net
   <div class="wrapper"><!-- END LEFT SIDEBAR -->
     <div id="main">
       <%=
+       # possible states: 0=not logged in, 1=error logging in, 2=logged in, 3=logout
        rc = loginStatus
-       if rc == 0
-         render 'login'
-       elsif rc == 1
-         render 'login_verify'
-       elsif rc == 2
+       if rc == 2
          render 'login_ok'
-       elsif rc == 3
-         render 'login_failed'
+       else
+         render 'login'
        end
       %>
     </div>
 
   <div id="sidebar-right" class="sidebar">
     <div class="block right-region deter-block clear-block" id="block-deter-1">
-      <h3><a href="/"><%= loginStatusText %></a></h3>
+      <h3>
+        <%= 
+         rc = loginStatus
+	 if rc == 2
+             link_to('Log Out', "login", { :confirm => "#{translate( :are_you_sure )}", :method => :delete }  )
+	 else
+             link_to('Log In', "login")
+	 end
+	%>
+      </h3>
     </div>
     <div class="block right-region deter-block clear-block" id="block-deter-1">
       <h3><%=t('rightgutter.usage')%></h3>
