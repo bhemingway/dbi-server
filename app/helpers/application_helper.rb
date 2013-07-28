@@ -24,7 +24,21 @@ module ApplicationHelper
 
   # are we logged in or not? return a state as a code: 0=initial, 1=trying, 2=worked, 3=failed
   def loginStatus
-      rc = 0
+      if params[:logout].blank? == false
+          @_current_user = session[:current_user_id] =  nil
+	  session[:deterLoginStatus] = session[:deter_version] = nil
+	  session.each do |k, v|
+	      if k.match(/^up_/)
+	      	session.delete(k)
+	      end
+	  end
+      end
+      if session[:current_user_id].blank? 
+          rc = 0
+      else
+          @_current_user = session[:current_user_id]
+	  rc = 2
+      end
       if @_current_user.blank?  # some flavor of not logged in
           session[:deterLoginStatus] = 'None'
           if params['uid'].blank? == false && params['password'].blank? == false # trying to log in
@@ -101,7 +115,7 @@ module ApplicationHelper
             session[:deterLoginStatus] = 'challengeResponse...'
             response = client.call(
 	                   :challenge_response,
-			   "message" => {'challengeID' => id, 'responseData' => encoded_data,:order! => [:responseData, :challengeID] }
+			   "message" => {'challengeID' => id, 'responseData' => encoded_data, :order! => [:responseData, :challengeID] }
 			)
 	    logger.debug response.to_hash.inspect
 	    if response.success? == true
@@ -109,8 +123,26 @@ module ApplicationHelper
 	        sslCert = Base64.decode64(response.to_hash[:challenge_response_response][:return])
         	rc = 2
 		session[:deterLoginStatus] = 'Login OK'
-		if session[:current_user_id].blank?
-	    	    session[:current_user_id] = uid
+	    	session[:current_user_id] = uid
+		# load the profile for this user, you will need it later
+                response = client.call(
+	                       :get_user_profile,
+			       "message" => {'uid' => uid, :order! => [:uid] }
+			    )
+	        if response.success? == true
+		    logger.debug response.to_hash.inspect
+		    # stash data away in the session by parsing profile tree: an array of hashes
+		    a = response.to_hash[:get_user_profile_response][:return][:attributes]
+		    a.each do |h|
+			if h[:description] == "The user's real world name"
+			    session[:up_Name] = h[:value]
+			end
+
+			# save entire profile in session for now
+			session[ 'up_' + h[:description] ] = h[:value]
+		    end
+		else
+		    session[:deterLoginStatus] = 'getUserfProfile...FAIL'
 		end
 	    else 
                 session[:deterLoginStatus] = 'challengeResponse...FAIL'
@@ -139,5 +171,23 @@ module ApplicationHelper
     end # if no current user
     rc
   end # loginValidate
+
+  # if the user wants to see it, show the profile
+  def showProfile
+      if params[:profile].blank? == false
+	output = Array.new
+	output.push('<table align="center">')
+	session.each do |k, v|
+	    if k.match(/^up_/) && !k.match('up_Name') 
+		output.push('<tr>')
+		output.push('<td><strong>' + k[3, k.length - 3] + '</strong></th>')
+	        output.push('<td>' + v + '</td>')
+		output.push('</tr>')
+	    end
+	end
+	output.push('</table>')
+	raw(output.join("\n"))
+      end
+  end
 
 end # module ApplicationHelper

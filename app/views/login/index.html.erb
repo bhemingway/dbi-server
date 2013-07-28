@@ -61,19 +61,30 @@ Sun Jul 14 16:16:58 UTC 2013 BFH v0.1, adapt http://info.deterlab.net
          render 'login'
        end
       %>
+      <%= showProfile %>
     </div>
 
   <div id="sidebar-right" class="sidebar">
     <div class="block right-region deter-block clear-block" id="block-deter-1">
       <h3>
         <%= 
-         rc = loginStatus
 	 if rc == 2
-             link_to('Log Out', "login", { :confirm => "#{translate( :are_you_sure )}", :method => :delete }  )
+             link_to('Log Out', "login?logout=true", { :confirm => "#{translate( :are_you_sure )}", :method => :delete }  )
 	 else
              link_to('Log In', "login")
 	 end
-	%>
+	 %>
+        <%= 
+         if rc == 2
+	     '|'
+	 end
+	 %>
+        <%= 
+         if rc == 2
+	     puts '|'
+             link_to('Profile', "login?profile=true")
+	 end
+	 %>
       </h3>
     </div>
     <div class="block right-region deter-block clear-block" id="block-deter-1">

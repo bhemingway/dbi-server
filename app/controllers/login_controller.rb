@@ -11,6 +11,6 @@ class LoginController < ApplicationController
     @_current_user = session[:current_user_id] = nil
     reset_session
     session[:deterLoginStatus] = 'Logged out'
-    #render :index
+    render :index
   end
 end
