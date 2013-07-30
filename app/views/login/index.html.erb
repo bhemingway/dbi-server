@@ -19,8 +19,19 @@ Sun Jul 14 16:16:58 UTC 2013 BFH v0.1, adapt http://info.deterlab.net
         <div id="headerlinks">
           <div class="block top-region menu-block clear-block" id="block-menu-menu-header-links">
             <ul class="menu">
-              <li class="leaf last"><a href="<%= AppConfig.headlinenav['contacturl'] %>"><%= t('headerlinenav.contact')%></a></li>
-              <li class="leaf"><a href="<%= AppConfig.headlinenav['deterprojecturl'] %>"><%= t('headerlinenav.deterproject')%></a></li>
+              <li class="leaf"><a href="<%= AppConfig.headlinenav['contacturl'] %>"><%= t('headerlinenav.contact')%></a></li>
+              <li class="leaf last"><a href="<%= AppConfig.headlinenav['deterprojecturl'] %>"><%= t('headerlinenav.deterproject')%></a></li>
+              <li class="leaf first active-trail">
+                <%= 
+                 # possible states: 0=not logged in, 1=error logging in, 2=logged in, 3=logout
+                 rc = loginStatus
+	         if rc == 2
+                     link_to('Log Out', "login?logout=true", { :confirm => "#{translate( :are_you_sure )}", :method => :delete }  )
+	         else
+                     link_to('Log In', "login")
+	         end
+	         %>
+	      </li>
             </ul>
           </div>
         </div> <!-- end sitename --> <!-- END SLOGAN -->
@@ -30,7 +41,19 @@ Sun Jul 14 16:16:58 UTC 2013 BFH v0.1, adapt http://info.deterlab.net
      <del class="wrap">
        <ul>
          <li class="leaf first active-trail">
-           <a href="<%= AppConfig.mainnav['main_nav_option1_link'] %>"><%= t('mainnav.main_nav_option1_name')%></a></li>
+           <!-- <a href="<%= AppConfig.mainnav['main_nav_option1_link'] %>"><%= t('mainnav.main_nav_option1_name')%></a> -->
+	   <FORM NAME="nav">
+	     <DIV>
+	       <SELECT NAME="SelectURL" onChange="document.location.href=document.nav.SelectURL.options[document.nav.SelectURL.selectedIndex].value">
+	         <OPTION VALUE="" SELECTED>
+                   <%= t('mainnav.main_nav_option1_name') %>
+		 </option>
+	         <OPTION VALUE="/login?profile=true">
+	           View Profile
+		 </option>
+	       </SELECT>
+	     <DIV>
+	   </FORM>
 	 </li>
          <li class="leaf">
            <a href="<%= AppConfig.mainnav['main_nav_option2_link'] %>"><%= t('mainnav.main_nav_option2_name')%></a></li>
@@ -53,8 +76,6 @@ Sun Jul 14 16:16:58 UTC 2013 BFH v0.1, adapt http://info.deterlab.net
   <div class="wrapper"><!-- END LEFT SIDEBAR -->
     <div id="main">
       <%=
-       # possible states: 0=not logged in, 1=error logging in, 2=logged in, 3=logout
-       rc = loginStatus
        if rc == 2
          render 'login_ok'
        else
@@ -67,24 +88,7 @@ Sun Jul 14 16:16:58 UTC 2013 BFH v0.1, adapt http://info.deterlab.net
   <div id="sidebar-right" class="sidebar">
     <div class="block right-region deter-block clear-block" id="block-deter-1">
       <h3>
-        <%= 
-	 if rc == 2
-             link_to('Log Out', "login?logout=true", { :confirm => "#{translate( :are_you_sure )}", :method => :delete }  )
-	 else
-             link_to('Log In', "login")
-	 end
-	 %>
-        <%= 
-         if rc == 2
-	     '|'
-	 end
-	 %>
-        <%= 
-         if rc == 2
-	     puts '|'
-             link_to('Profile', "login?profile=true")
-	 end
-	 %>
+        <%= loginStatusText %>
       </h3>
     </div>
     <div class="block right-region deter-block clear-block" id="block-deter-1">

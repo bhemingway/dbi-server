@@ -6,7 +6,7 @@ Thu Jul 18 15:44:18 UTC 2013 BFH v0.2 moving to partial views for flexibility
 -->
       <h2 class="title" id="page-title"><%= t('front.title') %></h2>
       <div id="node-1" class="page-ntype published not-promoted not-sticky full-view author-admin clear-block">
-        <p><%= t('front.para1') %> <%= loginMessage %> </p>
+        <p><%= loginMessage %> </p>
 
         <!-- login form definition begins -->
         <%= form_tag("/login", :method=>'post', :multipart=>true)  do %> 

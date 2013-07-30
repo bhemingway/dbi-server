@@ -83,19 +83,20 @@ module ApplicationHelper
     status = loginStatus
     text = ''
     if status == 2
-       text = link_to('Log Out', "login", { :confirm => "#{translate( :are_you_sure )}", :method => :delete, :class => 'action' } )
+       text = 'Logged in as ' + @_current_user + ' (' + session[:up_Name] + ')'
     else
-       text = link_to("Log In", "login", :method => :create, :class => 'action')
+       text = 'Not logged in'
     end
-    raw(text)
+    text
   end
 
   # what do we want to tell the user about logging in?
   def loginMessage
     status = loginStatus
+    message = t('front.para1') 
     if status != 2 and status != 0
 	message = '<span style="color: red">' + t('front.loginbox.loginfail') + '</span>'
-	message = message + ' <cite>' + session[:deterLoginStatus] + '</cite>'
+	#message = message + ' <cite>' + session[:deterLoginStatus] + '</cite>'
 	raw(message)
     end
   end
