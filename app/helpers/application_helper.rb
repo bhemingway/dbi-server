@@ -32,6 +32,34 @@ module ApplicationHelper
 	      	session.delete(k)
 	      end
 	  end
+	  if !session[:certFile].blank?
+	      bytes = File.size?(session[:certFile])
+	      if bytes
+	          certFile = File.new(session[:certFile],"w+")
+	          certFile.rewind
+	          bytes.times do
+	              certFile.print "x"
+	          end
+	          certFile.truncate(0)
+	          certFile.close
+	          File.delete(session[:certFile])
+	      end
+	      session[:certFile] = nil
+	  end
+	  if !session[:keyFile].blank?
+	      bytes = File.size?(session[:keyFile])
+	      if bytes
+	          keyFile = File.new(session[:keyFile],"w+")
+	          keyFile.rewind
+	          bytes.times do
+	              keyFile.print "x"
+	          end
+	          keyFile.truncate(0)
+	          keyFile.close
+	          File.delete(session[:keyFile])
+	      end
+	      session[:keyFile] = nil
+	  end
       end
       if session[:current_user_id].blank? 
           rc = 0
@@ -120,10 +148,54 @@ module ApplicationHelper
 	    logger.debug response.to_hash.inspect
 	    if response.success? == true
                 session[:deterLoginStatus] = 'challengeResponse...OK'
-	        sslCert = Base64.decode64(response.to_hash[:challenge_response_response][:return])
         	rc = 2
 		session[:deterLoginStatus] = 'Login OK'
 	    	session[:current_user_id] = uid
+
+		# handle the x509 certs: parse them into two different files
+	        x509s = Base64.decode64(response.to_hash[:challenge_response_response][:return])
+		lines = x509s.split("\n")
+		fname = Rails.root.join('tmp') + ('cert-' + request.session_options[:id] + '.pem')
+		logger.debug fname.inspect
+		certFile = File.new(fname, 'w')
+		lines.each do |l|
+		    certFile.print l,"\n"
+		    break if l.match(/END CERTIFICATE/)
+		end
+		certFile.close
+		session[:certFile] = fname
+
+		fname = Rails.root.join('tmp') + ('key-' + request.session_options[:id] + '.pem')
+		logger.debug fname.inspect
+		flag = 0
+		keyFile = File.new(fname, 'w')
+		lines.each do |l|
+		    flag = 1 if l.match(/BEGIN RSA PRIVATE/)
+		    if flag == 1
+		    	keyFile.print l,"\n"
+		    end
+		end
+		keyFile.close
+		session[:keyFile] = fname
+
+		# now that you have certs, create a more secure SOAP transaction pathway
+		client = nil # does this destroy the object? I hope so. I don't know.
+                client = Savon.client(
+                  :wsdl => "https://users.isi.deterlab.net:52323/axis2/services/Users?wsdl",
+                  :log_level => :debug, 
+                  :log => true, 
+                  :pretty_print_xml => true,
+                  :soap_version => 2,
+                  :namespace => 'http://api.testbed.deterlab.net/xsd',
+                  :logger => Rails.logger,
+                  :filters => :password,
+	          :raise_errors => false,
+	          # client SSL options
+		  :ssl_verify_mode => :none,
+	          :ssl_cert_file => session[:certFile],
+	          :ssl_cert_key_file => session[:keyFile]
+                  )
+
 		# load the profile for this user, you will need it later
                 response = client.call(
 	                       :get_user_profile,
