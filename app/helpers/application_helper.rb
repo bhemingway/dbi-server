@@ -97,8 +97,8 @@ module ApplicationHelper
     if status != 2 and status != 0
 	message = '<span style="color: red">' + t('front.loginbox.loginfail') + '</span>'
 	#message = message + ' <cite>' + session[:deterLoginStatus] + '</cite>'
-	raw(message)
     end
+    raw(message)
   end
 
   # validate the credentials supplied by the user via a SOAP transaction
