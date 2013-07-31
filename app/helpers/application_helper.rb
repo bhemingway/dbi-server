@@ -24,9 +24,8 @@ module ApplicationHelper
 
   # are we logged in or not? return a state as a code: 0=initial, 1=trying, 2=worked, 3=failed, 4=timed out
   def loginStatus
-      if session[:session_id].blank?
-         rc = 4
-      elsif params[:logout].blank? == false || session[:session_id].blank?
+      if params[:logout].blank? == false || session[:session_id].blank?
+          rc = 4 if session[:session_id].blank?
           @_current_user = nil
 	  if !session[:session_id].blank?
               session[:current_user_id] =  nil
@@ -40,6 +39,7 @@ module ApplicationHelper
 	  if !session[:certFile].blank?
 	      bytes = File.size?(session[:certFile])
 	      if bytes
+		  File.chmod(0600,session[:certFile])
 	          certFile = File.new(session[:certFile],"w+")
 	          certFile.rewind
 	          bytes.times do
@@ -54,6 +54,7 @@ module ApplicationHelper
 	  if !session[:keyFile].blank?
 	      bytes = File.size?(session[:keyFile])
 	      if bytes
+		  File.chmod(0600,session[:keyFile])
 	          keyFile = File.new(session[:keyFile],"w+")
 	          keyFile.rewind
 	          bytes.times do
@@ -164,23 +165,33 @@ module ApplicationHelper
 		session[:deterLoginStatus] = 'Login OK'
 	    	session[:current_user_id] = uid
 
+		# need a place to put the x509 certs: AppConfig.cert_directory
+		unless File.directory?(AppConfig.cert_directory) 
+		    if File.exist?(AppConfig.cert_directory)
+		        File.unlink(AppConfig.cert_directory)
+		    end
+		    Dir.mkdir(AppConfig.cert_directory)
+		    File.chmod(0700,AppConfig.cert_directory)
+		end
+
 		# handle the x509 certs: parse them into two different files
 	        x509s = Base64.decode64(response.to_hash[:challenge_response_response][:return])
 		lines = x509s.split("\n")
-		fname = Rails.root.join('tmp') + ('cert-' + session[:session_id] + '.pem')
+		fname = AppConfig.cert_directory + '/' +  ('cert-' + session[:session_id] + '.pem')
 		logger.debug fname.inspect
-		certFile = File.new(fname, 'w')
+		certFile = File.new(fname, 'w',0600)
 		lines.each do |l|
 		    certFile.print l,"\n"
 		    break if l.match(/END CERTIFICATE/)
 		end
 		certFile.close
+		File.chmod(0400,fname)
 		session[:certFile] = fname
 
-		fname = Rails.root.join('tmp') + ('key-' + session[:session_id] + '.pem')
+		fname = AppConfig.cert_directory + '/' + ('key-' + session[:session_id] + '.pem')
 		logger.debug fname.inspect
 		flag = 0
-		keyFile = File.new(fname, 'w')
+		keyFile = File.new(fname, 'w',0600)
 		lines.each do |l|
 		    flag = 1 if l.match(/BEGIN RSA PRIVATE/)
 		    if flag == 1
@@ -188,6 +199,7 @@ module ApplicationHelper
 		    end
 		end
 		keyFile.close
+		File.chmod(0400,fname)
 		session[:keyFile] = fname
 
 		# now that you have certs, create a more secure SOAP transaction pathway

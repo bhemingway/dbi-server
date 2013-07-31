@@ -4,6 +4,7 @@
 common: &common
   site_name: "DETERLAB Beginner Interface"
   contact_email: "webmaster@deterlab.net"
+  cert_directory: '/tmp/dbi'
 
   # the inactivity timeout in seconds
   timeoutsecs: 120
