@@ -46,8 +46,7 @@ en:
 
   rightgutter:
     loggedin: "Logged in."
-    usage: "Current Usage Statistics"
-    news: "Recent Announcements from DeterLab Operations"
+    notloggedin: "Not logged in."
     downtime: "Downtime"
     downtimetext: "Regularly Scheduled downtime: Wednesdays: 5PM-7PM, Saturdays: 10AM-1PM Pacific Time."
     # pair with mainnav.deterprojecturl in config.yml
@@ -57,7 +56,13 @@ en:
     # pair with rightgutter.docseduurl in config.yml
     docsedu: "Documentation for DeterLab Educators and Students"
     # pair with rightgutter.supporturl in config.yml
-    support: "DeterLab Technical Support"
+    support: "Technical Support"
+    information:
+      header: "Important Information"
+      # pair with rightgutter.usageurl in config.yml
+      usage: "Current Usage Statistics"
+      # pair with rightgutter.newsurl in config.yml
+      news: "Recent Announcements from DeterLab Operations"
     
 
   front:
