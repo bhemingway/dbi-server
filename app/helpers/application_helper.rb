@@ -270,18 +270,26 @@ module ApplicationHelper
 
   # if the user wants to see it, show the profile
   def showProfile
-      if params[:profile].blank? == false
+      if params[:profile].blank? == false && params[:profile] == 'show'
 	output = Array.new
 	output.push('<table align="center">')
-	session.each do |k, v|
+	bgcolor = ''
+	session.sort.each do |k, v|
 	    if k.match(/^up_/) && !k.match('up_Name') 
-		output.push('<tr>')
-		output.push('<td><strong>' + k[3, k.length - 3] + '</strong></th>')
-	        output.push('<td>' + v + '</td>')
-		output.push('</tr>')
+		if bgcolor.blank?
+		    bgcolor = '#ccddee'
+		else
+		    bgcolor = ''
+		end
+		output.push('  <tr bgcolor="' + bgcolor + '">')
+		output.push('    <td align="right"><strong>' + k[3, k.length - 3] + '</strong></td>')
+	        output.push('    <td>' + v + '</td>')
+		output.push('  </tr>')
 	    end
 	end
 	output.push('</table>')
+	output.push('<a href="/login?profile=edit">Edit Profile</a>')
+	output.push('<a href="/login?password=edit">Change Password</a>')
 	raw(output.join("\n"))
       end
   end

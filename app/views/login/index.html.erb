@@ -46,7 +46,7 @@ Sun Jul 14 16:16:58 UTC 2013 BFH v0.1, adapt http://info.deterlab.net
 	     <a href="/deterlab-cyber-security-science-facility" title="" class="active"><%= t('mainnav.main_nav_option1_name')%></a>
 	     <ul>
 	       <li class="leaf first">
-	         <a href="/login?profile=yes" title="" class="active"><%= t('mainnav.profile')%></a>
+	         <a href="/login?profile=show" title="" class="active"><%= t('mainnav.profile')%></a>
 	        </li>
 	     </ul>
 	 </li>
@@ -81,7 +81,7 @@ Sun Jul 14 16:16:58 UTC 2013 BFH v0.1, adapt http://info.deterlab.net
     </div>
 
   <div id="sidebar-right" class="sidebar">
-    <div class="block right-region deter-block clear-block" id="block-deter-1">
+    <div class="block right-region deter-block clear-block" id="block-deter-0">
       <h3>
         <%= 
          if rc == 2
@@ -98,7 +98,7 @@ Sun Jul 14 16:16:58 UTC 2013 BFH v0.1, adapt http://info.deterlab.net
          end
 	 %>
     </div>
-    <div class="block right-region deter-block clear-block" id="block-deter-0">
+    <div class="block right-region deter-block clear-block" id="block-deter-1">
       <h3>Documentation</h3>
       <div class="item-list">
         <ul>
@@ -107,10 +107,10 @@ Sun Jul 14 16:16:58 UTC 2013 BFH v0.1, adapt http://info.deterlab.net
         </ul>
       </div>
     </div>
-    <div class="block right-region deter-block clear-block" id="block-deter-0">
+    <div class="block right-region deter-block clear-block" id="block-deter-2">
       <h3><a href="<%= AppConfig.rightgutter['supporturl'] %>"><%= t('rightgutter.support')%></a></h3>
     </div>
-    <div class="block right-region deter-block clear-block" id="block-deter-1">
+    <div class="block right-region deter-block clear-block" id="block-deter-3">
       <h3><%=t('rightgutter.information.header')%></h3>
       <div class="item-list">
         <ul>
