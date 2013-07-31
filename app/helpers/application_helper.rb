@@ -22,14 +22,19 @@ module ApplicationHelper
     session[:deter_version]
   end
 
-  # are we logged in or not? return a state as a code: 0=initial, 1=trying, 2=worked, 3=failed
+  # are we logged in or not? return a state as a code: 0=initial, 1=trying, 2=worked, 3=failed, 4=timed out
   def loginStatus
-      if params[:logout].blank? == false
-          @_current_user = session[:current_user_id] =  nil
-	  session[:deterLoginStatus] = session[:deter_version] = nil
-	  session.each do |k, v|
-	      if k.match(/^up_/)
-	      	session.delete(k)
+      if session[:session_id].blank?
+         rc = 4
+      elsif params[:logout].blank? == false || session[:session_id].blank?
+          @_current_user = nil
+	  if !session[:session_id].blank?
+              session[:current_user_id] =  nil
+	      session[:deterLoginStatus] = session[:deter_version] = nil
+	      session.each do |k, v|
+	          if k.match(/^up_/)
+	      	    session.delete(k)
+	          end
 	      end
 	  end
 	  if !session[:certFile].blank?
@@ -69,7 +74,7 @@ module ApplicationHelper
       end
       if @_current_user.blank?  # some flavor of not logged in
           session[:deterLoginStatus] = 'None'
-          if params['uid'].blank? == false && params['password'].blank? == false # trying to log in
+          if (params['uid'].nil? || params['uid'].blank? == false) && (params['password'].nil? || params['password'].blank? == false) # trying to log in
 	      rc = loginValidate
           end
       else
@@ -94,17 +99,23 @@ module ApplicationHelper
   def loginMessage
     status = loginStatus
     message = t('front.para1') 
-    if status != 2 and status != 0
+    if status != 2 and status != 0 and status != 4
 	message = '<span style="color: red">' + t('front.loginbox.loginfail') + '</span>'
-	#message = message + ' <cite>' + session[:deterLoginStatus] + '</cite>'
     end
+    #message = message + ' <cite>' + session[:deterLoginStatus] + ' ' + status.to_s + '</cite>'
     raw(message)
   end
 
   # validate the credentials supplied by the user via a SOAP transaction
   def loginValidate
     session[:deterLoginStatus] = 'Unset'
-    if @_current_user.blank?
+    if session[:session_id].blank?
+        session[:deterLoginStatus] = 'Session timeout'
+	rc = 4
+    elsif @_current_user.blank? && params['uid'].blank?
+        session[:deterLoginStatus] = 'No user and no UID'
+	rc = 0
+    elsif @_current_user.blank? && !params['uid'].blank?
 	uid = params['uid']
 	password = params['password']
 	encoded_data = Base64.encode64(password)
@@ -156,7 +167,7 @@ module ApplicationHelper
 		# handle the x509 certs: parse them into two different files
 	        x509s = Base64.decode64(response.to_hash[:challenge_response_response][:return])
 		lines = x509s.split("\n")
-		fname = Rails.root.join('tmp') + ('cert-' + request.session_options[:id] + '.pem')
+		fname = Rails.root.join('tmp') + ('cert-' + session[:session_id] + '.pem')
 		logger.debug fname.inspect
 		certFile = File.new(fname, 'w')
 		lines.each do |l|
@@ -166,7 +177,7 @@ module ApplicationHelper
 		certFile.close
 		session[:certFile] = fname
 
-		fname = Rails.root.join('tmp') + ('key-' + request.session_options[:id] + '.pem')
+		fname = Rails.root.join('tmp') + ('key-' + session[:session_id] + '.pem')
 		logger.debug fname.inspect
 		flag = 0
 		keyFile = File.new(fname, 'w')

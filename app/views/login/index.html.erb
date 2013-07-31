@@ -23,7 +23,7 @@ Sun Jul 14 16:16:58 UTC 2013 BFH v0.1, adapt http://info.deterlab.net
               <li class="leaf last"><a href="<%= AppConfig.headlinenav['deterprojecturl'] %>"><%= t('headerlinenav.deterproject')%></a></li>
               <li class="leaf first active-trail">
                 <%= 
-                 # possible states: 0=not logged in, 1=error logging in, 2=logged in, 3=logout
+                 # possible states: 0=not logged in, 1=error logging in, 2=logged in, 3=logout, 4=timed out
                  rc = loginStatus
 	         if rc == 2
                      link_to('Log Out', "login?logout=true", { :confirm => "#{translate( :are_you_sure )}", :method => :delete }  )

@@ -5,6 +5,9 @@ common: &common
   site_name: "DETERLAB Beginner Interface"
   contact_email: "webmaster@deterlab.net"
 
+  # the inactivity timeout in seconds
+  timeoutsecs: 120
+
   headlinenav:
     deterprojecturl: "http://deter-project.org/"
     contacturl: "http://info.deterlab.net/contact_deterlab"
