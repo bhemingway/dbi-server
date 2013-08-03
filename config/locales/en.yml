@@ -1,8 +1,10 @@
+# Sat Aug  3 15:37:02 UTC 2013 BFH timeout apology support
 # Thu Jul 25 14:15:43 UTC 2013 BFH polishing the UI
 # Tue Jul 16 13:45:57 UTC 2013 BFH fill in blanks
 # Mon Jul 16 01:57:00 UTC 2013 EJS first cut
 en:
 
+  # generic message for confirmation, if needed
   are_you_sure: "Are you sure?"
 
   headerlinenav:
@@ -99,11 +101,8 @@ en:
      title: "Projects"
      para1: "You are a member of the following projects:"
 
-
-
-
-
-
-
-
-
+  apology_timeout:
+    title: "Session Timed Out"
+    subtitle: ""
+    paragraph1: "Please login to continue using DeterLab."
+    buttontext: "Login"

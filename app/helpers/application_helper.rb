@@ -24,18 +24,21 @@ module ApplicationHelper
 
   # are we logged in or not? return a state as a code: 0=initial, 1=trying, 2=worked, 3=failed, 4=timed out
   def loginStatus
+      rc = 0
       if params[:logout].blank? == false || session[:session_id].blank?
-          rc = 4 if session[:session_id].blank?
           @_current_user = nil
-	  if !session[:session_id].blank?
+	  if session.nil? || session[:session_id].blank?
               session[:current_user_id] =  nil
 	      session[:deterLoginStatus] = session[:deter_version] = nil
 	      session.each do |k, v|
-	          if k.match(/^up_/)
+	          if !k.nil? && k.match(/^up_/)
 	      	    session.delete(k)
 	          end
-	      end
-	  end
+	      end # for every key of the session hash
+              rc = 4
+	      session[:deterLoginStatus] = 'timeout'
+	  end # if no session id
+
 	  if !session[:certFile].blank?
 	      bytes = File.size?(session[:certFile])
 	      if bytes
@@ -50,7 +53,8 @@ module ApplicationHelper
 	          File.delete(session[:certFile])
 	      end
 	      session[:certFile] = nil
-	  end
+	  end # if nonblank cert file name
+
 	  if !session[:keyFile].blank?
 	      bytes = File.size?(session[:keyFile])
 	      if bytes
@@ -63,37 +67,19 @@ module ApplicationHelper
 	          keyFile.truncate(0)
 	          keyFile.close
 	          File.delete(session[:keyFile])
-	      end
+	      end # 
 	      session[:keyFile] = nil
-	  end
-      end
-      if session[:current_user_id].blank? 
-          rc = 0
-      else
-          @_current_user = session[:current_user_id]
-	  rc = 2
-      end
-      if @_current_user.blank?  # some flavor of not logged in
+          end # if nonblank key file name
+      elsif @_current_user.blank? and session[:current_user_id].blank?  # some flavor of not logged in
           session[:deterLoginStatus] = 'None'
           if (params['uid'].nil? || params['uid'].blank? == false) && (params['password'].nil? || params['password'].blank? == false) # trying to log in
 	      rc = loginValidate
           end
-      else
+      else # you are logged in
+          @_current_user = session[:current_user_id]
           rc = 2
-      end
+      end # logout or timeout vs other
       rc
-  end
-
-  # are we logged in or not? return a human-readable string to that effect
-  def loginStatusText
-    status = loginStatus
-    text = ''
-    if status == 2
-       text = 'Logged in as ' + @_current_user + ' (' + session[:up_Name] + ')'
-    else
-       text = 'Not logged in'
-    end
-    text
   end
 
   # what do we want to tell the user about logging in?
@@ -110,7 +96,7 @@ module ApplicationHelper
   # validate the credentials supplied by the user via a SOAP transaction
   def loginValidate
     session[:deterLoginStatus] = 'Unset'
-    if session[:session_id].blank?
+    if session[:session_id].blank? && !@_current_user.blank?
         session[:deterLoginStatus] = 'Session timeout'
 	rc = 4
     elsif @_current_user.blank? && params['uid'].blank?
@@ -163,7 +149,7 @@ module ApplicationHelper
                 session[:deterLoginStatus] = 'challengeResponse...OK'
         	rc = 2
 		session[:deterLoginStatus] = 'Login OK'
-	    	session[:current_user_id] = uid
+	    	@_current_user = session[:current_user_id] = uid
 
 		# need a place to put the x509 certs: AppConfig.cert_directory
 		unless File.directory?(AppConfig.cert_directory) 
@@ -226,7 +212,7 @@ module ApplicationHelper
 			       "message" => {'uid' => uid, :order! => [:uid] }
 			    )
 	        if response.success? == true
-		    logger.debug response.to_hash.inspect
+		    #logger.debug response.to_hash.inspect
 		    # stash data away in the session by parsing profile tree: an array of hashes
 		    a = response.to_hash[:get_user_profile_response][:return][:attributes]
 		    a.each do |h|
@@ -270,7 +256,8 @@ module ApplicationHelper
 
   # if the user wants to see it, show the profile
   def showProfile
-      if params[:profile].blank? == false && params[:profile] == 'show'
+      rc = loginStatus
+      if rc == 2 && params[:profile].blank? == false && params[:profile] == 'show'
 	output = Array.new
 	output.push('<table align="center">')
 	bgcolor = ''
