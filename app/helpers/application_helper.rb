@@ -305,6 +305,28 @@ module ApplicationHelper
 		      text = text + 'FAILED at Tranaction Level: ' + a[:reason]
 		  else
 	              text = text + 'OK'
+		      # now update our cache
+                      response = client.call(
+	                             :get_user_profile,
+			             "message" => {'uid' => @_current_user, :order! => [:uid] }
+			          )
+	              if response.success? == true
+		          #logger.debug response.to_hash.inspect
+		          # stash data away in the session by parsing profile tree: an array of hashes
+		          a = response.to_hash[:get_user_profile_response][:return][:attributes]
+		          a.each do |h|
+			      if h[:description] == "The user's real world name"
+			          session[:up_Name] = h[:value]
+			      end
+
+			      # save entire profile in session for now
+			      session[ 'up_' + h[:description] ] = h[:value]
+			      session[ 'up_' + h[:description] + '_access' ] = h[:access]
+			      session[ 'up_' + h[:description] + '_name' ] = h[:name]
+		          end
+	              else
+		          session[:deterLoginStatus] = 'getUserfProfile...FAIL'
+		      end
 	          end
 	      else
 	          text = text + 'FAILED at SOAP Level'
