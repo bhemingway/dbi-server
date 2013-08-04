@@ -31,7 +31,7 @@ module ApplicationHelper
               session[:current_user_id] =  nil
 	      session[:deterLoginStatus] = session[:deter_version] = nil
 	      session.each do |k, v|
-	          if !k.nil? && k.match(/^up_/)
+	          if !k.nil? && k.to_s.match(/^up_/)
 	      	    session.delete(k)
 	          end
 	      end # for every key of the session hash
@@ -222,6 +222,7 @@ module ApplicationHelper
 
 			# save entire profile in session for now
 			session[ 'up_' + h[:description] ] = h[:value]
+			session[ 'up_' + h[:description] + '_access' ] = h[:access]
 		    end
 		else
 		    session[:deterLoginStatus] = 'getUserfProfile...FAIL'
@@ -257,26 +258,18 @@ module ApplicationHelper
   # if the user wants to see it, show the profile
   def showProfile
       rc = loginStatus
-      if rc == 2 && params[:profile].blank? == false && params[:profile] == 'show'
+      if rc == 2 && params[:profile].blank? == false 
 	output = Array.new
-	output.push('<table align="center">')
-	bgcolor = ''
+	output.push('<table align="center" class="deter-block">')
 	session.sort.each do |k, v|
-	    if k.match(/^up_/) && !k.match('up_Name') 
-		if bgcolor.blank?
-		    bgcolor = '#ccddee'
-		else
-		    bgcolor = ''
-		end
-		output.push('  <tr bgcolor="' + bgcolor + '">')
+	    if k.match(/^up_/) && !k.match('up_Name')  && !k.match(/_access$/)
+		output.push('  <tr>')
 		output.push('    <td align="right"><strong>' + k[3, k.length - 3] + '</strong></td>')
 	        output.push('    <td>' + v + '</td>')
 		output.push('  </tr>')
 	    end
 	end
 	output.push('</table>')
-	output.push('<a href="/login?profile=edit">Edit Profile</a>')
-	output.push('<a href="/login?password=edit">Change Password</a>')
 	raw(output.join("\n"))
       end
   end

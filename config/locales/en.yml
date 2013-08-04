@@ -106,3 +106,12 @@ en:
     subtitle: ""
     paragraph1: "Please login to continue using DeterLab."
     buttontext: "Login"
+
+  profile_page:
+    title: "Your Profile"
+    subtitle: ""
+    paragraph1: "This is your DeterLab user profile."
+    buttons:
+      updatetext: "Update Profile"
+      savetext: "Save Profile"
+      passwordtext: "Change Password"

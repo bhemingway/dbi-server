@@ -7,7 +7,7 @@ common: &common
   cert_directory: '/tmp/dbi'
 
   # the inactivity timeout in seconds
-  timeoutsecs: 120
+  timeoutsecs: 300
 
   headlinenav:
     deterprojecturl: "http://deter-project.org/"
