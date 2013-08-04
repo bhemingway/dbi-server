@@ -223,6 +223,7 @@ module ApplicationHelper
 			# save entire profile in session for now
 			session[ 'up_' + h[:description] ] = h[:value]
 			session[ 'up_' + h[:description] + '_access' ] = h[:access]
+			session[ 'up_' + h[:description] + '_name' ] = h[:name]
 		    end
 		else
 		    session[:deterLoginStatus] = 'getUserfProfile...FAIL'
@@ -255,6 +256,65 @@ module ApplicationHelper
     rc
   end # loginValidate
 
+  # if the user requests it, save the profile
+  def saveProfile
+    text = ''
+    if !session.nil? && !@_current_user.blank? && params[:profile] == 'update'
+    	changes = Array.new
+	session.each do |k, v|
+	    next if v.nil?
+	    next if params[k].nil?
+	    if k.match(/^up_/) && !k.match('up_Name')  && !k.match(/_(access|name)$/)
+		unless params[k] == v
+		    text = text + k + ' changed from {' + v + '} to {' + params[k] + '}<br>'
+		    mykey = session[k + '_name']
+		    changes.push({'name' => mykey, 'value' =>params[k], 'delete' => 0})
+		end
+	    end
+	end
+
+	# save any changed data elements
+	unless changes.empty?
+	    # build a SOAP transaction pathway
+	    client = nil # just in case
+            client = Savon.client(
+              :wsdl => "https://users.isi.deterlab.net:52323/axis2/services/Users?wsdl",
+              :log_level => :debug, 
+              :log => true, 
+              :pretty_print_xml => true,
+              :soap_version => 2,
+              :namespace => 'http://api.testbed.deterlab.net/xsd',
+              :logger => Rails.logger,
+              :filters => :password,
+	      :raise_errors => false,
+	      # client SSL options
+	      :ssl_verify_mode => :none,
+	      :ssl_cert_file => session[:certFile],
+	      :ssl_cert_key_file => session[:keyFile]
+              )
+
+	      text = text + '<br><strong>' + 'Profile update '
+	      # send the changes to the server as a SOAP transaction
+              response = client.call(
+	                     :change_user_profile,
+	                     "message" => {'uid' => @_current_user, :order! => [:uid, :changes], 'changes' => changes }
+			     )
+	      if response.success? == true
+		  a = response.to_hash[:change_user_profile_response][:return]
+		  if !a[:success]
+		      text = text + 'FAILED at Tranaction Level: ' + a[:reason]
+		  else
+	              text = text + 'OK'
+	          end
+	      else
+	          text = text + 'FAILED at SOAP Level'
+	      end
+	      text = text + '</strong><br>'
+        end
+    end
+    raw(text)
+  end
+
   # if the user wants to see it, show the profile
   def showProfile
       rc = loginStatus
@@ -262,7 +322,7 @@ module ApplicationHelper
 	output = Array.new
 	output.push('<table align="center" class="deter-block">')
 	session.sort.each do |k, v|
-	    if k.match(/^up_/) && !k.match('up_Name')  && !k.match(/_access$/)
+	    if k.match(/^up_/) && !k.match('up_Name')  && !k.match(/_(access|name)$/)
 		output.push('  <tr>')
 		output.push('    <td align="right"><strong>' + k[3, k.length - 3] + '</strong></td>')
 	        output.push('    <td>' + v + '</td>')
