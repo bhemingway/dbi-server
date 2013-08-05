@@ -2,6 +2,46 @@ require 'base64'
 
 module ApplicationHelper
 
+  # load the current user profile: first template, then data
+  def loadProfile(client)
+      # first get the template, aka "description"
+      response = client.call(
+                   :get_profile_description,
+		   "message" => {'uid' => '', :order! => [:uid] }
+	         )
+      if response.success? == true
+          # stash data away in the session by parsing profile tree: an array of hashes
+          a = response.to_hash[:get_profile_description_response][:return][:attributes]
+          a.each do |h|
+ 	      session[ 'up_' + h[:description] ] = ''
+          end
+
+	  # now get the data for that template
+          response = client.call(
+	               :get_user_profile,
+	               "message" => {'uid' => @_current_user, :order! => [:uid] }
+		      )
+	  if response.success? == true
+	      #logger.debug response.to_hash.inspect
+	      # stash data away in the session by parsing profile tree: an array of hashes
+	      a = response.to_hash[:get_user_profile_response][:return][:attributes]
+              a.each do |h|
+	          if h[:description] == "The user's real world name"
+		      session[:up_Name] = h[:value]
+		  end
+
+		  # save entire profile in session for now
+		  session[ 'up_' + h[:description] ] = h[:value]
+		  session[ 'up_' + h[:description] + '_access' ] = h[:access]
+		  session[ 'up_' + h[:description] + '_name' ] = h[:name]
+              end
+	  else
+	      session[:deterLoginStatus] = 'getUserfProfile...FAIL'
+	  end
+      end
+      response
+  end
+
   # get the current DeterLab version for display via a SOAP transaction
   def deterVersion
     if session[:deter_version] == nil
@@ -25,9 +65,12 @@ module ApplicationHelper
   # are we logged in or not? return a state as a code: 0=initial, 1=trying, 2=worked, 3=failed, 4=timed out
   def loginStatus
       rc = 0
-      if params[:logout].blank? == false || session[:session_id].blank?
+      if !params[:logout].blank? || session[:session_id].blank? 
+          if session[:session_id].blank?
+              rc = 4
+	  end
           @_current_user = nil
-	  if session.nil? || session[:session_id].blank?
+	  if !session.nil? 
               session[:current_user_id] =  nil
 	      session[:deterLoginStatus] = session[:deter_version] = nil
 	      session.each do |k, v|
@@ -35,7 +78,6 @@ module ApplicationHelper
 	      	    session.delete(k)
 	          end
 	      end # for every key of the session hash
-              rc = 4
 	      session[:deterLoginStatus] = 'timeout'
 	  end # if no session id
 
@@ -70,9 +112,10 @@ module ApplicationHelper
 	      end # 
 	      session[:keyFile] = nil
           end # if nonblank key file name
-      elsif @_current_user.blank? and session[:current_user_id].blank?  # some flavor of not logged in
+      elsif @_current_user.blank? && session[:current_user_id].blank?  # some flavor of not logged in
+	  rc = 0
           session[:deterLoginStatus] = 'None'
-          if (params['uid'].nil? || params['uid'].blank? == false) && (params['password'].nil? || params['password'].blank? == false) # trying to log in
+          if (!params['uid'].nil? || params['uid'].blank? == false) && (!params['password'].nil? || params['password'].blank? == false) # trying to log in
 	      rc = loginValidate
           end
       else # you are logged in
@@ -207,24 +250,9 @@ module ApplicationHelper
                   )
 
 		# load the profile for this user, you will need it later
-                response = client.call(
-	                       :get_user_profile,
-			       "message" => {'uid' => uid, :order! => [:uid] }
-			    )
+                response = loadProfile(client)
 	        if response.success? == true
-		    #logger.debug response.to_hash.inspect
-		    # stash data away in the session by parsing profile tree: an array of hashes
-		    a = response.to_hash[:get_user_profile_response][:return][:attributes]
-		    a.each do |h|
-			if h[:description] == "The user's real world name"
-			    session[:up_Name] = h[:value]
-			end
-
-			# save entire profile in session for now
-			session[ 'up_' + h[:description] ] = h[:value]
-			session[ 'up_' + h[:description] + '_access' ] = h[:access]
-			session[ 'up_' + h[:description] + '_name' ] = h[:name]
-		    end
+		    session[:deterLoginStatus] = 'getUserfProfile...OK'
 		else
 		    session[:deterLoginStatus] = 'getUserfProfile...FAIL'
 		end
