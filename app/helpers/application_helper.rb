@@ -71,10 +71,10 @@ module ApplicationHelper
   # are we logged in or not? return a state as a code: 0=initial, 1=trying, 2=worked, 3=failed, 4=timed out
   def loginStatus
       rc = 0
+      if session[:session_id].blank?
+          rc = 4
+      end
       if !params[:logout].blank? || session[:session_id].blank? 
-          if session[:session_id].blank?
-              rc = 4
-	  end
           @_current_user = nil
 	  if !session.nil? 
               session[:current_user_id] =  nil
@@ -353,7 +353,11 @@ module ApplicationHelper
 	      text = text + '</strong><br>'
         end
     end
-    raw(text)
+    if AppConfig.debug_visible
+        raw(text)
+    else
+    	''
+    end
   end
 
   # if the user wants to see it, show the profile
@@ -364,9 +368,14 @@ module ApplicationHelper
 	output.push('<table align="center" class="deter-block">')
 	session.sort.each do |k, v|
 	    if k.match(/^up_/) && !k.match('up_Name')  && !k.match(/_(access|name)$/)
+		if v.blank?
+		    tmp = ''
+                else
+		    tmp = v
+                end
 		output.push('  <tr>')
 		output.push('    <td align="right"><strong>' + k[3, k.length - 3] + '</strong></td>')
-	        output.push('    <td>' + v + '</td>')
+	        output.push('    <td>' + tmp + '</td>')
 		output.push('  </tr>')
 	    end
 	end

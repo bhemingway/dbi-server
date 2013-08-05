@@ -2,6 +2,9 @@
 # Tue Jul 16 13:46:55 UTC 2013 BFH first cut, to match John's en.yml
 
 common: &common
+  # will programmer debugging output be visible to the end user 
+  # (should log be an alternative?)
+  debug_visible: false
   site_name: "DETERLAB Beginner Interface"
   contact_email: "webmaster@deterlab.net"
   cert_directory: '/tmp/dbi'
