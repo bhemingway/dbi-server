@@ -13,7 +13,12 @@ module ApplicationHelper
           # stash data away in the session by parsing profile tree: an array of hashes
           a = response.to_hash[:get_profile_description_response][:return][:attributes]
           a.each do |h|
- 	      session[ 'up_' + h[:description] ] = ''
+	      # create a slot for this attribute
+	      session[ 'up_' + h[:description] ] = ''
+
+	      # save other attributes as well
+	      session[ 'up_' + h[:description] + '_access' ] = h[:access]
+	      session[ 'up_' + h[:description] + '_name' ] = h[:name]
           end
 
 	  # now get the data for that template
@@ -22,18 +27,19 @@ module ApplicationHelper
 	               "message" => {'uid' => @_current_user, :order! => [:uid] }
 		      )
 	  if response.success? == true
+	      session[:deterLoginStatus] = 'getUserfProfile...OK'
+
 	      #logger.debug response.to_hash.inspect
 	      # stash data away in the session by parsing profile tree: an array of hashes
 	      a = response.to_hash[:get_user_profile_response][:return][:attributes]
               a.each do |h|
+		  # save the data for this attribute
+ 	          session[ 'up_' + h[:description] ] = h[:value]
+
+		  # this is app-specific shorthand
 	          if h[:description] == "The user's real world name"
 		      session[:up_Name] = h[:value]
 		  end
-
-		  # save entire profile in session for now
-		  session[ 'up_' + h[:description] ] = h[:value]
-		  session[ 'up_' + h[:description] + '_access' ] = h[:access]
-		  session[ 'up_' + h[:description] + '_name' ] = h[:name]
               end
 	  else
 	      session[:deterLoginStatus] = 'getUserfProfile...FAIL'
@@ -334,24 +340,9 @@ module ApplicationHelper
 		  else
 	              text = text + 'OK'
 		      # now update our cache
-                      response = client.call(
-	                             :get_user_profile,
-			             "message" => {'uid' => @_current_user, :order! => [:uid] }
-			          )
+                      response = loadProfile(client)
 	              if response.success? == true
-		          #logger.debug response.to_hash.inspect
-		          # stash data away in the session by parsing profile tree: an array of hashes
-		          a = response.to_hash[:get_user_profile_response][:return][:attributes]
-		          a.each do |h|
-			      if h[:description] == "The user's real world name"
-			          session[:up_Name] = h[:value]
-			      end
-
-			      # save entire profile in session for now
-			      session[ 'up_' + h[:description] ] = h[:value]
-			      session[ 'up_' + h[:description] + '_access' ] = h[:access]
-			      session[ 'up_' + h[:description] + '_name' ] = h[:name]
-		          end
+		          session[:deterLoginStatus] = 'getUserfProfile...OK'
 	              else
 		          session[:deterLoginStatus] = 'getUserfProfile...FAIL'
 		      end
