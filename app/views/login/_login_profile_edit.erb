@@ -1,0 +1,39 @@
+<!-- START _login_profile_edit.html.erb -->
+<!-- 
+HISTORY
+Sat Aug  3 20:40:24 UTC 2013 BFH v0.6, actual profile support starts
+Sun Jul 21 14:40:18 UTC 2013 BFH v0.2, first version
+-->
+
+      <h2 class="title" id="page-title"><%= t('profile_page.title') %></h2>
+      <div id="node-1" class="page-ntype published not-promoted not-sticky full-view author-admin clear-block">
+	<h3><%= t('profile_page.subtitle') %></h3>
+	<p><%= t('profile_page.paragraph1') %></p>
+        <!-- profile update form definition begins -->
+        <%= form_tag "/login?profile=update" do  %>
+	<table>
+	<%=
+	  output = Array.new
+	  session.sort.each do |k, v|
+	      if !k.nil? && k.to_s.match(/^up_/) && !k.to_s.match(/_(access|name)$/) && !k.to_s.match(/^up_Name$/)
+		  access_key = k + '_access'
+		  output.push('<tr><td><strong>', k[3, k.length - 3], '</strong></td><td><div class="field">')
+		  if session[access_key] == 1.to_s
+		      output.push(text_field_tag(k, v))
+		  else
+		      output.push(v)
+		  end
+		  output.push('</div></td></tr>')
+	      end
+	  end # for every key of the session hash
+	  raw(output.join("\n"))
+	%>
+        </table>
+	<table>
+	<tr><td colspan="2"><%= submit_tag t('profile_page.buttons.savetext') %></td></tr>
+        </table>
+        <!-- form definition ends -->
+	<% end %>
+    </div> <!-- end of node-1 -->
+
+<!-- END _login_profile_edit.html.erb -->
