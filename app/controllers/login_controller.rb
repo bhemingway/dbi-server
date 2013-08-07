@@ -362,4 +362,14 @@ class LoginController < ApplicationController
     render :index
   end
 
+  # pwrdedit = change your password
+  def pwrdedit
+    redirect_to "/error"
+  end
+
+  # error = end point for API errors
+  def error
+    render :index
+  end
+
 end

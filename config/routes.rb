@@ -58,12 +58,18 @@ Dbi::Application.routes.draw do
   # Note: This route will make all actions in every controller accessible via GET requests.
   # match ':controller(/:action(/:id))(.:format)'
 
-  # BFH: this is my starting point
+  #
+  # BFH: changes start here
+  #
+
+  # this is my starting point
   root :to => "login#index"
-  # BFH: actually, it turns out that this is my only point
-  #match '*path' => 'login#index'
+
+  # these are my app-specific routes
   match '/logout' => 'login#destroy'
   match '/profshow' => 'login#profshow'
   match '/profedit' => 'login#profedit'
   match '/profsave' => 'login#profsave'
+  match '/pwrdedit' => 'login#pwrdedit'
+  match '/error' => 'login#error'
 end

@@ -30,7 +30,14 @@ Sun Jul 21 14:40:18 UTC 2013 BFH v0.2, first version
 	%>
         </table>
 	<table>
-	<tr><td colspan="2"><%= submit_tag t('profile_page.buttons.savetext') %></td></tr>
+	<tr>
+	  <td>
+	    <%= submit_tag t('profile_page.buttons.savetext') %>
+	  </td>
+	  <td>
+	    <%= button_to t('profile_page.buttons.canceltext'), "/profshow", :method => "get" %>
+	  </td>
+	</tr>
         </table>
         <!-- form definition ends -->
 	<% end %>

@@ -88,13 +88,16 @@ Sun Jul 14 16:16:58 UTC 2013 BFH v0.1, adapt http://info.deterlab.net
       <%= debug rc if AppConfig.debug_visible %>
       <%= debug @_current_user if AppConfig.debug_visible %>
       <%= debug session[:current_user_id] if AppConfig.debug_visible %>
+      <%= debug params if AppConfig.debug_visible %>
       <%=
        if rc == 2 && session[:up_Name].blank?
            flash.now[:error] = 'No user name!'
 	   session[:up_Name] = 'unknown'
        end
 
-       if rc == 2 && !session[:profile].blank?
+       if params[:action] == 'error'
+           render 'login_error'
+       elsif rc == 2 && !session[:profile].blank?
            if session[:profile] == 'show'
 	   	render 'login_profile_show'
 	   elsif session[:profile] == 'edit'
