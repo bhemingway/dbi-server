@@ -10,12 +10,12 @@ Sun Jul 21 14:40:18 UTC 2013 BFH v0.2, first version
 	<h3><%= t('profile_page.subtitle') %></h3>
 	<p><%= t('profile_page.paragraph1') %></p>
         <!-- profile update form definition begins -->
-        <%= form_tag "/login?profile=update" do  %>
+        <%= form_tag "/profsave" do  %>
 	<table>
 	<%=
 	  output = Array.new
 	  session.sort.each do |k, v|
-	      if !k.nil? && k.to_s.match(/^up_/) && !k.to_s.match(/_(access|name)$/) && !k.to_s.match(/^up_Name$/)
+	      if !k.nil? && k.to_s.match(/^up_/) && !k.to_s.match(/_(access|name)$/)
 		  access_key = k + '_access'
 		  output.push('<tr><td><strong>', k[3, k.length - 3], '</strong></td><td><div class="field">')
 		  if session[access_key] == 1.to_s

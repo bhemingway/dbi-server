@@ -1,6 +1,7 @@
 <!-- START new.html.erb -->
 <!-- 
 HISTORY
+Wed Aug  7 14:22:08 UTC 2013 BFH v0.7, massive overhaul to put code into controllers
 Sat Aug  3 20:40:24 UTC 2013 BFH v0.6, actual profile support starts
 Sat Jul 27 18:46:26 UTC 2013 BFH v0.3, start to enforce logged-in-ness
 Thu Jul 25 14:13:21 UTC 2013 BFH v0.2, polish UI for review
@@ -27,7 +28,7 @@ Sun Jul 14 16:16:58 UTC 2013 BFH v0.1, adapt http://info.deterlab.net
                  # possible states: 0=not logged in, 1=error logging in, 2=logged in, 3=logout, 4=timed out
                  rc = loginStatus
 	         if rc == 2
-                     link_to('Log Out', "login?logout=true", { :confirm => "#{translate( :are_you_sure )}", :method => :delete }  )
+		     link_to('Log Out', '/logout')
 	         else
                      link_to('Log In', "login")
 	         end
@@ -46,7 +47,7 @@ Sun Jul 14 16:16:58 UTC 2013 BFH v0.1, adapt http://info.deterlab.net
 	     <a href="<%= AppConfig.mainnav['main_nav_option1_link'] %>" title="" class="active"><%= t('mainnav.main_nav_option1_name')%></a>
 	     <ul>
 	       <li class="leaf first">
-	         <a href="/login?profile=show" title="" class="active"><%= t('mainnav.profile')%></a>
+	         <a href="/profshow" title="" class="active"><%= t('mainnav.profile')%></a>
 	        </li>
 	     </ul>
 	 </li>
@@ -70,11 +71,35 @@ Sun Jul 14 16:16:58 UTC 2013 BFH v0.1, adapt http://info.deterlab.net
 <div id="maincontent">
   <div class="wrapper"><!-- END LEFT SIDEBAR -->
     <div id="main">
+      <%= 
+	  if AppConfig.debug_visible && !session.empty?
+	      o = Array.new
+	      #session.sort.each do |k, v|
+	      session.each do |k, v|
+	          next if k.nil? or v.nil?
+	          next if k.to_s.match(/^up_/)
+	          o.push(k.to_s + '=' + v.to_s)
+	      end
+	      raw(o.join('<br>'))
+	  else
+	      'session hash is empty' if AppConfig.debug_visible
+	  end
+      %>
+      <%= debug rc if AppConfig.debug_visible %>
+      <%= debug @_current_user if AppConfig.debug_visible %>
+      <%= debug session[:current_user_id] if AppConfig.debug_visible %>
       <%=
-       if rc == 2 && (params[:profile] == 'show' || params[:profile] == 'update')
-         render 'login_profile_show'
-       elsif rc == 2 && params[:profile] == 'edit'
-         render 'login_profile_edit'
+       if rc == 2 && session[:up_Name].blank?
+           flash.now[:error] = 'No user name!'
+	   session[:up_Name] = 'unknown'
+       end
+
+       if rc == 2 && !session[:profile].blank?
+           if session[:profile] == 'show'
+	   	render 'login_profile_show'
+	   elsif session[:profile] == 'edit'
+	        render 'login_profile_edit'
+           end
        elsif rc == 2
          render 'login_ok'
        elsif rc == 4
@@ -145,7 +170,7 @@ Sun Jul 14 16:16:58 UTC 2013 BFH v0.1, adapt http://info.deterlab.net
               <li class="leaf"><a href="<%=AppConfig.footer['privacyurl']%>" class="active"><%=t('footer.privacypolicylinktext')%></a></li>
               <li class="leaf"><a href="<%=AppConfig.footer['usageurl']%>" class="active"><%=t('footer.usagepolicylinktext')%></a></li>
               <li class="leaf"><a href="<%=AppConfig.footer['contacturl']%>" class="active"><%=t('footer.contact')%></a></li>
-	      <li class="leaf last"> DeterLab Version <%= deterVersion %></li>
+	      <li class="leaf last"> DeterLab Version <%= session[:deter_version] %></li>
 	    </ul>
             <%= t('footer.copyright') %>
 	  </td>

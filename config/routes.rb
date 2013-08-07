@@ -62,4 +62,8 @@ Dbi::Application.routes.draw do
   root :to => "login#index"
   # BFH: actually, it turns out that this is my only point
   #match '*path' => 'login#index'
+  match '/logout' => 'login#destroy'
+  match '/profshow' => 'login#profshow'
+  match '/profedit' => 'login#profedit'
+  match '/profsave' => 'login#profsave'
 end
