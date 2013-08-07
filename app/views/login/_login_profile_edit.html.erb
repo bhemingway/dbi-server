@@ -33,14 +33,14 @@ Sun Jul 21 14:40:18 UTC 2013 BFH v0.2, first version
 	<tr>
 	  <td>
 	    <%= submit_tag t('profile_page.buttons.savetext') %>
+        <!-- form definition ends -->
+	<% end %>
 	  </td>
 	  <td>
-	    <%= button_to t('profile_page.buttons.canceltext'), "/profshow", :method => "get" %>
+	    <%= button_to t('profile_page.buttons.canceltext'), '/profshow', :action => 'profshow' %>
 	  </td>
 	</tr>
         </table>
-        <!-- form definition ends -->
-	<% end %>
     </div> <!-- end of node-1 -->
 
 <!-- END _login_profile_edit.html.erb -->

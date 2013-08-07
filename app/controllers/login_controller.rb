@@ -265,7 +265,8 @@ class LoginController < ApplicationController
   def destroy
     session[:deterLoginStatus] = 'Logged out'
     end_session
-    render :index
+    redirect_to "/login"
+    #render :index
   end
 
   # profshow = show the profile

@@ -111,7 +111,8 @@ en:
     title: "DBI Error"
     subtitle: "A DBI Error Has Occurred"
     paragraph1: "An error has occurred in the communications between this User Interface and DeterLab. Please use the browser's back button to retry or contact Tech Support clicking on the appropriate link."
-    buttontext: "Main Page"
+    # pair with error_page.supporturl in config.yml
+    support: "Technical Support"
 
   profile_page:
     title: "Your Profile"

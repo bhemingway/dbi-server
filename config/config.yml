@@ -17,6 +17,9 @@ common: &common
     deterprojecturl: "http://deter-project.org/"
     contacturl: "http://info.deterlab.net/contact_deterlab"
 
+  error_page:
+    supporturl: "http://info.deterlab.net/support"
+
   mainnav:
     supporturl: "http://info.deterlab.net/support"
 
