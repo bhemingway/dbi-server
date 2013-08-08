@@ -79,6 +79,7 @@ en:
       pwd: "Password:"
       login: LOGIN
       loginfail: "Login failed. Please try again"
+      loginfirst: "You must be logged in to view this page. You will be taken here automatically after login for most pages."
 
     para2: "If you do not have a DeterLab account, then please learn more about DeterLab:"
     # pair with front.url1 in config.yml

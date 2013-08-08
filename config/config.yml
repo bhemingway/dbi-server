@@ -10,7 +10,7 @@ common: &common
 
   # will programmer debugging output be visible to the end user?
   # (should log be an alternative?)
-  debug_visible: true
+  debug_visible: false
 
   # the inactivity timeout in seconds
   timeoutsecs: 300

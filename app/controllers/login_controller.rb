@@ -102,6 +102,7 @@ class LoginController < ApplicationController
     end
 
     session[:deterLoginStatus] = '(create)'
+
     if @_current_user.blank? && !params['uid'].blank?
 	uid = params['uid']
 	password = params['password']
@@ -245,7 +246,13 @@ class LoginController < ApplicationController
 	end
     end # if no current user
     session[:deterLoginCode] = rc
-    render :index
+    if rc == 2 && !session[:original_target].blank?
+	tmp = session[:original_target]
+	session[:original_target] = nil
+        redirect_to tmp
+    else
+        render :index
+    end
   end
 
   def end_session
@@ -287,6 +294,11 @@ class LoginController < ApplicationController
 
   # profshow = show the profile
   def profshow
+    # what if we need to log in first?
+    if @_current_user.blank?
+        session[:original_target] = request.fullpath
+    end
+
     session['saveProfileStatus'] = nil
     @_current_user = session[:current_user_id] if @_current_user.blank?
     session['profile'] = 'show'
@@ -295,6 +307,10 @@ class LoginController < ApplicationController
 
   # profedit = edit the profile
   def profedit
+    # what if we need to log in first?
+    if @_current_user.blank?
+        session[:original_target] = request.fullpath
+    end
     session['saveProfileStatus'] = nil
     @_current_user = session[:current_user_id] if @_current_user.blank?
     session['profile'] = 'edit'
