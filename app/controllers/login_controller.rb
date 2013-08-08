@@ -149,7 +149,7 @@ class LoginController < ApplicationController
 	    logger.debug response.to_hash.inspect
 	    if response.success? == true
                 session[:deterLoginStatus] = 'challengeResponse...OK'
-        	rc = 2
+	        session[:deterLoginCode] = rc = 2
 		session[:deterLoginStatus] = 'Login OK'
 	    	@_current_user = session[:current_user_id] = uid
 
@@ -220,11 +220,11 @@ class LoginController < ApplicationController
 		end
 	    else 
                 session[:errorDescription] = 'challengeResponse...FAIL'
-		rc = 1
+	        session[:deterLoginCode] = rc = 1
 		session[:deterLoginStatus] = 'Login failed: bad credentials'
 	    end
 	else
-	    rc = 1
+	    session[:deterLoginCode] = rc = 1
 	    session[:deterLoginStatus] = 'requestChallenge...FAIL: '
 	    if response.to_hash[:fault][:reason][:text].nil? == false
 	        session[:errorDescription] = session[:deterLoginStatus] + 
@@ -238,7 +238,7 @@ class LoginController < ApplicationController
 	    raise 'SOAP Error'
 	end
     else
-        rc = 2
+        session[:deterLoginCode] = rc = 2
 	session[:deterLoginStatus] = 'Login OK'
 	if session[:current_user_id].blank?
 	    session[:current_user_id] = uid
