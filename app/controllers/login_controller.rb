@@ -1,13 +1,21 @@
 class LoginController < ApplicationController
 
+  rescue_from Exception, :with => :error
+
+  #def index
+  #    session[:deterLoginStatus] = '(inex)'
+  #    getDeterVersion
+  #    render :index
+  #end
+
   def new
     session[:deterLoginStatus] = '(new)'
     render :index
   end
 
   # get the current DeterLab version for display via a SOAP transaction
-  def deterVersion
-    if session[:deter_version] == nil
+  def getDeterVersion
+    if session[:deter_version].nil? || session[:deter_version].blank? 
         client = Savon.client(
           :wsdl => "https://users.isi.deterlab.net:52323/axis2/services/ApiInfo?wsdl",
           :log_level => :debug, 
@@ -16,12 +24,14 @@ class LoginController < ApplicationController
           :soap_version => 2,
           :namespace => 'http://api.testbed.deterlab.net/xsd',
           :logger => Rails.logger,
-          :filters => :password
+          :filters => :password,
+	  # client SSL options
+	  :ssl_verify_mode => :none
           )
 
         response = client.call(:get_version)
-	version =  response.to_hash[:get_version_response][:return][:version]
-        cookies[:deter_version] = { "value" => version, "expires" => 1.hour.from_now }
+        session[:deter_version] = response.to_hash[:get_version_response][:return][:version]
+	client = nil
     end
   end
 
@@ -32,7 +42,7 @@ class LoginController < ApplicationController
                    :get_profile_description,
 		   "message" => {'uid' => '', :order! => [:uid] }
 	         )
-      if response.success? == true
+      if response.success? == true  
           # stash data away in the session by parsing profile tree: an array of hashes
           a = response.to_hash[:get_profile_description_response][:return][:attributes]
           a.each do |h|
@@ -60,21 +70,23 @@ class LoginController < ApplicationController
  	          session[ 'up_' + h[:description] ] = h[:value]
               end
 	  else
-	      session[:deterLoginStatus] = 'getUserProfile...FAIL'
+	      session[:errorDescription] = 'getUserProfile...FAIL'
+	      raise "SOAP Error"
 	  end
+      else
+	  raise "SOAP Error"
       end
       response
   end
 
   # create = might be login (should use flash hash?)
   def create
+
+    # clear the "we are doing profiles" marker
     session[:profile] = nil
 
     # always make sure you have the deter version (ensures connectivity if nothing else)
-    deterVersion
-
-    # were we timed out? then destroy the session
-    end_session
+    getDeterVersion
 
     # really need a session ID
     if session[:session_id].blank?
@@ -84,7 +96,6 @@ class LoginController < ApplicationController
 	    session[:deterLoginCode] = 4
 	    render :index
 	    return
-	    #session[:session_id] = Time.now.to_s
 	else
 	    session[:session_id] = request.session_options[:id]
 	end
@@ -108,7 +119,9 @@ class LoginController < ApplicationController
           :namespace => 'http://api.testbed.deterlab.net/xsd',
           :logger => Rails.logger,
           :filters => :password,
-	  :raise_errors => false
+	  :raise_errors => false,
+	  # client SSL options
+	  :ssl_verify_mode => :none
           )
         session[:deterLoginStatus] = 'SOAP client...'
 
@@ -154,6 +167,7 @@ class LoginController < ApplicationController
 		lines = x509s.split("\n")
 		fname = AppConfig.cert_directory + '/' +  ('cert-' + session[:session_id] + '.pem')
 		logger.debug fname.inspect
+		File.delete(fname) if File.exists?(fname)
 		certFile = File.new(fname, 'w',0600)
 		lines.each do |l|
 		    certFile.print l,"\n"
@@ -166,6 +180,7 @@ class LoginController < ApplicationController
 		fname = AppConfig.cert_directory + '/' + ('key-' + session[:session_id] + '.pem')
 		logger.debug fname.inspect
 		flag = 0
+		File.delete(fname) if File.exists?(fname)
 		keyFile = File.new(fname, 'w',0600)
 		lines.each do |l|
 		    flag = 1 if l.match(/BEGIN RSA PRIVATE/)
@@ -201,9 +216,10 @@ class LoginController < ApplicationController
 		    session[:deterLoginStatus] = 'getUserProfile...OK'
 		else
 		    session[:deterLoginStatus] = 'getUserProfile...FAIL'
+	  	    raise "SOAP Error"
 		end
 	    else 
-                session[:deterLoginStatus] = 'challengeResponse...FAIL'
+                session[:errorDescription] = 'challengeResponse...FAIL'
 		rc = 1
 		session[:deterLoginStatus] = 'Login failed: bad credentials'
 	    end
@@ -211,14 +227,15 @@ class LoginController < ApplicationController
 	    rc = 1
 	    session[:deterLoginStatus] = 'requestChallenge...FAIL: '
 	    if response.to_hash[:fault][:reason][:text].nil? == false
-	        session[:deterLoginStatus] = session[:deterLoginStatus] + 
+	        session[:errorDescription] = session[:deterLoginStatus] + 
 		                             'requestChallenge Generic SOAP fault...' + 
 					     response.to_hash[:fault][:reason][:text]
 	    else
-	        session[:deterLoginStatus] = session[:deterLoginStatus] + 
+	        session[:errorDescription] = session[:deterLoginStatus] + 
 		                             'requestChallenge' + 
 		                             response.to_hash[:fault][:detail][:users_deter_fault][:deter_fault][:error_message]
 	    end
+	    raise 'SOAP Error'
 	end
     else
         rc = 2
@@ -235,7 +252,6 @@ class LoginController < ApplicationController
     logger.debug "----- in the end_session method: session hash follows"
     logger.debug session.inspect
 
-    cookies.delete :deter_version
     @_current_user = session[:current_user_id] = nil
 
     # scrub any and all x509-related files
@@ -340,11 +356,13 @@ class LoginController < ApplicationController
 	              if response.success? == true
 		          session[:deterLoginStatus] = 'getUserProfile...OK'
 	              else
-		          session[:deterLoginStatus] = 'getUserProfile...FAIL'
+		          session[:errorDescription] = 'getUserProfile...FAIL'
+	  	    	  raise "SOAP Error"
 		      end
 	          end
 	      else
-	          text = text + 'FAILED at SOAP Level'
+	          session[:errorDescription] = text = text + 'FAILED at SOAP Level'
+	  	  raise "SOAP Error"
 	      end
 	      text = text + '</strong><br>'
         end
@@ -365,7 +383,8 @@ class LoginController < ApplicationController
 
   # pwrdedit = change your password
   def pwrdedit
-    redirect_to "/error"
+    raise "Pretend Error"
+    render :index
   end
 
   # error = end point for API errors

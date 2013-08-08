@@ -1,4 +1,4 @@
-<!-- START new.html.erb -->
+<!-- START index.html.erb -->
 <!-- 
 HISTORY
 Wed Aug  7 14:22:08 UTC 2013 BFH v0.7, massive overhaul to put code into controllers
@@ -173,7 +173,11 @@ Sun Jul 14 16:16:58 UTC 2013 BFH v0.1, adapt http://info.deterlab.net
               <li class="leaf"><a href="<%=AppConfig.footer['privacyurl']%>" class="active"><%=t('footer.privacypolicylinktext')%></a></li>
               <li class="leaf"><a href="<%=AppConfig.footer['usageurl']%>" class="active"><%=t('footer.usagepolicylinktext')%></a></li>
               <li class="leaf"><a href="<%=AppConfig.footer['contacturl']%>" class="active"><%=t('footer.contact')%></a></li>
-	      <li class="leaf last"> DeterLab Version <%= session[:deter_version] %></li>
+	      <li class="leaf last">
+                <a href="<%=AppConfig.footer['deterprojecturl']%>" class="active">
+		  DeterLab Version <%= deterVersion %>
+		</a>
+	      </li>
 	    </ul>
             <%= t('footer.copyright') %>
 	  </td>
@@ -189,4 +193,4 @@ Sun Jul 14 16:16:58 UTC 2013 BFH v0.1, adapt http://info.deterlab.net
     </div> <!-- END FOOTER -->
   </div><!-- END MAINCONTENT-->
 
-<!-- END new.html.erb -->
+<!-- END index.html.erb -->

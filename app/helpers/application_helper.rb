@@ -4,7 +4,7 @@ module ApplicationHelper
 
   # get the current DeterLab version for display via a SOAP transaction
   def deterVersion
-    cookies[:deter_version]
+    session[:deter_version]
   end
 
   # are we logged in or not? return a state as a code: 0=initial, 1=trying, 2=worked, 3=failed, 4=timed out
@@ -87,11 +87,13 @@ module ApplicationHelper
 	              if response.success? == true
 		          session[:deterLoginStatus] = 'getUserProfile...OK'
 	              else
-		          session[:deterLoginStatus] = 'getUserProfile...FAIL'
+		          session[:errorDescription] = 'getUserProfile...FAIL'
+			  raise 'SOAP Error'
 		      end
 	          end
 	      else
-	          text = text + 'FAILED at SOAP Level'
+	          session[:errorDescription] = text = text + 'FAILED at SOAP Level'
+		  raise 'SOAP Error'
 	      end
 	      text = text + '</strong><br>'
         end

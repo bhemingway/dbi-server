@@ -5,6 +5,8 @@ common: &common
   site_name: "DETERLAB Beginner Interface"
   contact_email: "webmaster@deterlab.net"
   cert_directory: '/tmp/dbi'
+  # set this in case the app creates cookies
+  site_domain: 'deterlab.net'
 
   # will programmer debugging output be visible to the end user?
   # (should log be an alternative?)
