@@ -5,7 +5,16 @@
 <link rel="EditURI" type="application/rsd+xml" title="RSD" href="http://info.deterlab.net/blogapi/rsd" />
   <%= favicon_link_tag 'favicon.ico' %>
   <title><%= AppConfig.site_name %></title>
-    <link type="text/css" rel="stylesheet" media="all" href="http://info.deterlab.net/modules/node/node.css?Y" />
+    <%= stylesheet_link_tag("node", "media" => "all") %>
+    <%= stylesheet_link_tag("defaults", "media" => "all") %>
+    <%= stylesheet_link_tag("system", "media" => "all") %>
+    <%= stylesheet_link_tag("user", "media" => "all") %>
+    <%= stylesheet_link_tag("content-module", "media" => "all") %>
+    <%= stylesheet_link_tag("ckeditor", "media" => "all") %>
+    <%= stylesheet_link_tag("fieldgroup", "media" => "all") %>
+    <%= stylesheet_link_tag("style", "media" => "all") %>
+<!--
+<link type="text/css" rel="stylesheet" media="all" href="http://info.deterlab.net/modules/node/node.css?Y" />
 <link type="text/css" rel="stylesheet" media="all" href="http://info.deterlab.net/modules/system/defaults.css?Y" />
 <link type="text/css" rel="stylesheet" media="all" href="http://info.deterlab.net/modules/system/system.css?Y" />
 <link type="text/css" rel="stylesheet" media="all" href="http://info.deterlab.net/modules/user/user.css?Y" />
@@ -13,14 +22,22 @@
 <link type="text/css" rel="stylesheet" media="all" href="http://info.deterlab.net/sites/all/modules/ckeditor/ckeditor.css?Y" />
 <link type="text/css" rel="stylesheet" media="all" href="http://info.deterlab.net/sites/all/modules/cck/modules/fieldgroup/fieldgroup.css?Y" />
 <link type="text/css" rel="stylesheet" media="all" href="http://info.deterlab.net/sites/info.deterlab.net/themes/agua/css/style.css?Y" />
+-->
     
 <!--[if lt IE 7.0]><link rel="stylesheet" href="http://info.deterlab.net/sites/info.deterlab.net/themes/agua/css/ie-6.css" type="text/css" media="all" charset="utf-8" /><![endif]-->
 <!--[if IE 7.0]><link rel="stylesheet" href="http://info.deterlab.net/sites/info.deterlab.net/themes/agua/css/ie-7.css" type="text/css" media="all" charset="utf-8" /><![endif]-->
-    <script type="text/javascript" src="http://info.deterlab.net/misc/jquery.js?Y"></script>
+  
+    <%= javascript_include_tag "jquery"  %>
+    <%= javascript_include_tag "drupal"  %>
+    <%= javascript_include_tag "superfish"  %>
+    <%= javascript_include_tag "agua"  %>
+<!--
+<script type="text/javascript" src="http://info.deterlab.net/misc/jquery.js?Y"></script>
 <script type="text/javascript" src="http://info.deterlab.net/misc/drupal.js?Y"></script>
 <script type="text/javascript" src="http://info.deterlab.net/sites/info.deterlab.net/themes/agua/js/superfish.js?Y"></script>
 <script type="text/javascript" src="http://info.deterlab.net/sites/info.deterlab.net/themes/agua/js/agua.js?Y"></script>
 <script type="text/javascript">
+-->
 <!--//--><![CDATA[//><!--
 jQuery.extend(Drupal.settings, { "basePath": "/" });
 //--><!]]>

@@ -2,11 +2,12 @@ class LoginController < ApplicationController
 
   rescue_from Exception, :with => :error
 
-  #def index
-  #    session[:deterLoginStatus] = '(inex)'
-  #    getDeterVersion
-  #    render :index
-  #end
+# ----------
+#  def index
+#      session[:deterLoginStatus] = '(index)'
+#      create
+#  end
+# ---------
 
   def new
     session[:deterLoginStatus] = '(new)'
@@ -33,6 +34,7 @@ class LoginController < ApplicationController
         session[:deter_version] = response.to_hash[:get_version_response][:return][:version]
 	client = nil
     end
+    session[:deter_version]
   end
 
   # load the current user profile: first template, then data
