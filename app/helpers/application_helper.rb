@@ -112,7 +112,7 @@ module ApplicationHelper
       rc = loginStatus
       if rc == 2 && session[:profile].blank? == false 
 	output = Array.new
-	output.push('<table align="center" class="deter-block">')
+	output.push('<table align="center" class="dbi-profile">')
 	session.sort.each do |k, v|
 	    if k.match(/^up_/) && !k.match(/_(access|name)$/)
 		if v.blank?
@@ -121,7 +121,7 @@ module ApplicationHelper
 		    tmp = v
                 end
 		output.push('  <tr>')
-		output.push('    <td align="right"><strong>' + k[3, k.length - 3] + '</strong></td>')
+		output.push('    <td align="right" width="' + AppConfig.profile["name_col_width"] + '"><strong>' + k[3, k.length - 3] + '</strong></td>')
 	        output.push('    <td>' + tmp + '</td>')
 		output.push('  </tr>')
 	    end
