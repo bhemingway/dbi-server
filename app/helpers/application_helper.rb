@@ -26,7 +26,7 @@ module ApplicationHelper
   def loginMessage
     status = loginStatus
     message = t('front.para1') 
-    if !session[:original_target].blank?
+    if status != 2 && !session[:original_target].blank?
 	message = '<span style="color: red">' + t('front.loginbox.loginfirst') + '</span>'
     elsif status != 2 and status != 0 and status != 4
 	message = '<span style="color: red">' + t('front.loginbox.loginfail') + '</span>'

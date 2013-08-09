@@ -81,7 +81,6 @@ class LoginController < ApplicationController
 
   # create = might be login (should use flash hash?)
   def create
-
     # clear the "we are doing profiles" marker
     session[:profile] = nil
 
@@ -259,7 +258,8 @@ class LoginController < ApplicationController
     logger.debug "----- in the end_session method: session hash follows"
     logger.debug session.inspect
 
-    @_current_user = session[:current_user_id] = nil
+
+    session[:original_target] = @_current_user = session[:current_user_id] = nil
 
     # scrub any and all x509-related files
     toscrub = Array.new
@@ -294,25 +294,29 @@ class LoginController < ApplicationController
 
   # profshow = show the profile
   def profshow
+    @_current_user = session[:current_user_id] if @_current_user.blank?
+
     # what if we need to log in first?
     if @_current_user.blank?
         session[:original_target] = request.fullpath
+    else
+        session[:original_target] = nil
     end
 
     session['saveProfileStatus'] = nil
-    @_current_user = session[:current_user_id] if @_current_user.blank?
     session['profile'] = 'show'
     render :index
   end
 
   # profedit = edit the profile
   def profedit
+    @_current_user = session[:current_user_id] if @_current_user.blank?
     # what if we need to log in first?
     if @_current_user.blank?
         session[:original_target] = request.fullpath
     end
+
     session['saveProfileStatus'] = nil
-    @_current_user = session[:current_user_id] if @_current_user.blank?
     session['profile'] = 'edit'
     render :index
   end
@@ -399,7 +403,16 @@ class LoginController < ApplicationController
 
   # pwrdedit = change your password
   def pwrdedit
-    raise "Pretend Error"
+    @_current_user = session[:current_user_id] if @_current_user.blank?
+    # what if we need to log in first?
+    if @_current_user.blank?
+        session[:original_target] = request.fullpath
+    else
+        session[:original_target] = nil
+    end
+
+    session[:errorDescription] = "Testing error handling"
+    raise "SOAP Error"
     render :index
   end
 

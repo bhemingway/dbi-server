@@ -1,11 +1,15 @@
 --- 
 jquery/index.min.map: jquery.min-1c0cf7b6a3425fbd9a3bfccab0a99a4e.map
-favicon.ico: favicon-0dd7acb388ca28ba4dc2a1f5d6d12adb.ico
-application.js: application-2ccaa4259de1f1f174fd6eb47f03afed.js
-favicon/index.ico: favicon-0dd7acb388ca28ba4dc2a1f5d6d12adb.ico
-application/index.css: application-85dce4953aba89009910afc46567ecb2.css
-rails.png: rails-a3386665c05a2d82f711a4aaa72d247c.png
-application.css: application-85dce4953aba89009910afc46567ecb2.css
 application/index.js: application-2ccaa4259de1f1f174fd6eb47f03afed.js
+rails.png: rails-a3386665c05a2d82f711a4aaa72d247c.png
+favicon.ico: favicon-0dd7acb388ca28ba4dc2a1f5d6d12adb.ico
+fancy-builtwith/index.png: fancy-builtwith-64160cf18bee179e29118cef5fb9c4dd.png
+masthead.jpg: masthead-a55ffb69db2343ce839b414c4f981a26.jpg
+fancy-builtwith.png: fancy-builtwith-64160cf18bee179e29118cef5fb9c4dd.png
+application/index.css: application-85dce4953aba89009910afc46567ecb2.css
+application.js: application-2ccaa4259de1f1f174fd6eb47f03afed.js
+application.css: application-85dce4953aba89009910afc46567ecb2.css
 rails/index.png: rails-a3386665c05a2d82f711a4aaa72d247c.png
 jquery.min.map: jquery.min-1c0cf7b6a3425fbd9a3bfccab0a99a4e.map
+masthead/index.jpg: masthead-a55ffb69db2343ce839b414c4f981a26.jpg
+favicon/index.ico: favicon-0dd7acb388ca28ba4dc2a1f5d6d12adb.ico
