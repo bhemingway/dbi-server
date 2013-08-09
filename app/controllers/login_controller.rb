@@ -2,6 +2,11 @@ class LoginController < ApplicationController
 
   rescue_from Exception, :with => :error
 
+  # error = end point for API errors
+  def error
+    render :index
+  end
+
 # ----------
 #  def index
 #      session[:deterLoginStatus] = '(index)'
@@ -83,8 +88,8 @@ class LoginController < ApplicationController
 
   # create = might be login (should use flash hash?)
   def create
-    # clear the "we are doing profiles" marker
-    session[:profile] = nil
+    # clear the "we are doing profiles" flag and the "manage password" flag
+    session[:pwrdmgmt] = session[:profile] = nil
 
     # always make sure you have the deter version (ensures connectivity if nothing else)
     getDeterVersion
@@ -262,6 +267,7 @@ class LoginController < ApplicationController
 
 
     session[:original_target] = @_current_user = session[:current_user_id] = nil
+    session[:profile] = session[:pwrdmgmt] = nil
 
     # scrub any and all x509-related files
     toscrub = Array.new
@@ -307,6 +313,7 @@ class LoginController < ApplicationController
 
     session['saveProfileStatus'] = nil
     session['profile'] = 'show'
+    session['pwrdmgmt'] = nil
     render :index
   end
 
@@ -320,6 +327,7 @@ class LoginController < ApplicationController
 
     session['saveProfileStatus'] = nil
     session['profile'] = 'edit'
+    session['pwrdmgmt'] = nil
     render :index
   end
 
@@ -400,11 +408,15 @@ class LoginController < ApplicationController
     session['profile'] = 'update'
     session['saveProfileStatus'] = saveProfile
     session['profile'] = 'show'
+    session['pwrdmgmt'] = nil
     render :index
   end
 
   # pwrdedit = change your password
   def pwrdedit
+    session['profile'] = nil
+    session['pwrdmgmt'] = 'edit'
+
     @_current_user = session[:current_user_id] if @_current_user.blank?
     # what if we need to log in first?
     if @_current_user.blank?
@@ -413,13 +425,14 @@ class LoginController < ApplicationController
         session[:original_target] = nil
     end
 
-    session[:errorDescription] = "Testing error handling"
-    raise "SOAP Error"
     render :index
   end
 
-  # error = end point for API errors
-  def error
+  # pwrdsave = save your changed password
+  def pwrdsave
+    session['profile'] = nil
+    session['pwrdmgmt'] = nil
+
     render :index
   end
 

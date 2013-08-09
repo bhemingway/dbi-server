@@ -71,5 +71,6 @@ Dbi::Application.routes.draw do
   match '/profedit' => 'login#profedit'
   match '/profsave' => 'login#profsave'
   match '/pwrdedit' => 'login#pwrdedit'
+  match '/pwrdsave' => 'login#pwrdsave'
   match '/error' => 'login#error'
 end

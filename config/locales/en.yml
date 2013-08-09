@@ -124,3 +124,13 @@ en:
       savetext: "Save Profile"
       passwordtext: "Change Password"
       canceltext: "Cancel"
+
+  password_page:
+    title: "Change Your Password"
+    subtitle: ""
+    new1text: "Enter new password"
+    new2text: "Re-enter new password to confirm"
+    paragraph1: "This form allows you to change your DeterLab password."
+    buttons:
+      updatetext: "Change Password"
+      canceltext: "Cancel"
