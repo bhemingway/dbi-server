@@ -1,0 +1,21 @@
+/* $Id: ie-6.css,v 1.2 2009/11/12 04:17:29 nomonstersinme Exp $ */
+#navigation ul {
+  padding: 4px 0 0 0;
+}
+#navigation ul li a {
+  border: none !important;
+  padding: 3px 10px;
+}
+input[type="submit"] {
+  padding: 4px 10px;
+}
+#navigation ul ul li a,
+#navigation ul li.active-trail ul li a,
+#navigation .sfHover ul li a {
+	border: none;
+}
+#navigation ul ul li a:hover,
+#navigation ul li.active-trail ul li a:hover,
+#navigation .sfHover ul li a:hover {
+	border: none;
+}

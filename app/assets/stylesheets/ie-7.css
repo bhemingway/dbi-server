@@ -1,0 +1,10 @@
+/* $Id: ie-7.css,v 1.1 2009/09/29 21:22:28 nomonstersinme Exp $ */
+#navigation ul {
+  padding: 4px 0 0 0;
+}
+#navigation ul li a {
+  padding: 3px 10px;
+}
+input[type="submit"] {
+  padding: 4px 10px;
+}
