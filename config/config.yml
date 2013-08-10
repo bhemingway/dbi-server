@@ -51,8 +51,10 @@ common: &common
     url2: "https://www.isi.deterlab.net/reqaccount.php3"
 
   profile:
-    # note: this is a string because it is destined to be part of HTML
+    # note: this is a string because it is destined to be part of HTML, a td width
     name_col_width: "30"
+    # note: this is *field width* and so is in characters, not pels
+    value_col_width: "60"
 
 development:
   <<: *common

@@ -409,7 +409,8 @@ class LoginController < ApplicationController
     session['saveProfileStatus'] = saveProfile
     session['profile'] = 'show'
     session['pwrdmgmt'] = nil
-    render :index
+    #render :index
+    redirect_to("action" => 'profshow')
   end
 
   # pwrdedit = change your password
@@ -433,7 +434,8 @@ class LoginController < ApplicationController
     session['profile'] = nil
     session['pwrdmgmt'] = nil
 
-    render :index
+    #render :index
+    redirect_to("action" => 'profshow')
   end
 
 end
