@@ -134,3 +134,4 @@ en:
     buttons:
       updatetext: "Change Password"
       canceltext: "Cancel"
+    failedtext: "Attempt to change password failed"

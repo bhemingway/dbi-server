@@ -1,11 +1,18 @@
 class LoginController < ApplicationController
 
-  rescue_from Exception, :with => :error
+# ----------
+# error handling
+# ----------
+  rescue_from RuntimeError, Exception, :with => :error
+
 
   # error = end point for API errors
   def error
+    session[:error] = 99 if (session[:error].nil? || session[:error] == 0)
+    #session[:errorDescription] = 'There was an error' if session[:errorDescription].blank?
     render :index
   end
+# ----------
 
 # ----------
 #  def index
@@ -78,10 +85,10 @@ class LoginController < ApplicationController
               end
 	  else
 	      session[:errorDescription] = 'getUserProfile...FAIL'
-	      raise "SOAP Error"
+	      raise RuntimeError, "SOAP Error"
 	  end
       else
-	  raise "SOAP Error"
+	  raise RuntimeError, "SOAP Error"
       end
       response
   end
@@ -223,7 +230,7 @@ class LoginController < ApplicationController
 		    session[:deterLoginStatus] = 'getUserProfile...OK'
 		else
 		    session[:deterLoginStatus] = 'getUserProfile...FAIL'
-	  	    raise "SOAP Error"
+	  	    raise RuntimeError, "SOAP Error"
 		end
 	    else 
                 session[:errorDescription] = 'challengeResponse...FAIL'
@@ -233,16 +240,14 @@ class LoginController < ApplicationController
 	else
 	    session[:deterLoginCode] = rc = 1
 	    session[:deterLoginStatus] = 'requestChallenge...FAIL: '
-	    if response.to_hash[:fault][:reason][:text].nil? == false
-	        session[:errorDescription] = session[:deterLoginStatus] + 
-		                             'requestChallenge Generic SOAP fault...' + 
-					     response.to_hash[:fault][:reason][:text]
+	    generic = response.to_hash[:fault][:reason][:text]
+	    detail = response.to_hash[:fault][:detail][:users_deter_fault][:deter_fault][:detail_message]
+	    if !detail.blank?
+	        session[:errorDescription] = detail
 	    else
-	        session[:errorDescription] = session[:deterLoginStatus] + 
-		                             'requestChallenge' + 
-		                             response.to_hash[:fault][:detail][:users_deter_fault][:deter_fault][:error_message]
+	        session[:errorDescription] = generic
 	    end
-	    raise 'SOAP Error'
+	    raise RuntimeError, 'SOAP Error'
 	end
     else
         session[:deterLoginCode] = rc = 2
@@ -267,7 +272,8 @@ class LoginController < ApplicationController
 
 
     session[:original_target] = @_current_user = session[:current_user_id] = nil
-    session[:profile] = session[:pwrdmgmt] = nil
+    session[:error] = session[:profile] = session[:pwrdmgmt] = nil
+    session[:pwrderror] = false
 
     # scrub any and all x509-related files
     toscrub = Array.new
@@ -387,12 +393,12 @@ class LoginController < ApplicationController
 		          session[:deterLoginStatus] = 'getUserProfile...OK'
 	              else
 		          session[:errorDescription] = 'getUserProfile...FAIL'
-	  	    	  raise "SOAP Error"
+	  	    	  raise RuntimeError, "SOAP Error"
 		      end
 	          end
 	      else
 	          session[:errorDescription] = text = text + 'FAILED at SOAP Level'
-	  	  raise "SOAP Error"
+	  	  raise RuntimeError, "SOAP Error"
 	      end
 	      text = text + '</strong><br>'
         end
@@ -431,11 +437,97 @@ class LoginController < ApplicationController
 
   # pwrdsave = save your changed password
   def pwrdsave
-    session['profile'] = nil
-    session['pwrdmgmt'] = nil
+    session[:errorDescription] = session[:error] = session['profile'] = session['pwrdmgmt'] = nil
+    session[:pwrderror] = false
 
+    text = ''
+
+    # validate the input
+    unless params['newpass1'] == params['newpass2']
+        session[:errorDescription] = t('password_page.failedtext') + ' because password & confirmation do not match'
+        logger.debug session[:errorDescription]
+	session[:pwrderror] = true
+	#raise RuntimeError, 'Bad Password'
+    end
+    pwrd = params['newpass1']
+    if pwrd.blank?
+        session[:errorDescription] = t('password_page.failedtext') + ' because password is blank'
+        logger.debug session[:errorDescription]
+	session[:pwrderror] = true
+	#raise RuntimeError, 'Bad Password'
+    end
+    if pwrd.length < 8 || !pwrd.match(/[0-9]/) || ! pwrd.match(/[a-zA-Z]/)
+        session[:errorDescription] = t('password_page.failedtext') + 
+	  ' because password is too weak: must be at least 8 characters and contain at least one digit and one letter'
+	session[:pwrderror] = true
+    end
+
+    # if the new password is acceptable, send it to the server
+    unless session[:pwrderror]
+        # make the SOAP call to change the password for this user
+        client = Savon.client(
+          :wsdl => "https://users.isi.deterlab.net:52323/axis2/services/Users?wsdl",
+          :log_level => :debug, 
+          :log => true, 
+          :pretty_print_xml => true,
+          :soap_version => 2,
+          :namespace => 'http://api.testbed.deterlab.net/xsd',
+          :logger => Rails.logger,
+          :filters => :password,
+	  :raise_errors => false,
+	  # client SSL options
+	  :ssl_verify_mode => :none,
+	  :ssl_cert_file => session[:certFile],
+	  :ssl_cert_key_file => session[:keyFile]
+          )
+
+	# send the changes to the server as a SOAP transaction
+        response = client.call(
+	               :change_password,
+	               "message" => {'uid' => session[:current_user_id], 'newPass' => pwrd, :order! => [:uid, :newPass] }
+	           )
+	if response.success?
+            a = response.to_hash[:change_password_response][:return]
+            if a == true
+	        text = text + 'OK'
+            else
+	        text = text + 'FAILED at Tranaction Level: ' + a[:reason]
+	        session[:errorDescription] = text + 'FAILED at SOAP Level'
+		session[:pwrderror] = true
+	        #raise RuntimeError, session[:errorDescription]
+	    end
+	else
+	    msg = response.to_hash[:fault][:detail][:users_deter_fault][:deter_fault][:detail_message]
+	    logger.debug msg
+	    logger.debug '1'
+	    session[:errorDescription] = text + 'FAILED at SOAP Level'
+	    logger.debug '2'
+	    if !msg.blank?
+	        session[:errorDescription] = session[:errorDescription] = t('password_page.failedtext') + 'because ' + msg
+	        text = text + ' ' + msg
+	    end
+	    logger.debug '3'
+	    session[:pwrderror] = true
+	    logger.debug msg
+	    #raise RuntimeError, session[:errorDescription]
+	end
+	logger.debug '4'
+	text = text + '</strong><br>'
+	session[:deterLoginStatus] = text
+
+	# destroy the SOAP client, you are done with it
+        client = nil
+    end
+
+    logger.debug msg
     #render :index
-    redirect_to("action" => 'profshow')
+    if session[:pwrderror]
+        myaction = 'pwrdedit'
+    else
+	session[:notice] = 'Password changed'
+        myaction = 'profshow'
+    end
+    redirect_to("action" => myaction)
   end
 
 end
