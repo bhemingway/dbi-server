@@ -56,6 +56,10 @@ common: &common
     # note: this is *field width* and so is in characters, not pels
     value_col_width: "60"
 
+  login:
+    forgoturl: "/pwrdforgot1"
+    reseturl: "/pwrdreset1"
+
 development:
   <<: *common
 

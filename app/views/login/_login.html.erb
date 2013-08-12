@@ -23,10 +23,22 @@ Thu Jul 18 15:44:18 UTC 2013 BFH v0.2 moving to partial views for flexibility
               <%= password_field_tag 'password', nil, :maxlength => 16, :size => 16 %>
 	    </td>
           </tr>
+	  <tr>
+            <td colspan="2">
+              <%= t('front.loginbox.resetpara') %>
+	      <a href="<%=AppConfig.login['reseturl']%>"><%= t('front.loginbox.resetlinktext') %></a>
+	    </td>
+          </tr>
           <tr>
             <td colspan="2" align="center">
               <b> <%= submit_tag "Login" %> </b>
             </td>
+          </tr>
+	  <tr>
+            <td colspan="2">
+              <%= t('front.loginbox.forgotpara') %>
+	      <a href="<%=AppConfig.login['forgoturl']%>"><%= t('front.loginbox.forgotlinktext') %></a>
+	    </td>
           </tr>
         </table>
         <% end %>                 

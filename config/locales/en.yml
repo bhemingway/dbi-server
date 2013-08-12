@@ -1,3 +1,4 @@
+# Mon Aug 12 13:35:59 UTC 2013 BFH forgot password support
 # Sat Aug  3 15:37:02 UTC 2013 BFH timeout apology support
 # Thu Jul 25 14:15:43 UTC 2013 BFH polishing the UI
 # Tue Jul 16 13:45:57 UTC 2013 BFH fill in blanks
@@ -81,6 +82,14 @@ en:
       loginfail: "Login failed. Please try again"
       loginfirst: "You must be logged in to view this page. You will be taken here automatically after login for most pages."
 
+      # pair with login.forgoturl in config.yml
+      forgotpara: "Forgot password? Start reset recovery"
+      forgotlinktext: "here."
+
+      # pair with login.reseturl in config.yml
+      resetpara: "If you've received your password reset email, you can complete the reset"
+      resetlinktext: "here."
+
     para2: "If you do not have a DeterLab account, then please learn more about DeterLab:"
     # pair with front.url1 in config.yml
     url1linktext: "Introduction to DeterLab"
@@ -135,3 +144,16 @@ en:
       updatetext: "Change Password"
       canceltext: "Cancel"
     failedtext: "Attempt to change password failed"
+
+  forgot_page:
+    title: "Reset Your Password?"
+    subtitle: ""
+    paragraph1: "Use this page to start to reset your forgotten or expired password."
+    buttontext: "Start Recovery"
+
+  reset_page:
+    title: "Resetting Your Password"
+    subtitle: ""
+    paragraph1: "Use this page to complete the reset of your forgotten or expired password."
+    challengetext: "Enter your challenge from email"
+    buttontext: "Reset Password"

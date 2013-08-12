@@ -116,7 +116,9 @@ class LoginController < ApplicationController
 
     session[:deterLoginStatus] = '(create)'
 
-    if @_current_user.blank? && !params['uid'].blank?
+    if @_current_user.blank? && (params['uid'].blank? || !params['password'].blank?)
+        session[:deterLoginCode] = rc = 0
+    elsif @_current_user.blank? && !params['uid'].blank? && !params['password'].blank?
 	uid = params['uid']
 	password = params['password']
 	encoded_data = Base64.encode64(password)
@@ -164,7 +166,7 @@ class LoginController < ApplicationController
 	    if response.success? == true
                 session[:deterLoginStatus] = 'challengeResponse...OK'
 	        session[:deterLoginCode] = rc = 2
-		session[:deterLoginStatus] = 'Login OK'
+		session[:deterLoginStatus] = 'Login OK [1]'
 	    	@_current_user = session[:current_user_id] = uid
 
 		# need a place to put the x509 certs: AppConfig.cert_directory
@@ -251,7 +253,7 @@ class LoginController < ApplicationController
 	end
     else
         session[:deterLoginCode] = rc = 2
-	session[:deterLoginStatus] = 'Login OK'
+	session[:deterLoginStatus] = 'Login OK [2]'
 	if session[:current_user_id].blank?
 	    session[:current_user_id] = uid
 	end
@@ -270,9 +272,8 @@ class LoginController < ApplicationController
     logger.debug "----- in the end_session method: session hash follows"
     logger.debug session.inspect
 
-
     session[:original_target] = @_current_user = session[:current_user_id] = nil
-    session[:error] = session[:profile] = session[:pwrdmgmt] = nil
+    session[:deterLoginCode] = session[:error] = session[:profile] = session[:pwrdmgmt] = nil
     session[:pwrderror] = false
 
     # scrub any and all x509-related files
@@ -435,14 +436,8 @@ class LoginController < ApplicationController
     render :index
   end
 
-  # pwrdsave = save your changed password
-  def pwrdsave
-    session[:errorDescription] = session[:error] = session['profile'] = session['pwrdmgmt'] = nil
-    session[:pwrderror] = false
-
-    text = ''
-
-    # validate the input
+  # validate the proposed password for either change password or reset password
+  def checkPassword
     unless params['newpass1'] == params['newpass2']
         session[:errorDescription] = t('password_page.failedtext') + ' because password & confirmation do not match'
         logger.debug session[:errorDescription]
@@ -461,6 +456,18 @@ class LoginController < ApplicationController
 	  ' because password is too weak: must be at least 8 characters and contain at least one digit and one letter'
 	session[:pwrderror] = true
     end
+    pwrd
+  end
+
+  # pwrdsave = save your changed password
+  def pwrdsave
+    session[:errorDescription] = session[:error] = session['profile'] = session['pwrdmgmt'] = nil
+    session[:pwrderror] = false
+
+    text = ''
+
+    # validate the input
+    pwrd = checkPassword
 
     # if the new password is acceptable, send it to the server
     unless session[:pwrderror]
@@ -528,6 +535,141 @@ class LoginController < ApplicationController
         myaction = 'profshow'
     end
     redirect_to("action" => myaction)
+  end
+
+  # pwrdforgot1 = step 1 of handling password reset: form to request a challenge
+  def pwrdforgot1
+      end_session
+      render :index
+  end
+
+  # pwrdforgot2 = step 2 of handling password reset: action to actually request a challenge
+  def pwrdforgot2
+    # compose the URL prefix to the challenge: http://host/pwrdreset1?challenge=
+    logger.debug "-----pwrdforgot2 starts"
+    logger.debug request.inspect
+    url = request.protocol + '://' + request.host_with_port + '/pwrdreset1?challenge='
+    logger.debug url.inspect
+
+    text = ''
+
+    # send SOAP transaction to request a challenge
+    unless session[:pwrderror]
+        # make the SOAP call to change the password for this user
+        client = Savon.client(
+          :wsdl => "https://users.isi.deterlab.net:52323/axis2/services/Users?wsdl",
+          :log_level => :debug, 
+          :log => true, 
+          :pretty_print_xml => true,
+          :soap_version => 2,
+          :namespace => 'http://api.testbed.deterlab.net/xsd',
+          :logger => Rails.logger,
+          :filters => :password,
+	  :raise_errors => false,
+	  # client SSL options
+	  :ssl_verify_mode => :none
+          )
+
+	# send the changes to the server as a SOAP transaction
+        response = client.call(
+	               :request_password_reset,
+	               "message" => {'uid' => params['uidreset'], 'urlPrefix' => url, :order! => [:uid, :urlPrefix] }
+	           )
+	if response.success?
+            a = response.to_hash[:request_password_reset_response][:return]
+            if a == true
+	        text = text + 'OK'
+            else
+	        text = text + 'FAILED at Tranaction Level: ' + a[:reason]
+	        session[:errorDescription] = text + 'FAILED at SOAP Level'
+		session[:pwrderror] = true
+	        #raise RuntimeError, session[:errorDescription]
+	    end
+	else
+	    msg = response.to_hash[:fault][:detail][:users_deter_fault][:deter_fault][:detail_message]
+	    logger.debug msg
+	    session[:errorDescription] = text + 'FAILED at SOAP Level'
+	    if !msg.blank?
+	        session[:errorDescription] = session[:errorDescription] = t('password_page.failedtext') + 'because ' + msg
+	        text = text + ' ' + msg
+	    end
+	    session[:pwrderror] = true
+	    #raise RuntimeError, session[:errorDescription]
+	end
+	text = text + '</strong><br>'
+	session[:deterLoginStatus] = text
+
+	# destroy the SOAP client, you are done with it
+        client = nil
+    end
+      
+    session[:notice] = 'Password reset requested'
+    redirect_to("action" => 'create')
+  end
+
+  # pwrdreset1 = step 3 of handling password reset: enter proposed password and challenge
+  def pwrdreset1
+      end_session
+      render :index
+  end
+
+  # pwrdreset2 = step 4 of handling password reset: use the challenge and proposed password
+  def pwrdreset2
+
+    # validate the input
+    pwrd = checkPassword
+
+    # if the new password is acceptable, send it to the server along with the challenge
+    unless session[:pwrderror]
+        # make the SOAP call to change the password for this user
+        client = Savon.client(
+          :wsdl => "https://users.isi.deterlab.net:52323/axis2/services/Users?wsdl",
+          :log_level => :debug, 
+          :log => true, 
+          :pretty_print_xml => true,
+          :soap_version => 2,
+          :namespace => 'http://api.testbed.deterlab.net/xsd',
+          :logger => Rails.logger,
+          :filters => :password,
+	  :raise_errors => false,
+	  # client SSL options
+	  :ssl_verify_mode => :none
+          )
+
+	# send the changes to the server as a SOAP transaction
+        response = client.call(
+	               :change_password_challenge,
+	               "message" => {'challengeID' => params['challenge'], 'newPass' => pwrd, :order! => [:challengeID, :newPass] }
+	           )
+	if response.success?
+            a = response.to_hash[:change_password_challenge_response][:return]
+            if a == true
+	        text = text + 'OK'
+            else
+	        text = text + 'FAILED at Tranaction Level: ' + a[:reason]
+	        session[:errorDescription] = text + 'FAILED at SOAP Level'
+		session[:pwrderror] = true
+	        #raise RuntimeError, session[:errorDescription]
+	    end
+	else
+	    msg = response.to_hash[:fault][:detail][:users_deter_fault][:deter_fault][:detail_message]
+	    logger.debug msg
+	    session[:errorDescription] = text + 'FAILED at SOAP Level'
+	    if !msg.blank?
+	        session[:errorDescription] = session[:errorDescription] = t('password_page.failedtext') + 'because ' + msg
+	        text = text + ' ' + msg
+	    end
+	    session[:pwrderror] = true
+	    #raise RuntimeError, session[:errorDescription]
+	end
+	text = text + '</strong><br>'
+	session[:deterLoginStatus] = text
+
+	# destroy the SOAP client, you are done with it
+        client = nil
+    end
+    session[:notice] = 'Password reset was accepted'
+    render :index
   end
 
 end

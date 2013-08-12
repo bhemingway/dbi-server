@@ -73,4 +73,8 @@ Dbi::Application.routes.draw do
   match '/pwrdedit' => 'login#pwrdedit'
   match '/pwrdsave' => 'login#pwrdsave'
   match '/error' => 'login#error'
+  match '/pwrdforgot1' => 'login#pwrdforgot1'
+  match '/pwrdforgot2' => 'login#pwrdforgot2'
+  match '/pwrdreset1' => 'login#pwrdreset1'
+  match '/pwrdreset2' => 'login#pwrdreset2'
 end
