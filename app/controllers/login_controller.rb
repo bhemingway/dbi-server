@@ -548,7 +548,7 @@ class LoginController < ApplicationController
     # compose the URL prefix to the challenge: http://host/pwrdreset1?challenge=
     logger.debug "-----pwrdforgot2 starts"
     logger.debug request.inspect
-    url = request.protocol + '://' + request.host_with_port + '/pwrdreset1?challenge='
+    url = request.protocol + request.host_with_port + '/pwrdreset1?challenge='
     logger.debug url.inspect
 
     text = ''
