@@ -14,18 +14,29 @@ Sun Jul 21 14:40:18 UTC 2013 BFH v0.2, first version
 	<table class="dbi-profile">
 	<%=
 	  output = Array.new
-	  session.sort.each do |k, v|
-	      if !k.nil? && k.to_s.match(/^up_/) && !k.to_s.match(/_(access|name)$/)
-		  access_key = k + '_access'
-		  output.push('<tr><td width="' + AppConfig.profile["name_col_width"] + 
-		              '"><strong>', k[3, k.length - 3], '</strong></td><td><div class="field">')
-		  if session[access_key] == 1.to_s
-		      output.push(text_field_tag(k, v, "size" => AppConfig.profile["value_col_width"]))
-		  else
-		      output.push(v)
-		  end
-		  output.push('</div></td></tr>')
+	  session.sort.each do |sortkey, datakey|
+	      next unless sortkey.match(/^up_sort/)
+	      v = session[datakey]
+              if v.blank?
+		  tmp = ''
+              else
+		  tmp = v
+              end
+	      k = datakey
+	      access_key = k + '_access'
+	      length_key = k + '_length_hint'
+	      width = AppConfig.profile["value_col_width"]
+	      unless session[length_key] == 0
+	          width = session[length_key]
 	      end
+              output.push('<tr><td width="' + AppConfig.profile["name_col_width"] + 
+		          '"><strong>', k[3, k.length - 3], '</strong></td><td><div class="field">')
+              if session[access_key] == 1.to_s
+		  output.push(text_field_tag(k, v, "size" => width))
+              else
+		  output.push(v)
+              end
+              output.push('</div></td></tr>')
 	  end # for every key of the session hash
 	  raw(output.join("\n"))
 	%>

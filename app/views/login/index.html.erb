@@ -77,7 +77,7 @@ Sun Jul 14 16:16:58 UTC 2013 BFH v0.1, adapt http://info.deterlab.net
 	      #session.sort.each do |k, v|
 	      session.each do |k, v|
 	          next if k.nil? or v.nil?
-	          next if k.to_s.match(/^up_/)
+	          next if k.to_s.match(/^up_/) && !k.to_s.match(/^up_sort/)
 	          o.push(k.to_s + '=' + v.to_s)
 	      end
 	      raw(o.join('<br>'))

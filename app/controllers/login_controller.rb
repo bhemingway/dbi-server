@@ -66,6 +66,10 @@ class LoginController < ApplicationController
 	      # save other attributes as well
 	      session[ 'up_' + h[:description] + '_access' ] = h[:access]
 	      session[ 'up_' + h[:description] + '_name' ] = h[:name]
+	      session[ 'up_' + h[:description] + '_length_hint' ] = h[:length_hint]
+
+	      # sort key is special
+	      session[ 'up_sort_' +  sprintf("%08d",h[:ordering_hint].to_i) ] = 'up_' + h[:description];
           end
 
 	  # now get the data for that template
@@ -275,6 +279,10 @@ class LoginController < ApplicationController
     session[:original_target] = @_current_user = session[:current_user_id] = nil
     session[:deterLoginCode] = session[:error] = session[:profile] = session[:pwrdmgmt] = nil
     session[:pwrderror] = false
+    session.each do |k, v|
+        next unless k.match(/^up_/)
+	session[k] = nil
+    end
 
     # scrub any and all x509-related files
     toscrub = Array.new
@@ -347,7 +355,7 @@ class LoginController < ApplicationController
 	session.each do |k, v|
 	    next if v.nil?
 	    next if params[k].nil?
-	    if k.match(/^up_/) && !k.match(/_(access|name)$/)
+	    if k.match(/^up_/) && !k.match(/_(access|name|length|order)$/)
 		unless params[k] == v
 		    text = text + k + ' changed from {' + v + '} to {' + params[k] + '}<br>'
 		    mykey = session[k + '_name']

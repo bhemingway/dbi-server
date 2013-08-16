@@ -43,7 +43,7 @@ module ApplicationHelper
 	session.each do |k, v|
 	    next if v.nil?
 	    next if params[k].nil?
-	    if k.match(/^up_/) && !k.match(/_(access|name)$/)
+	    if k.match(/^up_/) && !k.match(/_(access|name|length|order)$/)
 		unless params[k] == v
 		    text = text + k + ' changed from {' + v + '} to {' + params[k] + '}<br>'
 		    mykey = session[k + '_name']
@@ -113,18 +113,19 @@ module ApplicationHelper
       if rc == 2 && session[:profile].blank? == false 
 	output = Array.new
 	output.push('<table align="center" class="dbi-profile">')
-	session.sort.each do |k, v|
-	    if k.match(/^up_/) && !k.match(/_(access|name)$/)
-		if v.blank?
-		    tmp = ''
-                else
-		    tmp = v
-                end
-		output.push('  <tr>')
-		output.push('    <td align="right" width="' + AppConfig.profile["name_col_width"] + '"><strong>' + k[3, k.length - 3] + '</strong></td>')
-	        output.push('    <td>' + tmp + '</td>')
-		output.push('  </tr>')
-	    end
+	session.sort.each do |sortkey, datakey|
+	    next unless sortkey.match(/^up_sort/)
+	    v = session[datakey]
+            if v.blank?
+		tmp = ''
+            else
+		tmp = v
+            end
+	    k = datakey
+	    output.push('  <tr>')
+	    output.push('    <td align="right" width="' + AppConfig.profile["name_col_width"] + '"><strong>' + k[3, k.length - 3] + '</strong></td>')
+	    output.push('    <td>' + tmp + '</td>')
+            output.push('  </tr>')
 	end
 	output.push('</table>')
 	raw(output.join("\n"))
