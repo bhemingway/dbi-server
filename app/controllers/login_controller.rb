@@ -116,7 +116,7 @@ class LoginController < ApplicationController
 
     session[:deterLoginStatus] = '(create)'
 
-    if @_current_user.blank? && (params['uid'].blank? || !params['password'].blank?)
+    if @_current_user.blank? && params['uid'].blank?
         session[:deterLoginCode] = rc = 0
     elsif @_current_user.blank? && !params['uid'].blank? && !params['password'].blank?
 	uid = params['uid']
