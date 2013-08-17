@@ -3,7 +3,7 @@ class LoginController < ApplicationController
 # ----------
 # error handling
 # ----------
-  rescue_from RuntimeError, Exception, :with => :error
+#  rescue_from RuntimeError, Exception, :with => :error
 
 
   # error = end point for API errors
@@ -677,6 +677,54 @@ class LoginController < ApplicationController
         client = nil
     end
     session[:notice] = 'Password reset was accepted'
+    render :index
+  end
+
+  # projlist = list projects available to this user
+  def projlist
+    @_current_user = session[:current_user_id] if @_current_user.blank?
+
+    # what if we need to log in first?
+    if @_current_user.blank?
+        session[:original_target] = request.fullpath
+    else
+        session[:original_target] = nil
+    end
+
+    session['saveProfileStatus'] = session['profile'] = session['pwrdmgmt'] = nil
+
+    # get the list of projects associated with this user
+
+    # for now, stub this out because the call does not exist
+    plist = [
+        {   'Name' => 'Project Runway',
+	    'Members' => [ 
+	        { 'Userid' => 'ricci', 'rights' => 0 }, 
+		{ 'Userid' => 'bfdh',  'rights' => 1 } 
+	    ]
+	},
+        {   'Name' => 'Project X',
+	    'Members' => [ 
+	        { 'Userid' => 'ricci', 'rights' => 0 },
+		{ 'Userid' => 'ejs', 'rights' => 3 },
+		{ 'Userid' => 'bfdh', 'rights' => 7 } 
+	    ]
+	},
+        {   'Name' => 'Project Your_voice',
+	    'Members' => [
+	        { 'Userid' => 'ricci', 'rights' => 0 },
+		{ 'Userid' => 'batman', 'rights' => 3 } 
+	    ]
+	}
+    ]
+
+    logger.debug 'Barg!'
+    plist.each do |h|
+        logger.debug h.inspect
+	k = 'proj_' + h['Name']
+        session[k] = h['Name']
+    end
+
     render :index
   end
 

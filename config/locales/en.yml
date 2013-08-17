@@ -21,10 +21,17 @@ en:
   mainnav:
     # also requires mainnav.banner in config.yml
 
+    # this is a placeholder
     mydeterlab: "MY DETERLAB"
-    experiments: "EXPERIMENTS"
-    projects: "PROJECTS"
+
+    # pair with mainnav.profileurl in config.yml
     profile: "PROFILE"
+
+    # pair with mainnav.projectsurl in config.yml
+    projects: "PROJECTS"
+
+    experiments: "EXPERIMENTS"
+
     # pair with mainnav.supporturl in config.yml
     SUPPORT: "SUPPORT"
 
@@ -157,3 +164,9 @@ en:
     paragraph1: "Use this page to complete the reset of your forgotten or expired password."
     challengetext: "Enter your challenge from email"
     buttontext: "Reset Password"
+
+  projects_page:
+    title: "Your Projects"
+    subtitle: ""
+    paragraph1: "This is the list of DeterLab projects of which you are a member."
+

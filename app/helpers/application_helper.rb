@@ -132,4 +132,14 @@ module ApplicationHelper
       end
   end
 
+  def listProjects
+    text = '<ul>'
+    session.each do |k, v|
+	next unless k.match(/^proj_/)
+	text = text + ('<li>' + k[5, k.length - 5] + '</li>')
+    end
+    text = text + '</ul>'
+    raw(text)
+  end
+
 end # module ApplicationHelper

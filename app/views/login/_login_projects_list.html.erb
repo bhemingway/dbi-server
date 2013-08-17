@@ -1,0 +1,27 @@
+<!-- START _login_projects_show.html.erb -->
+<!-- 
+HISTORY
+Sat Aug 17 16:53:13 UTC 2013 BFH first version
+-->
+
+      <h2 class="title" id="page-title"><%= t('projects_page.title') %></h2>
+      <div id="node-1" class="page-ntype published not-promoted not-sticky full-view author-admin clear-block">
+	<h3><%= t('projects_page.subtitle') %></h3>
+	<p>
+	  <%= t('projects_page.paragraph1') %>
+<!--	  <%= saveProfile %> -->
+        </p>
+	<p>
+	  <%= listProjects %>
+        </p>
+<!--
+	<table>
+	<tr><td>
+	<%= button_to t('projects_page.buttons.updatetext'), "/profedit", :method => "post" %>
+	</td><td>
+	<%= button_to t('projects_page.buttons.passwordtext'), "/pwrdedit", :method => "post" %>
+	</td></tr></table>
+-->
+    </div> <!-- end of node-1 -->
+
+<!-- END _login_projects_show.html.erb -->

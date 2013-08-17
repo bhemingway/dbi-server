@@ -24,9 +24,11 @@ common: &common
 
   mainnav:
     supporturl: "http://info.deterlab.net/support"
+    projectsurl: "/projlist"
+    profileurl: "/profshow"
 
-    main_nav_option1_link: "/"
-    main_nav_option2_link: "/"
+    main_nav_option1_link: "/profshow"
+    main_nav_option2_link: "/projlist"
     main_nav_option3_link: "/"
     main_nav_option4_link: "/"
     main_nav_option5_link: "/"
