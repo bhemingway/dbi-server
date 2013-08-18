@@ -699,30 +699,44 @@ class LoginController < ApplicationController
     plist = [
         {   'Name' => 'Project Runway',
 	    'Members' => [ 
-	        { 'Userid' => 'ricci', 'rights' => 0 }, 
-		{ 'Userid' => 'bfdh',  'rights' => 1 } 
+	        { 'Userid' => 'ricci', 'rights' => 0, 'status' => 'owner' }, 
+		{ 'Userid' => 'bfdh',  'rights' => 1, 'status' => 'member' } 
 	    ]
 	},
         {   'Name' => 'Project X',
 	    'Members' => [ 
-	        { 'Userid' => 'ricci', 'rights' => 0 },
-		{ 'Userid' => 'ejs', 'rights' => 3 },
-		{ 'Userid' => 'bfdh', 'rights' => 7 } 
+	        { 'Userid' => 'ricci', 'rights' => 0, 'status' => 'member' },
+		{ 'Userid' => 'ejs', 'rights' => 3, 'status' => 'member' },
+		{ 'Userid' => 'bfdh', 'rights' => 7, 'status' => 'member' } 
 	    ]
 	},
         {   'Name' => 'Project Your_voice',
 	    'Members' => [
-	        { 'Userid' => 'ricci', 'rights' => 0 },
-		{ 'Userid' => 'batman', 'rights' => 3 } 
+	        { 'Userid' => 'ricci', 'rights' => 0, 'status' => 'member' },
+		{ 'Userid' => 'batman', 'rights' => 3, 'status' => 'member' } 
 	    ]
 	}
     ]
 
-    logger.debug 'Barg!'
+    #logger.debug 'Barg!'
     plist.each do |h|
-        logger.debug h.inspect
+        #logger.debug h.inspect
+
+	# find this user's status in this project
+	status = '?'
+	h['Members'].each do |i|
+	    i.each do |k, v|
+	        if k == 'Userid' && v == @_current_user
+	    	    status = i['status']
+	        end
+	    end
+	end
+
+	# get the key for this project
 	k = 'proj_' + h['Name']
-        session[k] = h['Name']
+
+	# set the session variable for this project
+        session[k] = status
     end
 
     render :index

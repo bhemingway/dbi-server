@@ -133,12 +133,16 @@ module ApplicationHelper
   end
 
   def listProjects
-    text = '<ul>'
+    text = '<table>'
     session.each do |k, v|
 	next unless k.match(/^proj_/)
-	text = text + ('<li>' + k[5, k.length - 5] + '</li>')
+	image = '&nbsp;'
+	if v == 'owner'
+	    image = image_tag("gold-star.jpg", 'size' => '20x20')
+	end
+	text = text + ('<td width="25" align="center">' + image +'</td><td>' + k[5, k.length - 5] + '</td></tr>')
     end
-    text = text + '</ul>'
+    text = text + '</table>'
     raw(text)
   end
 
