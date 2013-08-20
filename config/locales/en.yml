@@ -30,6 +30,7 @@ en:
     # pair with mainnav.projectsurl in config.yml
     projects: "PROJECTS"
 
+    # pair with mainnav.experimentsurl in config.yml
     experiments: "EXPERIMENTS"
 
     # pair with mainnav.supporturl in config.yml
@@ -88,6 +89,7 @@ en:
       login: LOGIN
       loginfail: "Login failed. Please try again"
       loginfirst: "You must be logged in to view this page. You will be taken here automatically after login for most pages."
+      logintimeout: "Your session timed out. Please re-login to continue."
 
       # pair with login.forgoturl in config.yml
       forgotpara: "Forgot password? Start reset recovery"
@@ -169,4 +171,9 @@ en:
     title: "Your Projects"
     subtitle: ""
     paragraph1: "This is the list of DeterLab projects of which you are a member."
+
+  experiments_page:
+    title: "Your Experiments"
+    subtitle: ""
+    paragraph1: "This is the list of DeterLab experiments to which you have access."
 

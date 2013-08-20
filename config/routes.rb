@@ -78,4 +78,5 @@ Dbi::Application.routes.draw do
   match '/pwrdreset1' => 'login#pwrdreset1'
   match '/pwrdreset2' => 'login#pwrdreset2'
   match '/projlist' => 'login#projlist'
+  match '/experlist' => 'login#experlist'
 end

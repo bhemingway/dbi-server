@@ -11,13 +11,13 @@ module ApplicationHelper
   def loginStatus
       rc = 0
       rc = session[:deterLoginCode].to_i unless session[:deterLoginCode].blank?
+      session[:deterLoginCode] = nil
       if session.nil? or session.empty?
           rc = session[:deterLoginCode] = 4
-      end
-
-      # non-empty session implies that we are no longer timed out, but rather logged out
-      if rc == 4 && (!session.nil? || !session.empty?)
+      elsif rc == 4 && (!session.nil? || !session.empty?) # non-empty session implies that we are no longer timed out, but rather logged out
           rc = session[:deterLoginCode] = 0
+      else
+          session[:deterLoginCode] = rc
       end
       rc
   end
@@ -27,7 +27,9 @@ module ApplicationHelper
     status = loginStatus
     message = t('front.para1') 
     if status != 2 && !session[:original_target].blank?
-	message = '<span style="color: red">' + t('front.loginbox.loginfirst') + '</span>'
+	tmp = t('front.loginbox.loginfirst')
+	tmp = t('front.loginbox.logintimeout') if status == 4
+	message = '<span style="color: red">' + tmp + '</span>'
     elsif status != 2 and status != 0 and status != 4
 	message = '<span style="color: red">' + t('front.loginbox.loginfail') + '</span>'
     end
@@ -134,13 +136,23 @@ module ApplicationHelper
 
   def listProjects
     text = '<table>'
-    session.each do |k, v|
+    session.sort.each do |k, v|
 	next unless k.match(/^proj_/)
 	image = '&nbsp;'
 	if v == 'owner'
 	    image = image_tag("gold-star.jpg", 'size' => '20x20')
 	end
 	text = text + ('<td width="25" align="center">' + image +'</td><td>' + k[5, k.length - 5] + '</td></tr>')
+    end
+    text = text + '</table>'
+    raw(text)
+  end
+
+  def listExperiments
+    text = '<table>'
+    session.sort.each do |k, v|
+	next unless k.match(/^exper_/)
+	text = text + ('<td>' + k[6, k.length - 6] + '</td></tr>')
     end
     text = text + '</table>'
     raw(text)

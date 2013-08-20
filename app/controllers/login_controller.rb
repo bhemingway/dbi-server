@@ -695,7 +695,7 @@ class LoginController < ApplicationController
 
     # get the list of projects associated with this user
 
-    # for now, stub this out because the call does not exist
+    # for now, stub out viewProject() call
     plist = [
         {   'Name' => 'Project Runway',
 	    'Members' => [ 
@@ -737,6 +737,77 @@ class LoginController < ApplicationController
 
 	# set the session variable for this project
         session[k] = status
+    end
+
+    render :index
+  end
+
+  # experlist = list experiments available to this user
+  def experlist
+    @_current_user = session[:current_user_id] if @_current_user.blank?
+
+    # what if we need to log in first?
+    if @_current_user.blank?
+        session[:original_target] = request.fullpath
+    else
+        session[:original_target] = nil
+    end
+
+    session['saveProfileStatus'] = session['profile'] = session['pwrdmgmt'] = nil
+
+    # get the list of projects associated with this user
+
+    # for now, stub out viewExperiments() call
+    plist = [
+        {   'Name' => 'Experiment 1',
+	    'ReadProjects' => [ 
+	        'Project X'
+	    ],
+	    'WriteProjects' => [ 
+	        'Project Runway'
+	    ],
+	    'RealizeProjects' => [ 
+	        'Project Runway'
+	    ]
+	},
+        {   'Name' => 'Experiment 2',
+	    'ReadProjects' => [ 
+	        'Project Runway'
+	    ],
+	    'WriteProjects' => [ 
+	        'Project Runway'
+	    ],
+	    'RealizeProjects' => [ 
+	        'Project Runway'
+	    ]
+	},
+        {   'Name' => 'Experiment 3',
+	    'ReadProjects' => [ 
+	        'Project Your_voice'
+	    ],
+	    'WriteProjects' => [ 
+	        'Project Runway'
+	    ],
+	    'RealizeProjects' => [ 
+	        'Project X'
+	    ]
+	}
+    ]
+
+    #logger.debug 'Barg!'
+    plist.each do |h|
+        #logger.debug h.inspect
+
+	# get the key for this experiment
+	k = 'exper_' + h['Name']
+
+	# set the session variable for this project
+	z = Hash.new
+	['ReadProjects', 'WriteProjects', 'RealizeProjects'].each do |x|
+	    z[x] = h[x]
+	end
+        session[k] = z
+        logger.debug z.inspect
     end
 
     render :index
