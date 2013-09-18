@@ -31,7 +31,7 @@ Sun Jul 21 14:40:18 UTC 2013 BFH v0.2, first version
 	      end
               output.push('<tr><td width="' + AppConfig.profile["name_col_width"] + 
 		          '"><strong>', k[3, k.length - 3], '</strong></td><td><div class="field">')
-              if session[access_key] == 1.to_s
+              if session[access_key].match(/WRITE/i)
 		  output.push(text_field_tag(k, v, "size" => width))
               else
 		  output.push(v)

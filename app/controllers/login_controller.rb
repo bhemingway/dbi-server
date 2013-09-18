@@ -3,7 +3,7 @@ class LoginController < ApplicationController
 # ----------
 # error handling
 # ----------
-  rescue_from RuntimeError, Exception, :with => :error
+#  rescue_from RuntimeError, Exception, :with => :error
 
 
   # error = end point for API errors
@@ -28,7 +28,9 @@ class LoginController < ApplicationController
 
   # get the current DeterLab version for display via a SOAP transaction
   def getDeterVersion
+    logger.debug "getDeterVersion..."
     if session[:deter_version].nil? || session[:deter_version].blank? 
+        logger.debug "getDeterVersion...calling SOAP"
         client = Savon.client(
           :wsdl => "https://users.isi.deterlab.net:52323/axis2/services/ApiInfo?wsdl",
           :log_level => :debug, 
@@ -45,12 +47,18 @@ class LoginController < ApplicationController
         response = client.call(:get_version)
         session[:deter_version] = response.to_hash[:get_version_response][:return][:version]
 	client = nil
+	response = nil
+        logger.debug "getDeterVersion...used SOAP"
+    else 
+        logger.debug "getDeterVersion...used cached version in session"
     end
     session[:deter_version]
   end
 
   # load the current user profile: first template, then data
-  def loadProfile(client)
+  def loadProfile(client, user_id=@_current_user, name_flag=0)
+      name = '' # in case we are mapping uids to names
+
       # first get the template, aka "description"
       response = client.call(
                    :get_profile_description,
@@ -59,34 +67,44 @@ class LoginController < ApplicationController
       if response.success? == true  
           # stash data away in the session by parsing profile tree: an array of hashes
           a = response.to_hash[:get_profile_description_response][:return][:attributes]
-          a.each do |h|
-	      # create a slot for this attribute
-	      session[ 'up_' + h[:description] ] = ''
+	  if name_flag == 0
+              a.each do |h|
+	          # create a slot for this attribute
+	          session[ 'up_' + h[:description] ] = ''
+    
+	          # save other attributes as well
+	          session[ 'up_' + h[:description] + '_access' ] = h[:access]
+	          session[ 'up_' + h[:description] + '_name' ] = h[:name]
+	          session[ 'up_' + h[:description] + '_length_hint' ] = h[:length_hint]
 
-	      # save other attributes as well
-	      session[ 'up_' + h[:description] + '_access' ] = h[:access]
-	      session[ 'up_' + h[:description] + '_name' ] = h[:name]
-	      session[ 'up_' + h[:description] + '_length_hint' ] = h[:length_hint]
-
-	      # sort key is special
-	      session[ 'up_sort_' +  sprintf("%08d",h[:ordering_hint].to_i) ] = 'up_' + h[:description];
+	          # sort key is special
+	          session[ 'up_sort_' +  sprintf("%08d",h[:ordering_hint].to_i) ] = 'up_' + h[:description];
+              end
           end
-
 	  # now get the data for that template
           response = client.call(
 	               :get_user_profile,
-	               "message" => {'uid' => @_current_user, :order! => [:uid] }
+	               "message" => {'uid' => user_id, :order! => [:uid] }
 		      )
 	  if response.success? == true
-	      session[:deterLoginStatus] = 'getUserProfile...OK'
+	      if name_flag == 0
+	          session[:deterLoginStatus] = 'getUserProfile...OK'
+	      end
 
 	      #logger.debug response.to_hash.inspect
 	      # stash data away in the session by parsing profile tree: an array of hashes
 	      a = response.to_hash[:get_user_profile_response][:return][:attributes]
               a.each do |h|
-		  # save the data for this attribute
- 	          session[ 'up_' + h[:description] ] = h[:value]
-              end
+		  if name_flag == 0
+		      # save the data for this attribute
+ 	              session[ 'up_' + h[:description] ] = h[:value]
+		  else
+		      #logger.debug h.inspect
+		      if h[:name] == 'name'
+		          name = h[:value]
+		      end
+		  end
+	      end
 	  else
 	      session[:errorDescription] = 'getUserProfile...FAIL'
 	      raise RuntimeError, "SOAP Error"
@@ -94,13 +112,15 @@ class LoginController < ApplicationController
       else
 	  raise RuntimeError, "SOAP Error"
       end
-      response
+      if name_flag == 0
+          response
+      else
+          name
+      end
   end
 
   # create = might be login (should use flash hash?)
   def create
-    # clear the "we are doing profiles" flag and the "manage password" flag
-    session[:pwrdmgmt] = session[:profile] = nil
 
     # always make sure you have the deter version (ensures connectivity if nothing else)
     getDeterVersion
@@ -121,13 +141,14 @@ class LoginController < ApplicationController
     session[:deterLoginStatus] = '(create)'
 
     if @_current_user.blank? && params['uid'].blank?
+        end_session
         session[:deterLoginCode] = rc = 0
     elsif @_current_user.blank? && !params['uid'].blank? && !params['password'].blank?
 	uid = params['uid']
 	password = params['password']
 	encoded_data = Base64.encode64(password)
 
-        session[:deterLoginStatus] = '(create) Logging in...'
+        session[:deterLoginStatus] = '(create) Logging in as ' + uid + '...' 
 
 	# build a SOAP transaction pathway
         client = Savon.client(
@@ -144,7 +165,11 @@ class LoginController < ApplicationController
 	  :ssl_verify_mode => :none
           )
         session[:deterLoginStatus] = 'SOAP client...'
-
+	if client.nil?
+	    raise RuntimeError, "SOAP Error (could not create client)"
+	end
+	#logger.debug client.inspect
+	
 	#
 	# two step process: requestChallenge, then challengeResponse
 	#
@@ -152,7 +177,7 @@ class LoginController < ApplicationController
 	#requestChallenge, uid={value} types={'clear'}; response has type={'clear'}, validity={stuff}
         session[:deterLoginStatus] = 'requestChallenge...'
         response = client.call(
-	             :request_challenge, 
+	             :request_challenge,
 		     "message" => {'uid' => uid, 'types' => 'clear', :order! => [:uid, :types] }
 		   )
 	logger.debug response.to_hash.inspect
@@ -280,7 +305,7 @@ class LoginController < ApplicationController
     session[:deterLoginCode] = session[:error] = session[:profile] = session[:pwrdmgmt] = nil
     session[:pwrderror] = false
     session.each do |k, v|
-        next unless k.match(/^up_/)
+        next unless k.match(/^(up|proj)_|(_members$)/)
 	session[k] = nil
     end
 
@@ -322,6 +347,8 @@ class LoginController < ApplicationController
     # what if we need to log in first?
     if @_current_user.blank?
         session[:original_target] = request.fullpath
+	render :index
+	return
     else
         session[:original_target] = nil
     end
@@ -338,6 +365,8 @@ class LoginController < ApplicationController
     # what if we need to log in first?
     if @_current_user.blank?
         session[:original_target] = request.fullpath
+	render :index
+	return
     end
 
     session['saveProfileStatus'] = nil
@@ -393,7 +422,7 @@ class LoginController < ApplicationController
 	      if response.success? == true
 		  a = response.to_hash[:change_user_profile_response][:return]
 		  if !a[:success]
-		      text = text + 'FAILED at Tranaction Level: ' + a[:reason]
+		      text = text + 'FAILED at Transaction Level: ' + a[:reason]
 		  else
 	              text = text + 'OK'
 		      # now update our cache
@@ -437,6 +466,8 @@ class LoginController < ApplicationController
     # what if we need to log in first?
     if @_current_user.blank?
         session[:original_target] = request.fullpath
+	render :index
+	return
     else
         session[:original_target] = nil
     end
@@ -506,7 +537,7 @@ class LoginController < ApplicationController
             if a == true
 	        text = text + 'OK'
             else
-	        text = text + 'FAILED at Tranaction Level: ' + a[:reason]
+	        text = text + 'FAILED at Transaction Level: ' + a[:reason]
 	        session[:errorDescription] = text + 'FAILED at SOAP Level'
 		session[:pwrderror] = true
 	        #raise RuntimeError, session[:errorDescription]
@@ -518,7 +549,7 @@ class LoginController < ApplicationController
 	    session[:errorDescription] = text + 'FAILED at SOAP Level'
 	    logger.debug '2'
 	    if !msg.blank?
-	        session[:errorDescription] = session[:errorDescription] = t('password_page.failedtext') + 'because ' + msg
+	        session[:errorDescription] = session[:errorDescription] = t('password_page.failedtext') + ' because ' + msg
 	        text = text + ' ' + msg
 	    end
 	    logger.debug '3'
@@ -588,7 +619,7 @@ class LoginController < ApplicationController
             if a == true
 	        text = text + 'OK'
             else
-	        text = text + 'FAILED at Tranaction Level: ' + a[:reason]
+	        text = text + 'FAILED at Transaction Level: ' + a[:reason]
 	        session[:errorDescription] = text + 'FAILED at SOAP Level'
 		session[:pwrderror] = true
 	        #raise RuntimeError, session[:errorDescription]
@@ -598,7 +629,7 @@ class LoginController < ApplicationController
 	    logger.debug msg
 	    session[:errorDescription] = text + 'FAILED at SOAP Level'
 	    if !msg.blank?
-	        session[:errorDescription] = session[:errorDescription] = t('password_page.failedtext') + 'because ' + msg
+	        session[:errorDescription] = session[:errorDescription] = t('password_page.failedtext') + ' because ' + msg
 	        text = text + ' ' + msg
 	    end
 	    session[:pwrderror] = true
@@ -623,6 +654,7 @@ class LoginController < ApplicationController
 
   # pwrdreset2 = step 4 of handling password reset: use the challenge and proposed password
   def pwrdreset2
+    text = ''
 
     # validate the input
     pwrd = checkPassword
@@ -654,7 +686,7 @@ class LoginController < ApplicationController
             if a == true
 	        text = text + 'OK'
             else
-	        text = text + 'FAILED at Tranaction Level: ' + a[:reason]
+	        text = text + 'FAILED at Transaction Level: ' + a[:reason]
 	        session[:errorDescription] = text + 'FAILED at SOAP Level'
 		session[:pwrderror] = true
 	        #raise RuntimeError, session[:errorDescription]
@@ -664,7 +696,7 @@ class LoginController < ApplicationController
 	    logger.debug msg
 	    session[:errorDescription] = text + 'FAILED at SOAP Level'
 	    if !msg.blank?
-	        session[:errorDescription] = session[:errorDescription] = t('password_page.failedtext') + 'because ' + msg
+	        session[:errorDescription] = session[:errorDescription] = t('password_page.failedtext') + ' because ' + msg
 	        text = text + ' ' + msg
 	    end
 	    session[:pwrderror] = true
@@ -675,8 +707,11 @@ class LoginController < ApplicationController
 
 	# destroy the SOAP client, you are done with it
         client = nil
+        session[:notice] = 'Password reset was accepted'
     end
-    session[:notice] = 'Password reset was accepted'
+    if session[:pwrderror]
+	raise RuntimeError, session[:errorDescription]
+    end
     render :index
   end
 
@@ -684,60 +719,152 @@ class LoginController < ApplicationController
   def projlist
     @_current_user = session[:current_user_id] if @_current_user.blank?
 
+    text = 'Project List'
+
     # what if we need to log in first?
     if @_current_user.blank?
         session[:original_target] = request.fullpath
+	render :index
+	return
     else
         session[:original_target] = nil
     end
 
-    session['saveProfileStatus'] = session['profile'] = session['pwrdmgmt'] = nil
+    msg = session[:errorDescription ] = session['saveProfileStatus'] = session['profile'] = session['pwrdmgmt'] = nil
 
-    # get the list of projects associated with this user
+    # get the list of projects associated with this user with viewProjects()
+    client = nil # does this destroy the object? I hope so. I don't know.
+    pclient = Savon.client(
+        :wsdl => "https://users.isi.deterlab.net:52323/axis2/services/Projects?wsdl",
+        :log_level => :debug, 
+        :log => true, 
+        :pretty_print_xml => true,
+        :soap_version => 2,
+        :namespace => 'http://api.testbed.deterlab.net/xsd',
+        :logger => Rails.logger,
+        :filters => :password,
+        :raise_errors => false,
+        # client SSL options
+	:ssl_verify_mode => :none,
+	:ssl_cert_file => session[:certFile],
+	:ssl_cert_key_file => session[:keyFile]
+    )
 
-    # for now, stub out viewProject() call
-    plist = [
-        {   'Name' => 'Project Runway',
-	    'Members' => [ 
-	        { 'Userid' => 'ricci', 'rights' => 0, 'status' => 'owner' }, 
-		{ 'Userid' => 'bfdh',  'rights' => 1, 'status' => 'member' } 
-	    ]
-	},
-        {   'Name' => 'Project X',
-	    'Members' => [ 
-	        { 'Userid' => 'ricci', 'rights' => 0, 'status' => 'member' },
-		{ 'Userid' => 'ejs', 'rights' => 3, 'status' => 'member' },
-		{ 'Userid' => 'bfdh', 'rights' => 7, 'status' => 'member' } 
-	    ]
-	},
-        {   'Name' => 'Project Your_voice',
-	    'Members' => [
-	        { 'Userid' => 'ricci', 'rights' => 0, 'status' => 'member' },
-		{ 'Userid' => 'batman', 'rights' => 3, 'status' => 'member' } 
-	    ]
-	}
-    ]
+    # query the server for all profiles as a SOAP transaction
+    response = pclient.call(
+                   :view_projects,
+	           "message" => {'uid' => @_current_user, :order! => [:uid] }
+	       )
 
-    #logger.debug 'Barg!'
-    plist.each do |h|
-        #logger.debug h.inspect
+    if response.success?
+        a = response.to_hash[:view_projects_response][:return]
+	logger.debug a.class
+	logger.debug a.inspect
+	if a.class.to_s == 'Array'
+	    text = text + 'OK'
+        elsif a.has_key?("reason")
+	    text = text + 'FAILED at Transaction Level: ' + a[:reason]
+	    session[:errorDescription] = text + 'FAILED at SOAP Level'
+	    raise RuntimeError, session[:errorDescription]
+	end
+    else
+	msg = response.to_hash[:fault][:detail][:projects_deter_fault][:deter_fault][:detail_message]
+	logger.debug msg
+	session[:errorDescription] = text + 'FAILED at SOAP Level'
+	if !msg.blank?
+	    session[:errorDescription] = session[:errorDescription] + ' Attempt to list projects failed because ' + msg
+	    text = text + ' ' + msg
+	end
+	raise RuntimeError, session[:errorDescription]
+    end
 
-	# find this user's status in this project
-	status = '?'
-	h['Members'].each do |i|
-	    i.each do |k, v|
-	        if k == 'Userid' && v == @_current_user
-	    	    status = i['status']
+    # if there is just one project, a is a Hash. I pray that
+    # if there are multiple projects, a is an Array of Hashes
+    if a.class.to_s == 'Array'
+	b = a
+    else
+	# fake out an array of one element: the hash returned
+        tmp = Array.new
+	tmp.push(a)
+	b = tmp
+    end
+
+    # create a SOAP client for the Users service, so we can get people's names
+    client = Savon.client(
+        :wsdl => "https://users.isi.deterlab.net:52323/axis2/services/Users?wsdl",
+        :log_level => :debug, 
+        :log => true, 
+        :pretty_print_xml => true,
+        :soap_version => 2,
+        :namespace => 'http://api.testbed.deterlab.net/xsd',
+        :logger => Rails.logger,
+        :filters => :password,
+        :raise_errors => false,
+        # client SSL options
+	:ssl_verify_mode => :none,
+        :ssl_cert_file => session[:certFile],
+        :ssl_cert_key_file => session[:keyFile]
+        )
+    status = '?'
+
+    # get the members for each project
+    members = Array.new
+    b.each do |h|
+        if h[:owner] == @_current_user
+	    status = 'owner'
+        end
+
+	# get the key for this project
+	k = 'proj_' + h[:project_id]
+
+	members.clear
+	h[:members].each do |m|
+	    unless m[:uid] == h[:owner]
+	        members.push(loadProfile(client,m[:uid],1))
+	        #members.push(m[:uid])
+	    end
+	end
+
+	# get the project description
+	desc = '';
+        response = pclient.call(
+                       :get_project_profile,
+	               "message" => {'projectid' => h[:project_id], :order! => [:projectid] }
+	           )
+        if response.success?
+            projprof = response.to_hash[:get_project_profile_response][:return][:attributes]
+	    #logger.debug projprof.inspect
+	    #logger.debug projprof.class
+	    if projprof.class.to_s == 'Hash'
+                desc = projprof[:value]
+	    else
+		projprof.each do |z|
+		    if z[:name] == 'description'
+                        desc = z[:value]
+		    end
 	        end
 	    end
 	end
 
-	# get the key for this project
-	k = 'proj_' + h['Name']
-
-	# set the session variable for this project
+	# set the session variables for this project
         session[k] = status
+	if !members.empty?
+	    l = h[:project_id] + '_members'
+	    session[l] = members.sort.join(", ")
+	end
+	l = h[:project_id] + '_owner'
+	session[l] = loadProfile(client,h[:owner],1)
+	l = h[:project_id] + '_approved'
+	session[l] = h[:approved]
+	l = h[:project_id] + '_desc'
+	session[l] = desc
     end
+
+    # destroy the SOAP client for the Users service, you are done with it
+    client = nil
+
+    # destroy the SOAP client for the Projects service, you are done with it
+    pclient = nil
 
     render :index
   end
@@ -749,6 +876,8 @@ class LoginController < ApplicationController
     # what if we need to log in first?
     if @_current_user.blank?
         session[:original_target] = request.fullpath
+	render :index
+	return
     else
         session[:original_target] = nil
     end

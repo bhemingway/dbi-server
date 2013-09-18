@@ -135,14 +135,22 @@ module ApplicationHelper
   end
 
   def listProjects
-    text = '<table>'
+    text = '<table><tr><th>Project</th><th>Owner</th><th>Members</th><th>Approved</th></tr>'
     session.sort.each do |k, v|
 	next unless k.match(/^proj_/)
+	projid = k[5, k.length - 5]
+	pdesc = session[projid + '_desc']
+	membs = session[projid + '_members']
+	owner = session[projid + '_owner']
+	apprv = session[projid + '_approved']
 	image = '&nbsp;'
-	if v == 'owner'
+	if apprv 
 	    image = image_tag("gold-star.jpg", 'size' => '20x20')
 	end
-	text = text + ('<td width="25" align="center">' + image +'</td><td>' + k[5, k.length - 5] + '</td></tr>')
+	text = text + ('<tr><td>' + projid + '</td><td>' + owner + '</td><td>' + membs + '</td><td>' + image + '</td></tr>')
+	unless pdesc.blank?
+	    text = text + ('<tr><td>Description</td><td colspan="3">' + pdesc + '</td></tr>')
+	end
     end
     text = text + '</table>'
     raw(text)
@@ -156,6 +164,17 @@ module ApplicationHelper
     end
     text = text + '</table>'
     raw(text)
+  end
+
+  # nuke session state
+  def clean_slate
+    session[:profile] = session[:error] = session[:pwrdmgmt] = nil
+    session[:pwrderror] = false
+    session.each do |k, v|
+        next unless k.match(/^(proj)_|(_members$)/)
+	session[k] = nil
+    end
+    return
   end
 
 end # module ApplicationHelper
