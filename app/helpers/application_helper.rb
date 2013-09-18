@@ -139,6 +139,8 @@ module ApplicationHelper
     session.sort.each do |k, v|
 	next unless k.match(/^proj_/)
 	projid = k[5, k.length - 5]
+	url = session[projid + '_url']
+	affil = session[projid + '_affil']
 	pdesc = session[projid + '_desc']
 	membs = session[projid + '_members']
 	owner = session[projid + '_owner']
@@ -147,9 +149,26 @@ module ApplicationHelper
 	if apprv 
 	    image = image_tag("gold-star.jpg", 'size' => '20x20')
 	end
+
+	#
+	# deal with HTML output
+	#
+
+	# do we need a separator?
+	if text.match(/\<td\>/i)
+	    text = text + '<tr><td colspan="4" align="center"><hr width="75%"></td></tr>'
+	end
+
+	# create usual output
 	text = text + ('<tr><td>' + projid + '</td><td>' + owner + '</td><td>' + membs + '</td><td>' + image + '</td></tr>')
 	unless pdesc.blank?
 	    text = text + ('<tr><td>Description</td><td colspan="3">' + pdesc + '</td></tr>')
+	end
+	unless affil.blank?
+	    text = text + ('<tr><td>Affiliation</td><td colspan="3">' + affil + '</td></tr>')
+	end
+	unless url.blank?
+	    text = text + ('<tr><td>URL</td><td colspan="3"><a href="' + url + '">' + url + '</a></td></tr>')
 	end
     end
     text = text + '</table>'

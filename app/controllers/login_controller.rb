@@ -825,8 +825,10 @@ class LoginController < ApplicationController
 	    end
 	end
 
-	# get the project description
-	desc = '';
+	# get attributes from the project profile
+	desc = ''
+	url = ''
+	affil = ''
         response = pclient.call(
                        :get_project_profile,
 	               "message" => {'projectid' => h[:project_id], :order! => [:projectid] }
@@ -836,11 +838,21 @@ class LoginController < ApplicationController
 	    #logger.debug projprof.inspect
 	    #logger.debug projprof.class
 	    if projprof.class.to_s == 'Hash'
-                desc = projprof[:value]
+		if projprof[:name] == 'description'
+                    desc = projprof[:value]
+		elsif projprof[:name] == 'URL'
+                    url = projprof[:value]
+		elsif projprof[:name] == 'affiliation'
+                    affil = projprof[:value]
+		end
 	    else
 		projprof.each do |z|
 		    if z[:name] == 'description'
                         desc = z[:value]
+		    elsif z[:name] == 'URL'
+                        url = z[:value]
+		    elsif z[:name] == 'affiliation'
+                        affil = z[:value]
 		    end
 	        end
 	    end
@@ -856,8 +868,19 @@ class LoginController < ApplicationController
 	session[l] = loadProfile(client,h[:owner],1)
 	l = h[:project_id] + '_approved'
 	session[l] = h[:approved]
-	l = h[:project_id] + '_desc'
-	session[l] = desc
+
+	if !desc.blank?
+	    l = h[:project_id] + '_desc'
+	    session[l] = desc
+	end
+	if !url.blank?
+	    l = h[:project_id] + '_url'
+	    session[l] = url
+	end
+	if !affil.blank?
+	    l = h[:project_id] + '_affil'
+	    session[l] = affil
+	end
     end
 
     # destroy the SOAP client for the Users service, you are done with it
