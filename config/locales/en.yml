@@ -177,3 +177,8 @@ en:
     subtitle: ""
     paragraph1: "This is the list of DeterLab experiments to which you have access."
 
+  experiment_show_page:
+    title: "Experiment Detail"
+    subtitle: ""
+    paragraph1: "This is the DeterLab experiment you selected for review."
+

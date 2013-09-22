@@ -134,17 +134,112 @@ module ApplicationHelper
       end
   end
 
+  # show = show specified experiment
+  def showExperiments
+    @_current_user = session[:current_user_id] if @_current_user.blank?
+
+    # what if we need to log in first?
+    if @_current_user.blank?
+        session[:original_target] = request.fullpath
+	render :index
+	return
+    else
+        session[:original_target] = nil
+    end
+
+    session['saveProfileStatus'] = session['profile'] = session['pwrdmgmt'] = nil
+
+    # for now, stub out viewExperiments
+    exper = nil
+    if params["id"] == 'ExperimentOne'
+        exper = [
+          { 
+            'owner' => 'ricci',
+	    'proj'  => 'Tutorial2013 Project',
+	    'stat'  => 'Unrealized',
+	    'topol' => link_to('Topology','/expershow?id=ExperimentOne'),
+	    'acts'  => link_to('Actions','/expershow?id=ExperimentOne'),
+	    'const' => link_to('Constraints','/expershow?id=ExperimentOne'),
+	    'dcol'  => link_to('DataCollection','/expershow?id=ExperimentOne'),
+	    'conts' => link_to('Containers','/expershow?id=ExperimentOne'),
+	    'rezs'  => link_to('Resources','/expershow?id=ExperimentOne')
+          }
+        ]
+    else
+        exper = [
+          { 
+            'owner' => 'benzel',
+	    'proj'  => 'Tutorial2013 Project',
+	    'stat'  => 'Unrealized',
+	    'topol' => link_to('Topology','/expershow?id=ExperimentTwo'),
+	    'acts'  => link_to('Actions','/expershow?id=ExperimentTwo'),
+	    'const' => link_to('Constraints','/expershow?id=ExperimentTwo'),
+	    'dcol'  => link_to('DataCollection','/expershow?id=ExperimentTwo'),
+	    'conts' => link_to('Containers','/expershow?id=ExperimentTwo'),
+	    'rezs'  => link_to('Resources','/expershow?id=ExperimentTwo')
+          }
+        ]
+    end
+
+    text = '<table><tr><td>Experiment</td><td>' + params["id"]
+    order = Array.new
+    order = [ 'owner','proj','stat','topol','acts','const','dcol','conts','rezs' ]
+    exper.each do |h|
+	order.each do |k|
+	    v = h[k]
+	    if v.nil? or v.blank?
+	        v = '&nbsp;'
+	    end
+
+	    if k == 'topol' 
+    	        text = text + '<tr><td>Attributes</td><td>'
+	    end
+	    if k == 'owner'
+    	        text = text + ('<tr><td>Owner</td><td>' + v + '</td></tr>')
+	    elsif k == 'proj'
+    	        text = text + ('<tr><td>Parent Project</td><td>' + v + '</td></tr>')
+	    elsif k == 'stat'
+    	        text = text + ('<tr><td>Status</td><td>' + v + '</td></tr>')
+	    else
+	        text = text + (v + ' ')
+	        if !k.eql?('rezs')
+    	            text = text + ' &bull; '
+	        end
+	    end
+
+	    if k == 'rez' 
+    	        text = text + '</td></tr>'
+	    end
+	end
+    end
+
+    client = nil
+
+    text = text + '<tr><td><input type="button" value="Run Experiment"></td><td><input type="button" value="Halt Experiment"></td></tr>'
+    text = text + '</table>'
+
+    raw(text)
+  end
+
   def listProjects
     text = '<table><tr><th>Project</th><th>Owner</th><th>Members</th><th>Approved</th></tr>'
     session.sort.each do |k, v|
+	# skip data elements not related to projects
 	next unless k.match(/^proj_/)
+
+	# get this project ID, from which you get everything else
 	projid = k[5, k.length - 5]
+
+	# now that you have the project ID, get the related data
+	exps = session[projid + '_exps']
 	url = session[projid + '_url']
 	affil = session[projid + '_affil']
 	pdesc = session[projid + '_desc']
 	membs = session[projid + '_members']
 	owner = session[projid + '_owner']
 	apprv = session[projid + '_approved']
+
+	# give approved projects a gold star
 	image = '&nbsp;'
 	if apprv 
 	    image = image_tag("gold-star.jpg", 'size' => '20x20')
@@ -169,6 +264,9 @@ module ApplicationHelper
 	end
 	unless url.blank?
 	    text = text + ('<tr><td>URL</td><td colspan="3"><a href="' + url + '">' + url + '</a></td></tr>')
+	end
+	unless exps.blank?
+	    text = text + ('<tr><td>Experiments</td><td colspan="3">' + exps + '</td></tr>')
 	end
     end
     text = text + '</table>'

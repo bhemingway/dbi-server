@@ -1,4 +1,5 @@
 class LoginController < ApplicationController
+  include ActionView::Helpers::UrlHelper
 
 # ----------
 # error handling
@@ -78,7 +79,7 @@ class LoginController < ApplicationController
 	          session[ 'up_' + h[:description] + '_length_hint' ] = h[:length_hint]
 
 	          # sort key is special
-	          session[ 'up_sort_' +  sprintf("%08d",h[:ordering_hint].to_i) ] = 'up_' + h[:description];
+	          session[ 'up_sort_' +  sprintf("%08d",h[:ordering_hint].to_i) ] = 'up_' + h[:description]
               end
           end
 	  # now get the data for that template
@@ -808,6 +809,7 @@ class LoginController < ApplicationController
     status = '?'
 
     # get the members for each project
+    exps = Array.new
     members = Array.new
     b.each do |h|
         if h[:owner] == @_current_user
@@ -817,12 +819,25 @@ class LoginController < ApplicationController
 	# get the key for this project
 	k = 'proj_' + h[:project_id]
 
+	# process members
 	members.clear
 	h[:members].each do |m|
 	    unless m[:uid] == h[:owner]
 	        members.push(loadProfile(client,m[:uid],1))
 	        #members.push(m[:uid])
 	    end
+	end
+
+	# stub out call to viewExperiments
+	exps.clear
+	if h[:project_id] == 'Tutorial2011'
+	    exps.push(
+	        link_to('ExperimentOne', '/expershow?id=ExperimentOne')
+	    )
+	elsif h[:project_id] == 'emulab-ops'
+	    exps.push(
+	        link_to('ExperimentTwo', '/expershow?id=ExperimentTwo')
+	    )
 	end
 
 	# get attributes from the project profile
@@ -864,6 +879,10 @@ class LoginController < ApplicationController
 	    l = h[:project_id] + '_members'
 	    session[l] = members.sort.join(", ")
 	end
+	if !exps.empty?
+	    l = h[:project_id] + '_exps'
+	    session[l] = exps.sort.join(", ")
+	end
 	l = h[:project_id] + '_owner'
 	session[l] = loadProfile(client,h[:owner],1)
 	l = h[:project_id] + '_approved'
@@ -889,6 +908,23 @@ class LoginController < ApplicationController
     # destroy the SOAP client for the Projects service, you are done with it
     pclient = nil
 
+    render :index
+  end
+
+  # expershow = show a specific experiment to the user
+  def expershow
+    @_current_user = session[:current_user_id] if @_current_user.blank?
+
+    # what if we need to log in first?
+    if @_current_user.blank?
+        session[:original_target] = request.fullpath
+	render :index
+	return
+    else
+        session[:original_target] = nil
+    end
+
+    session['saveProfileStatus'] = session['profile'] = session['pwrdmgmt'] = nil
     render :index
   end
 

@@ -1,0 +1,27 @@
+<!- -START _login_experiments_show.html.erb -->
+<!-- 
+HISTORY
+Sun Sep 22 19:43:09 UTC 2013 BFH first version
+-->
+
+      <h2 class="title" id="page-title"><%= t('experiment_show_page.title') %></h2>
+      <div id="node-1" class="page-ntype published not-promoted not-sticky full-view author-admin clear-block">
+	<h3><%= t('experiment_show_page.subtitle') %></h3> 
+	<p>
+	  <%= t('experiment_show_page.paragraph1') %>
+<!--	  <%= saveProfile %> -->
+        </p>
+	<p>
+	  <%= showExperiments %>
+        </p>
+<!--
+	<table>
+	<tr><td>
+	<%= button_to t('experiments_page.buttons.updatetext'), "/experedit", :method => "post" %>
+	</td><td>
+	<%= button_to t('experiments_page.buttons.passwordtext'), "/pwrdedit", :method => "post" %>
+	</td></tr></table>
+-->
+    </div> <!-- end of node-1 -->
+
+<!-- END _login_projects_show.html.erb -->
