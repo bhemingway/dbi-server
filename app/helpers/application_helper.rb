@@ -39,8 +39,10 @@ module ApplicationHelper
 
   # if the user requests it, save the profile
   def saveProfile
+    logger.debug '==>saveProfile (helper version)'
+return
     text = ''
-    if !session.nil? && !@_current_user.blank? && session[:profile] == 'update'
+    if !session.nil? && !@_current_user.blank? && session['profile'] == 'update'
     	changes = Array.new
 	session.each do |k, v|
 	    next if v.nil?

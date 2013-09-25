@@ -1,5 +1,4 @@
 class LoginController < ApplicationController
-  include ActionView::Helpers::UrlHelper
 
 # ----------
 # error handling
@@ -144,6 +143,9 @@ class LoginController < ApplicationController
     if @_current_user.blank? && params['uid'].blank?
         end_session
         session[:deterLoginCode] = rc = 0
+    elsif @_current_user.blank? && !params['uid'].blank? && params['password'].blank?
+	session[:deterLoginCode] = rc = 1
+	session[:deterLoginStatus] = 'Login failed: bad credentials'
     elsif @_current_user.blank? && !params['uid'].blank? && !params['password'].blank?
 	uid = params['uid']
 	password = params['password']
@@ -377,22 +379,36 @@ class LoginController < ApplicationController
   end
 
   # if the user requests it, save the profile
-  def saveProfile
+  def saveProfileController
+logger.debug '==>saveProfileController starts...'
     text = ''
-    if session[:profile] == 'update'
+    if session['profile'] == 'update'
 	text = 'working...'
     	changes = Array.new
 	session.each do |k, v|
-	    next if v.nil?
-	    next if params[k].nil?
-	    if k.match(/^up_/) && !k.match(/_(access|name|length|order)$/)
-		unless params[k] == v
-		    text = text + k + ' changed from {' + v + '} to {' + params[k] + '}<br>'
-		    mykey = session[k + '_name']
-		    changes.push({'name' => mykey, 'value' =>params[k], 'delete' => 0})
-		end
+	    next if (v.nil? or v.blank?) and (params[k].nil? or params[k].blank?)
+	    next unless k.match(/^up_/) 
+	    next if k.match(/_(access|name|length|order)$/)
+	    next if k.match(/_(sort_|length_hint)/)
+	    next if params[k] == v
+	    next if params[k].to_s == v.to_s
+
+	    # if we get here, we have new data
+	    old = v
+	    if old.nil? or old.blank?
+		old = '-blank-'
 	    end
+	    new = params[k]
+	    if new.nil? or new.blank?
+	        new = ''
+	    end
+	    text = text + k + ' changed from {' + old.to_s + '} to {' + new.to_s + '}<br>'
+logger.debug ('==>' +  k + ' changed from {' + old.to_s + '} to {' + new.to_s + '}')
+	    mykey = session[k + '_name']
+	    changes.push({'name' => mykey, 'value' =>new.to_s, 'delete' => 0})
+logger.debug ('==>(' + mykey.to_s + ')|' + new.to_s)
 	end
+logger.debug changes.inspect
 
 	# save any changed data elements
 	unless changes.empty?
@@ -442,7 +458,7 @@ class LoginController < ApplicationController
 	      text = text + '</strong><br>'
         end
     else
-        text = 'no triggers for saveProfile'
+        text = 'no triggers for saveProfileController'
     end
     text
   end
@@ -451,7 +467,9 @@ class LoginController < ApplicationController
   def profsave
     @_current_user = session[:current_user_id] if @_current_user.blank?
     session['profile'] = 'update'
-    session['saveProfileStatus'] = saveProfile
+    session['saveProfileStatus'] = saveProfileController
+logger.debug '==> saveProfileController output...'
+logger.debug session['saveProfileStatus']
     session['profile'] = 'show'
     session['pwrdmgmt'] = nil
     #render :index
@@ -831,12 +849,14 @@ class LoginController < ApplicationController
 	# stub out call to viewExperiments
 	exps.clear
 	if h[:project_id] == 'Tutorial2011'
+	        #link_to('ExperimentOne', '/expershow?id=ExperimentOne')
 	    exps.push(
-	        link_to('ExperimentOne', '/expershow?id=ExperimentOne')
+		'<a href="/expershow?id=ExperimentOne">ExperimentOne</a>'
 	    )
 	elsif h[:project_id] == 'emulab-ops'
+	        #link_to('ExperimentTwo', '/expershow?id=ExperimentTwo')
 	    exps.push(
-	        link_to('ExperimentTwo', '/expershow?id=ExperimentTwo')
+		'<a href="/expershow?id=ExperimentTwo">ExperimentTwo</a>'
 	    )
 	end
 
