@@ -75,7 +75,13 @@ class LoginController < ApplicationController
 	          # save other attributes as well
 	          session[ 'up_' + h[:description] + '_access' ] = h[:access]
 	          session[ 'up_' + h[:description] + '_name' ] = h[:name]
-	          session[ 'up_' + h[:description] + '_length_hint' ] = h[:length_hint]
+
+		  # suggested length of zero is not helpful
+		  len = h[:length_hint].to_i
+		  if len <= 0
+		      len = 50
+		  end
+	          session[ 'up_' + h[:description] + '_length_hint' ] = len.to_s
 
 	          # sort key is special
 	          session[ 'up_sort_' +  sprintf("%08d",h[:ordering_hint].to_i) ] = 'up_' + h[:description]
@@ -381,17 +387,47 @@ class LoginController < ApplicationController
   # if the user requests it, save the profile
   def saveProfileController
 logger.debug '==>saveProfileController starts...'
+logger.debug session.inspect
     text = ''
     if session['profile'] == 'update'
+logger.debug '==>0...'
 	text = 'working...'
-    	changes = Array.new
+
+	# need a superset of keys so that if blank in one, but not in the other, we still process the k
+    	kh = Hash.new
 	session.each do |k, v|
-	    next if (v.nil? or v.blank?) and (params[k].nil? or params[k].blank?)
+	    next unless k.match(/^up_/) 
+	    kh[k] = 'found'
+	end
+	params.each do |k, v|
+	    next unless k.match(/^up_/) 
+	    kh[k] = 'found'
+	end
+logger.debug kh.inspect
+
+	# find all the changes
+    	changes = Array.new
+	kh.each do |k, x|
+logger.debug ('==>' +  k + ' 1...')
+	    # selection based on keys
 	    next unless k.match(/^up_/) 
 	    next if k.match(/_(access|name|length|order)$/)
 	    next if k.match(/_(sort_|length_hint)/)
-	    next if params[k] == v
+logger.debug ('==>' +  k + ' 2...')
+
+	    # if the form did not post this key, then the corresponding value is not editable
+	    next unless params.has_key?(k)
+logger.debug ('==>' +  k + ' 3...')
+
+	    # get the old value for this key out of sessions hash
+	    v = session[k]
+
+	    # selection based on data values
+	    next if (v.nil? or v.blank?) and (params[k].nil? or params[k].blank?)
+logger.debug ('==>' +  k + ' 4...')
+	    #next if params[k] == v
 	    next if params[k].to_s == v.to_s
+logger.debug ('==>' +  k + ' 5...')
 
 	    # if we get here, we have new data
 	    old = v
@@ -438,8 +474,27 @@ logger.debug changes.inspect
 			     )
 	      if response.success? == true
 		  a = response.to_hash[:change_user_profile_response][:return]
-		  if !a[:success]
-		      text = text + 'FAILED at Transaction Level: ' + a[:reason]
+		  # should changes array be checked against the return?
+
+		  # "a" should be an array of hashes but sometimes it is just the has
+		  # so make the hash into an array of hashes
+    		  if a.class.to_s == 'Array'
+		      b = a
+                  else
+	              # fake out an array of one element: the hash returned
+                      tmp = Array.new
+	              tmp.push(a)
+	              b = tmp
+		  end
+
+		  flag = 1
+		  b.each do |h|
+		      if h.has_key?('success') && h[:success] != true
+		      	  flag = 0
+		      end
+		  end
+		  if flag == 0
+		      text = text + 'FAILED at Transaction Level: '
 		  else
 	              text = text + 'OK'
 		      # now update our cache
