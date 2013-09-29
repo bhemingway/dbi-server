@@ -3,7 +3,7 @@ class LoginController < ApplicationController
 # ----------
 # error handling
 # ----------
-  rescue_from RuntimeError, Exception, :with => :error
+#  rescue_from RuntimeError, Exception, :with => :error
 
 
   # error = end point for API errors
@@ -112,8 +112,8 @@ class LoginController < ApplicationController
 		  end
 	      end
 	  else
-	      session[:errorDescription] = 'getUserProfile...FAIL'
-	      raise RuntimeError, "SOAP Error"
+	      session[:errorDescription] = ('getUserProfile(' + user_id + ')...FAIL')
+	      raise RuntimeError, ("SOAP Error: " + session[:errorDescription])
 	  end
       else
 	  raise RuntimeError, "SOAP Error"
@@ -1018,11 +1018,29 @@ logger.debug session['saveProfileStatus']
 
     session['saveProfileStatus'] = session['profile'] = session['pwrdmgmt'] = nil
 
+    # create a SOAP client for the Users service, so we can get people's names
+    client = Savon.client(
+        :wsdl => "https://users.isi.deterlab.net:52323/axis2/services/Users?wsdl",
+        :log_level => :debug, 
+        :log => true, 
+        :pretty_print_xml => true,
+        :soap_version => 2,
+        :namespace => 'http://api.testbed.deterlab.net/xsd',
+        :logger => Rails.logger,
+        :filters => :password,
+        :raise_errors => false,
+        # client SSL options
+	:ssl_verify_mode => :none,
+        :ssl_cert_file => session[:certFile],
+        :ssl_cert_key_file => session[:keyFile]
+        )
+
     # get the list of projects associated with this user
 
     # for now, stub out viewExperiments() call
     plist = [
-        {   'Name' => 'Experiment 1',
+        {   'Name' => 'ExperimentOne',
+	    'owner' => 'ricci',
 	    'ReadProjects' => [ 
 	        'Project X'
 	    ],
@@ -1033,7 +1051,8 @@ logger.debug session['saveProfileStatus']
 	        'Project Runway'
 	    ]
 	},
-        {   'Name' => 'Experiment 2',
+        {   'Name' => 'ExperimentTwo',
+	    'owner' => 'jsebes',
 	    'ReadProjects' => [ 
 	        'Project Runway'
 	    ],
@@ -1044,7 +1063,8 @@ logger.debug session['saveProfileStatus']
 	        'Project Runway'
 	    ]
 	},
-        {   'Name' => 'Experiment 3',
+        {   'Name' => 'ExperimentThree',
+	    'owner' => 'bfdh',
 	    'ReadProjects' => [ 
 	        'Project Your_voice'
 	    ],
@@ -1064,14 +1084,21 @@ logger.debug session['saveProfileStatus']
 	# get the key for this experiment
 	k = 'exper_' + h['Name']
 
-	# set the session variable for this project
-	z = Hash.new
-	['ReadProjects', 'WriteProjects', 'RealizeProjects'].each do |x|
-	    z[x] = h[x]
-	end
-        session[k] = z
-        logger.debug z.inspect
+	# store this experiment name for use later
+        session[k] = loadProfile(client,h['owner'],1)
+
+#-
+#	# set the session variable for this project
+#	z = Hash.new
+#	['ReadProjects', 'WriteProjects', 'RealizeProjects'].each do |x|
+#	    z[x] = h[x]
+#	end
+#        session[k] = z
+#        logger.debug z.inspect
+#-
     end
+
+    client = nil
 
     render :index
   end

@@ -136,6 +136,57 @@ return
       end
   end
 
+  # stub out viewExperiments call
+  def experData(id)
+    exper = nil
+    # note; 'owner' comes from session[exper_{name}] now: want actual name not user id
+    if id == 'ExperimentOne'
+        exper = [
+          { 
+            'owner' => 'ricci', 
+	    'proj'  => 'Tutorial2013 Project',
+	    'stat'  => 'Unrealized',
+	    'topol' => link_to('Topology','/expershow?id=ExperimentOne'),
+	    'acts'  => link_to('Actions','/expershow?id=ExperimentOne'),
+	    'const' => link_to('Constraints','/expershow?id=ExperimentOne'),
+	    'dcol'  => link_to('DataCollection','/expershow?id=ExperimentOne'),
+	    'conts' => link_to('Containers','/expershow?id=ExperimentOne'),
+	    'rezs'  => link_to('Resources','/expershow?id=ExperimentOne')
+          }
+        ]
+    elsif id == 'ExperimentTwo'
+        exper = [
+          { 
+            'owner' => 'benzel',
+	    'proj'  => 'Tutorial2013 Project',
+	    'stat'  => 'Changing',
+	    'topol' => link_to('Topology','/expershow?id=ExperimentTwo'),
+	    'acts'  => link_to('Actions','/expershow?id=ExperimentTwo'),
+	    'const' => link_to('Constraints','/expershow?id=ExperimentTwo'),
+	    'dcol'  => link_to('DataCollection','/expershow?id=ExperimentTwo'),
+	    'conts' => link_to('Containers','/expershow?id=ExperimentTwo'),
+	    'rezs'  => link_to('Resources','/expershow?id=ExperimentTwo')
+          }
+        ]
+    elsif id == 'ExperimentThree'
+        exper = [
+          { 
+            'owner' => 'bfdh',
+	    'proj'  => 'Super Secret Project',
+	    'stat'  => 'Realizing',
+	    'topol' => link_to('Topology','/expershow?id=ExperimentThree'),
+	    'acts'  => link_to('Actions','/expershow?id=ExperimentThree'),
+	    'const' => link_to('Constraints','/expershow?id=ExperimentThree'),
+	    'dcol'  => link_to('DataCollection','/expershow?id=ExperimentThree'),
+	    'conts' => link_to('Containers','/expershow?id=ExperimentThree'),
+	    'rezs'  => link_to('Resources','/expershow?id=ExperimentThree')
+          }
+        ]
+    end
+    client = nil
+    exper
+  end
+
   # show = show specified experiment
   def showExperiments
     @_current_user = session[:current_user_id] if @_current_user.blank?
@@ -152,38 +203,10 @@ return
     session['saveProfileStatus'] = session['profile'] = session['pwrdmgmt'] = nil
 
     # for now, stub out viewExperiments
-    exper = nil
-    if params["id"] == 'ExperimentOne'
-        exper = [
-          { 
-            'owner' => 'ricci',
-	    'proj'  => 'Tutorial2013 Project',
-	    'stat'  => 'Unrealized',
-	    'topol' => link_to('Topology','/expershow?id=ExperimentOne'),
-	    'acts'  => link_to('Actions','/expershow?id=ExperimentOne'),
-	    'const' => link_to('Constraints','/expershow?id=ExperimentOne'),
-	    'dcol'  => link_to('DataCollection','/expershow?id=ExperimentOne'),
-	    'conts' => link_to('Containers','/expershow?id=ExperimentOne'),
-	    'rezs'  => link_to('Resources','/expershow?id=ExperimentOne')
-          }
-        ]
-    else
-        exper = [
-          { 
-            'owner' => 'benzel',
-	    'proj'  => 'Tutorial2013 Project',
-	    'stat'  => 'Unrealized',
-	    'topol' => link_to('Topology','/expershow?id=ExperimentTwo'),
-	    'acts'  => link_to('Actions','/expershow?id=ExperimentTwo'),
-	    'const' => link_to('Constraints','/expershow?id=ExperimentTwo'),
-	    'dcol'  => link_to('DataCollection','/expershow?id=ExperimentTwo'),
-	    'conts' => link_to('Containers','/expershow?id=ExperimentTwo'),
-	    'rezs'  => link_to('Resources','/expershow?id=ExperimentTwo')
-          }
-        ]
-    end
+    exper = experData(params["id"])
 
     text = '<table><tr><td>Experiment</td><td>' + params["id"]
+    owner = session[('exper_' + params["id"])]
     order = Array.new
     order = [ 'owner','proj','stat','topol','acts','const','dcol','conts','rezs' ]
     exper.each do |h|
@@ -197,7 +220,8 @@ return
     	        text = text + '<tr><td>Attributes</td><td>'
 	    end
 	    if k == 'owner'
-    	        text = text + ('<tr><td>Owner</td><td>' + v + '</td></tr>')
+    	        #text = text + ('<tr><td>Owner</td><td>' + v + '</td></tr>')
+    	        text = text + ('<tr><td>Owner</td><td>' + owner + '</td></tr>')
 	    elsif k == 'proj'
     	        text = text + ('<tr><td>Parent Project</td><td>' + v + '</td></tr>')
 	    elsif k == 'stat'
@@ -276,12 +300,33 @@ return
   end
 
   def listExperiments
-    text = '<table>'
+    text = ''
     session.sort.each do |k, v|
 	next unless k.match(/^exper_/)
-	text = text + ('<td>' + k[6, k.length - 6] + '</td></tr>')
+
+	owner = session[k]
+
+	experid = k[6, k.length - 6]
+	experlink = link_to(experid,'/expershow?id='+experid)
+	exper = experData(experid)
+	next if exper.nil?
+
+	# this is probably incorrectly stubbed and should not be array of hashes, but rather a simple hash
+	exper.each do |h|
+	    next if h.nil?
+
+            text += "<table>\n"
+            text += "<tr><th width=\"100\">Experiment</th><th width=\"100\">Owner</th><th width=\"100\">Parent Project</th><th width=\"100\">Status</th></tr>\n"
+	    text = text + "<tr>\n"
+	    text = text + ('  <td>' + experlink + '</td>' + "\n")
+	    text = text + ('  <td>' + owner + '</td>' + "\n")
+	    text = text + (' <td>' + h['proj'] + '</td>' + "\n")
+	    text = text + (' <td>' + h['stat'] + '</td>' + "\n")
+	    text = text + ('</tr>' + "\n")
+            text += "</table>\n"
+        end
     end
-    text = text + '</table>'
+    
     raw(text)
   end
 
