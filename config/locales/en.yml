@@ -178,7 +178,21 @@ en:
     paragraph1: "This is the list of DeterLab experiments to which you have access."
 
   experiment_show_page:
-    title: "Experiment Detail"
+    # title: "Experiment Detail" -- title is now the experiement name
     subtitle: ""
     paragraph1: "This is the DeterLab experiment you selected for review."
+    # line headers
+    experiment: "Experiment"
+    owner: "Owner"
+    project: "Parent Project"
+    status: "Status"
+    attributes: "Attributes"
+
+    # text for links to attributes
+    topol_link_text: "Topology"
+    actions_link_text: "Actions"
+    const_link_text: "Constraints"
+    dc_link_text: "Data Collection"
+    cont_link_text: "Containers"
+    rez_link_text: "Resources"
 

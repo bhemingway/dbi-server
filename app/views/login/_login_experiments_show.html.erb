@@ -4,7 +4,7 @@ HISTORY
 Sun Sep 22 19:43:09 UTC 2013 BFH first version
 -->
 
-      <h2 class="title" id="page-title"><%= t('experiment_show_page.title') %></h2>
+      <h2 class="title" id="page-title"><%= params['id'] %></h2>
       <div id="node-1" class="page-ntype published not-promoted not-sticky full-view author-admin clear-block">
 	<h3><%= t('experiment_show_page.subtitle') %></h3> 
 	<p>
@@ -12,7 +12,13 @@ Sun Sep 22 19:43:09 UTC 2013 BFH first version
 <!--	  <%= saveProfile %> -->
         </p>
 	<p>
+          <!-- experiment show/edit form definition begins -->
+          <%= 
+	    form_tag(("/expershow?id=" + params["id"]), :method=>'post', :multipart=>true, :id=>'expershowform')  do 
+	  %> 
 	  <%= showExperiments %>
+          <% end %>                 
+          <!-- form definition ends -->
         </p>
 <!--
 	<table>

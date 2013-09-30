@@ -37,6 +37,13 @@ module ApplicationHelper
     raw(message)
   end
 
+  # check to see if you need up update the current experiment
+  def saveExperiment
+logger.debug '==>saveExperiment...'
+    if !session.nil? && !@_current_user.blank? && !params['id'].blank?
+    end
+  end
+
   # if the user requests it, save the profile
   def saveProfile
     logger.debug '==>saveProfile (helper version)'
@@ -146,12 +153,18 @@ return
             'owner' => 'ricci', 
 	    'proj'  => 'Tutorial2013 Project',
 	    'stat'  => 'Unrealized',
-	    'topol' => link_to('Topology','/expershow?id=ExperimentOne'),
-	    'acts'  => link_to('Actions','/expershow?id=ExperimentOne'),
-	    'const' => link_to('Constraints','/expershow?id=ExperimentOne'),
-	    'dcol'  => link_to('DataCollection','/expershow?id=ExperimentOne'),
-	    'conts' => link_to('Containers','/expershow?id=ExperimentOne'),
-	    'rezs'  => link_to('Resources','/expershow?id=ExperimentOne')
+	    'topol' => link_to(t('experiment_show_page.topol_link_text'),'#',
+	                 :onclick =>"if (hiddenFlag) return false; document.getElementById('hidden_topol').style.display='block'; hiddenFlag = true; return false;"),
+	    'acts'  => link_to(t('experiment_show_page.actions_link_text'),'#',
+	                 :onclick =>"if (hiddenFlag) return false; document.getElementById('hidden_actions').style.display='block'; hiddenFlag = true; return false;"),
+	    'const' => link_to(t('experiment_show_page.const_link_text'),'#',
+	                 :onclick =>"if (hiddenFlag) return false; document.getElementById('hidden_const').style.display='block'; hiddenFlag = true; return false;"),
+	    'dcol'  => link_to(t('experiment_show_page.dc_link_text'),'#',
+	                 :onclick =>"if (hiddenFlag) return false; document.getElementById('hidden_dc').style.display='block'; hiddenFlag = true; return false;"),
+	    'conts' => link_to(t('experiment_show_page.cont_link_text'),'#',
+	                 :onclick =>"if (hiddenFlag) return false; document.getElementById('hidden_conts').style.display='block'; hiddenFlag = true; return false;"),
+	    'rezs'  => link_to(t('experiment_show_page.rez_link_text'),'#',
+	                 :onclick =>"if (hiddenFlag) return false; document.getElementById('hidden_rezs').style.display='block'; hiddenFlag = true; return false;"),
           }
         ]
     elsif id == 'ExperimentTwo'
@@ -160,12 +173,12 @@ return
             'owner' => 'benzel',
 	    'proj'  => 'Tutorial2013 Project',
 	    'stat'  => 'Changing',
-	    'topol' => link_to('Topology','/expershow?id=ExperimentTwo'),
-	    'acts'  => link_to('Actions','/expershow?id=ExperimentTwo'),
-	    'const' => link_to('Constraints','/expershow?id=ExperimentTwo'),
-	    'dcol'  => link_to('DataCollection','/expershow?id=ExperimentTwo'),
-	    'conts' => link_to('Containers','/expershow?id=ExperimentTwo'),
-	    'rezs'  => link_to('Resources','/expershow?id=ExperimentTwo')
+	    'topol' => link_to(t('experiment_show_page.topol_link_text'),'/expershow?id=ExperimentTwo'),
+	    'acts'  => link_to(t('experiment_show_page.actions_link_text'),'/expershow?id=ExperimentTwo'),
+	    'const' => link_to(t('experiment_show_page.const_link_text'),'/expershow?id=ExperimentTwo'),
+	    'dcol'  => link_to(t('experiment_show_page.dc_link_text'),'/expershow?id=ExperimentTwo'),
+	    'conts' => link_to(t('experiment_show_page.cont_link_text'),'/expershow?id=ExperimentTwo'),
+	    'rezs'  => link_to(t('experiment_show_page.rez_link_text'),'/expershow?id=ExperimentTwo')
           }
         ]
     elsif id == 'ExperimentThree'
@@ -174,17 +187,57 @@ return
             'owner' => 'bfdh',
 	    'proj'  => 'Super Secret Project',
 	    'stat'  => 'Realizing',
-	    'topol' => link_to('Topology','/expershow?id=ExperimentThree'),
-	    'acts'  => link_to('Actions','/expershow?id=ExperimentThree'),
-	    'const' => link_to('Constraints','/expershow?id=ExperimentThree'),
-	    'dcol'  => link_to('DataCollection','/expershow?id=ExperimentThree'),
-	    'conts' => link_to('Containers','/expershow?id=ExperimentThree'),
-	    'rezs'  => link_to('Resources','/expershow?id=ExperimentThree')
+	    'topol' => link_to(t('experiment_show_page.topol_link_text'),'/expershow?id=ExperimentThree'),
+	    'acts'  => link_to(t('experiment_show_page.actions_link_text'),'/expershow?id=ExperimentThree'),
+	    'const' => link_to(t('experiment_show_page.const_link_text'),'/expershow?id=ExperimentThree'),
+	    'dcol'  => link_to(t('experiment_show_page.dc_link_text'),'/expershow?id=ExperimentThree'),
+	    'conts' => link_to(t('experiment_show_page.cont_link_text'),'/expershow?id=ExperimentThree'),
+	    'rezs'  => link_to(t('experiment_show_page.rez_link_text'),'/expershow?id=ExperimentThree')
           }
         ]
     end
     client = nil
     exper
+  end
+
+  def getUserName(uid)
+      name = uid # default in case of disaster
+
+      # first, we need a secure SOAP transaction pathway
+      client = Savon.client(
+        :wsdl => "https://users.isi.deterlab.net:52323/axis2/services/Users?wsdl",
+        :log_level => :debug, 
+        :log => true, 
+        :pretty_print_xml => true,
+        :soap_version => 2,
+        :namespace => 'http://api.testbed.deterlab.net/xsd',
+        :logger => Rails.logger,
+        :filters => :password,
+	:raise_errors => false,
+	# client SSL options
+	:ssl_verify_mode => :none,
+	:ssl_cert_file => session[:certFile],
+	:ssl_cert_key_file => session[:keyFile]
+        )
+
+      # now we need to get the user profile for this user id
+      response = client.call(
+	         :get_user_profile,
+	         "message" => {'uid' => uid, :order! => [:uid] }
+	       )
+      if response.success? == true
+	  # pick out the data by parsing profile tree: an array of hashes
+	  a = response.to_hash[:get_user_profile_response][:return][:attributes]
+          a.each do |h|
+	      if h[:name] == 'name'
+	          name = h[:value]
+	      end
+	  end
+      end
+
+      client = nil
+
+      name
   end
 
   # show = show specified experiment
@@ -206,7 +259,6 @@ return
     exper = experData(params["id"])
 
     text = '<table><tr><td>Experiment</td><td>' + params["id"]
-    owner = session[('exper_' + params["id"])]
     order = Array.new
     order = [ 'owner','proj','stat','topol','acts','const','dcol','conts','rezs' ]
     exper.each do |h|
@@ -217,15 +269,19 @@ return
 	    end
 
 	    if k == 'topol' 
-    	        text = text + '<tr><td>Attributes</td><td>'
+    	        text = text + '<tr><td>' + t('experiment_show_page.attributes') + '</td><td>'
 	    end
 	    if k == 'owner'
+		owner = getUserName(v)
+		if owner.nil?
+		    owner = v
+		end
     	        #text = text + ('<tr><td>Owner</td><td>' + v + '</td></tr>')
-    	        text = text + ('<tr><td>Owner</td><td>' + owner + '</td></tr>')
+    	        text = text + ('<tr><td>' + t('experiment_show_page.owner') + '</td><td>' + owner + '</td></tr>')
 	    elsif k == 'proj'
-    	        text = text + ('<tr><td>Parent Project</td><td>' + v + '</td></tr>')
+    	        text = text + ('<tr><td>' + t('experiment_show_page.project') + '</td><td>' + v + '</td></tr>')
 	    elsif k == 'stat'
-    	        text = text + ('<tr><td>Status</td><td>' + v + '</td></tr>')
+    	        text = text + ('<tr><td>' + t('experiment_show_page.status') + '</td><td>' + v + '</td></tr>')
 	    else
 	        text = text + (v + ' ')
 	        if !k.eql?('rezs')
@@ -243,6 +299,41 @@ return
 
     text = text + '<tr><td><input type="button" value="Run Experiment"></td><td><input type="button" value="Halt Experiment"></td></tr>'
     text = text + '</table>'
+
+    # usually-hidden areas
+    text = text + '<div style="display: none;"><input type="text" name="whichaction" id="whichaction" size="25"></div>'
+    list = [
+        { 'title' => 'Topology', 'abbrev' => 'topol'},
+        { 'title' => 'Actions', 'abbrev' => 'actions'},
+        { 'title' => 'Constraints', 'abbrev' => 'const'},
+        { 'title' => 'Data Collection', 'abbrev' => 'dc'},
+        { 'title' => 'Containers', 'abbrev' => 'conts'},
+        { 'title' => 'Resources', 'abbrev' => 'rezs'},
+    ]
+    list.each do |h|
+	@title = h["title"]
+	@id = "hidden_" + h["abbrev"]
+	@idfile = "hidden_" + h["abbrev"] + "_file"
+	@todo = 'download_' + h["abbrev"]
+	@varname = "attrib_" + h["abbrev"]
+        @hidden = <<END
+    <div style="display: none;" id="#{@id}" name="#{@id}">
+	<h4>#{@title}<h4>
+	<textarea rows="5" cols="75" name="#{@varname}">lorem ipsum #{@title}</textarea>
+	<br>
+        <input type="button" value="Save"     onClick="hiddenFlag=false; document.getElementById('expershowform').submit(); return true;">
+        <input type="button" value="Download" onClick="hiddenFlag=false; document.getElementById('whichaction').value='#{@todo}'; document.getElementById('expershowform').submit(); return true;">
+        <input type="button" value="Replace"  onClick="document.getElementById('#{@idfile}').style.display='block'; return false;">
+        <input type="button" value="Cancel"   onClick="document.getElementById('#{@id}').style.display='none'; hiddenFlag = false; return false;">
+    </div>
+    <div style="display: none;" id="#{@idfile}" name="#{@idfile}">
+	<h5>Replace #{@title} From a File</h5>
+    	<input type="file">
+        <input type="button" value="Done" onClick="document.getElementById('#{@idfile}').style.display='none'; return false;">
+    </div>
+END
+        text = text + @hidden
+    end
 
     raw(text)
   end
@@ -312,18 +403,27 @@ return
 	next if exper.nil?
 
 	# this is probably incorrectly stubbed and should not be array of hashes, but rather a simple hash
+	stuff = Array.new
 	exper.each do |h|
 	    next if h.nil?
 
-            text += "<table>\n"
-            text += "<tr><th width=\"100\">Experiment</th><th width=\"100\">Owner</th><th width=\"100\">Parent Project</th><th width=\"100\">Status</th></tr>\n"
-	    text = text + "<tr>\n"
-	    text = text + ('  <td>' + experlink + '</td>' + "\n")
-	    text = text + ('  <td>' + owner + '</td>' + "\n")
-	    text = text + (' <td>' + h['proj'] + '</td>' + "\n")
-	    text = text + (' <td>' + h['stat'] + '</td>' + "\n")
-	    text = text + ('</tr>' + "\n")
-            text += "</table>\n"
+	    stuff.clear
+	    stuff.push("<table>\n", "<tr>\n")
+	    stuff.push('<th width="100">', t('experiment_show_page.experiment'), "</th>\n")
+	    stuff.push('<th width="100">', t('experiment_show_page.owner'),      "</th>\n")
+	    stuff.push('<th width="100">', t('experiment_show_page.project'),    "</th>\n")
+	    stuff.push('<th width="100">', t('experiment_show_page.status'),     "</th>\n")
+	    stuff.push("</tr>\n")
+
+	    stuff.push("<tr>\n")
+	    stuff.push('<td>', experlink, '</td>', "\n")
+	    stuff.push('<td>', owner,     '</td>', "\n")
+	    stuff.push('<td>', h['proj'], '</td>', "\n")
+	    stuff.push('<td>', h['stat'], '</td>', "\n")
+	    stuff.push('</tr>',"\n")
+	    stuff.push("</table>\n")
+
+	    text = text + stuff.join(' ')
         end
     end
     

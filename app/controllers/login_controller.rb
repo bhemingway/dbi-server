@@ -1000,6 +1000,17 @@ logger.debug session['saveProfileStatus']
     end
 
     session['saveProfileStatus'] = session['profile'] = session['pwrdmgmt'] = nil
+
+    # do we need to send data to the client?
+    if !params['whichaction'].nil? && !params['whichaction'].blank? && params['whichaction'].match(/^download_/)
+	@tmp = params['whichaction']
+	@tag = @tmp[9, @tmp.length - 9]
+	@key = 'attrib_' + @tag 
+	@fn = @tag + '.txt'
+	send_data(params[@key].to_s, :filename=>@fn)
+	return
+    end
+
     render :index
   end
 
