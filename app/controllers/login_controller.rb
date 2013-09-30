@@ -3,7 +3,7 @@ class LoginController < ApplicationController
 # ----------
 # error handling
 # ----------
-#  rescue_from RuntimeError, Exception, :with => :error
+  rescue_from RuntimeError, Exception, :with => :error
 
 
   # error = end point for API errors
