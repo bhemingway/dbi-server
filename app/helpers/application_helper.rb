@@ -173,12 +173,18 @@ return
             'owner' => 'benzel',
 	    'proj'  => 'Tutorial2013 Project',
 	    'stat'  => 'Changing',
-	    'topol' => link_to(t('experiment_show_page.topol_link_text'),'/expershow?id=ExperimentTwo'),
-	    'acts'  => link_to(t('experiment_show_page.actions_link_text'),'/expershow?id=ExperimentTwo'),
-	    'const' => link_to(t('experiment_show_page.const_link_text'),'/expershow?id=ExperimentTwo'),
-	    'dcol'  => link_to(t('experiment_show_page.dc_link_text'),'/expershow?id=ExperimentTwo'),
-	    'conts' => link_to(t('experiment_show_page.cont_link_text'),'/expershow?id=ExperimentTwo'),
-	    'rezs'  => link_to(t('experiment_show_page.rez_link_text'),'/expershow?id=ExperimentTwo')
+	    'topol' => link_to(t('experiment_show_page.topol_link_text'),'#',
+	                 :onclick =>"if (hiddenFlag) return false; document.getElementById('hidden_topol').style.display='block'; hiddenFlag = true; return false;"),
+	    'acts'  => link_to(t('experiment_show_page.actions_link_text'),'#',
+	                 :onclick =>"if (hiddenFlag) return false; document.getElementById('hidden_actions').style.display='block'; hiddenFlag = true; return false;"),
+	    'const' => link_to(t('experiment_show_page.const_link_text'),'#',
+	                 :onclick =>"if (hiddenFlag) return false; document.getElementById('hidden_const').style.display='block'; hiddenFlag = true; return false;"),
+	    'dcol'  => link_to(t('experiment_show_page.dc_link_text'),'#',
+	                 :onclick =>"if (hiddenFlag) return false; document.getElementById('hidden_dc').style.display='block'; hiddenFlag = true; return false;"),
+	    'conts' => link_to(t('experiment_show_page.cont_link_text'),'#',
+	                 :onclick =>"if (hiddenFlag) return false; document.getElementById('hidden_conts').style.display='block'; hiddenFlag = true; return false;"),
+	    'rezs'  => link_to(t('experiment_show_page.rez_link_text'),'#',
+	                 :onclick =>"if (hiddenFlag) return false; document.getElementById('hidden_rezs').style.display='block'; hiddenFlag = true; return false;"),
           }
         ]
     elsif id == 'ExperimentThree'
@@ -187,12 +193,18 @@ return
             'owner' => 'bfdh',
 	    'proj'  => 'Super Secret Project',
 	    'stat'  => 'Realizing',
-	    'topol' => link_to(t('experiment_show_page.topol_link_text'),'/expershow?id=ExperimentThree'),
-	    'acts'  => link_to(t('experiment_show_page.actions_link_text'),'/expershow?id=ExperimentThree'),
-	    'const' => link_to(t('experiment_show_page.const_link_text'),'/expershow?id=ExperimentThree'),
-	    'dcol'  => link_to(t('experiment_show_page.dc_link_text'),'/expershow?id=ExperimentThree'),
-	    'conts' => link_to(t('experiment_show_page.cont_link_text'),'/expershow?id=ExperimentThree'),
-	    'rezs'  => link_to(t('experiment_show_page.rez_link_text'),'/expershow?id=ExperimentThree')
+	    'topol' => link_to(t('experiment_show_page.topol_link_text'),'#',
+	                 :onclick =>"if (hiddenFlag) return false; document.getElementById('hidden_topol').style.display='block'; hiddenFlag = true; return false;"),
+	    'acts'  => link_to(t('experiment_show_page.actions_link_text'),'#',
+	                 :onclick =>"if (hiddenFlag) return false; document.getElementById('hidden_actions').style.display='block'; hiddenFlag = true; return false;"),
+	    'const' => link_to(t('experiment_show_page.const_link_text'),'#',
+	                 :onclick =>"if (hiddenFlag) return false; document.getElementById('hidden_const').style.display='block'; hiddenFlag = true; return false;"),
+	    'dcol'  => link_to(t('experiment_show_page.dc_link_text'),'#',
+	                 :onclick =>"if (hiddenFlag) return false; document.getElementById('hidden_dc').style.display='block'; hiddenFlag = true; return false;"),
+	    'conts' => link_to(t('experiment_show_page.cont_link_text'),'#',
+	                 :onclick =>"if (hiddenFlag) return false; document.getElementById('hidden_conts').style.display='block'; hiddenFlag = true; return false;"),
+	    'rezs'  => link_to(t('experiment_show_page.rez_link_text'),'#',
+	                 :onclick =>"if (hiddenFlag) return false; document.getElementById('hidden_rezs').style.display='block'; hiddenFlag = true; return false;"),
           }
         ]
     end
@@ -256,6 +268,14 @@ return
     session['saveProfileStatus'] = session['profile'] = session['pwrdmgmt'] = nil
 
     # for now, stub out viewExperiments
+    @list = [
+        { 'title' => 'Topology', 'abbrev' => 'topol'},
+        { 'title' => 'Actions', 'abbrev' => 'actions'},
+        { 'title' => 'Constraints', 'abbrev' => 'const'},
+        { 'title' => 'Data Collection', 'abbrev' => 'dc'},
+        { 'title' => 'Containers', 'abbrev' => 'conts'},
+        { 'title' => 'Resources', 'abbrev' => 'rezs'},
+    ]
     exper = experData(params["id"])
 
     text = '<table><tr><td>Experiment</td><td>' + params["id"]
@@ -302,15 +322,7 @@ return
 
     # usually-hidden areas
     text = text + '<div style="display: none;"><input type="text" name="whichaction" id="whichaction" size="25"></div>'
-    list = [
-        { 'title' => 'Topology', 'abbrev' => 'topol'},
-        { 'title' => 'Actions', 'abbrev' => 'actions'},
-        { 'title' => 'Constraints', 'abbrev' => 'const'},
-        { 'title' => 'Data Collection', 'abbrev' => 'dc'},
-        { 'title' => 'Containers', 'abbrev' => 'conts'},
-        { 'title' => 'Resources', 'abbrev' => 'rezs'},
-    ]
-    list.each do |h|
+    @list.each do |h|
 	@title = h["title"]
 	@id = "hidden_" + h["abbrev"]
 	@idfile = "hidden_" + h["abbrev"] + "_file"
