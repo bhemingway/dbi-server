@@ -80,4 +80,8 @@ Dbi::Application.routes.draw do
   match '/projlist' => 'login#projlist'
   match '/experlist' => 'login#experlist'
   match '/expershow' => 'login#expershow'
+  match '/newproject' => 'login#newproject'
+  match '/newproject1' => 'login#newproject1'
+  match '/newproject2' => 'login#newproject2'
+  match '/newproject3' => 'login#newproject3'
 end

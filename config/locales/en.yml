@@ -1,3 +1,4 @@
+# WARNING: de-tab this file whenever you change it
 # Mon Aug 12 13:35:59 UTC 2013 BFH forgot password support
 # Sat Aug  3 15:37:02 UTC 2013 BFH timeout apology support
 # Thu Jul 25 14:15:43 UTC 2013 BFH polishing the UI
@@ -196,3 +197,190 @@ en:
     cont_link_text: "Containers"
     rez_link_text: "Resources"
 
+  newproject:
+    title: "Start Using DeterLab: New Project Application Form"
+    subtitle0: "Submit This Form to Request a New Project"
+    subtitle1: "Step 1 of 3: Enter Project Leader Information"
+    subtitle2: "Step 2 of 3: Enter Project Information"
+    subtitle3: "Step 3 of 3: Submit the New Project Application Form"
+    intro: |+
+      To start using DeterLab, you need to apply for a project and user account using this web form. Before doing so, please first read the instructions on what type of DeterLab access you need - Get Started in DeterLab - and read the DeterLab Usage Policy. Then use the appropriate web form to submit your request.
+
+      For PIs, project leaders, and sponsors only, the form below is the mechanism to provide DETER project staff with key information required to confirm eligibility to use DeterLab and to set up a user account. A DETER project staff member will contact you using the email address you provide. An organization-affiliated email address is required. Other email addresses (Gmail, Hotmail, email addresses from ISPs) are not accepted.
+
+      If you already have a DeterLab account and need to create a new project, please log in first. If you are still not quite ready to start and need additional assistance, please contact us using the link at the bottom of this page.
+
+      If you already have a DETER account, please log on first!  Use the link at the top of the page.
+
+    next_prompt: "Next"
+    back_prompt: "Back"
+    next_link_text: "Back to New Project Overview"
+    next1_link_text: "Enter Project Leader information (step 1 of 3)"
+    next2_link_text: "Enter Project information (step 2 of 3)"
+    next3_link_text: "Submit new project request (step 3 of 3)"
+
+    form:
+      name:
+        label: "Full Name"
+        description: "Your full name including title"
+        len: "40"
+        required: "yes"
+      email:
+        label: "Email Address"
+        description: "The e-mail address that is most appropriate for communication with the DeterLab team, including notification of approval of your project, and of the project leader account at DeterLab"
+        len: "40"
+        required: "yes"
+      telno:
+        label: "Phone Number"
+        description: "The phone number that the DeterLab team can use to contact you"
+        required: "no"
+        len: "40"
+      job:
+        label: "Position, Title, or Job Description"
+        description: "Your position at your employer, e.g. Associate Professor, Research Director, or Director of Engineering"
+        required: "no"
+        len: "40"
+        required: "yes"
+      org_name:
+        label: "Full Name of Employer or Affiliated Institution"
+        description: "A corporation, academic institution, government organization, or NGO that you are employed by or affiliated with"
+        required: "no"
+        len: "40"
+      org_abbrev:
+        label: "Institution Abbreviation"
+        description: 'The short name or abbreviation of your institution, for example: "CalTech" or "NIST"'
+        required: "no"
+        len: "10"
+      org_url:
+        label: "Institution's Web Site"
+        description: "The main page of the web site of your corporation, academic institution, government organization, or NGO"
+        required: "no"
+        len: "40"
+      postal:
+        label: "Postal Address"
+        description: "Your postal address at your afflilated institution"
+        required: "no"
+        addr1:
+          label: "Address 1"
+          len: "50"
+        addr2:
+          label: "Address 2"
+          len: "50"
+        city:
+          label: "City"
+          len: "25"
+        state:
+          label: "State/Province"
+          len: "2"
+        zip:
+          label: "Zip/Postal Code"
+          len: "10"
+        country:
+          label: "Country"
+          len: "15"
+      user_name:
+        label: "Username"
+        description: "A 6-to-8-character username-- numbers and letters only-- that will be used a user-id for your login to DeterLab"
+        required: "no"
+        len: "8"
+        required: "yes"
+      password1:
+        label: "Password"
+        description: "Suggest a password for your Deterlab login"
+        required: "no"
+        len: "8"
+        required: "yes"
+      password2:
+        label: "Re-type Password"
+        description: "Confirm the suggested password for your Deterlab login"
+        required: "no"
+        len: "8"
+        required: "yes"
+      proj_name:
+        label: "Project Name"
+        description: "Your project's name or brief description"
+        required: "no"
+        len: "40"
+        required: "yes"
+      proj_plan:
+        label: "Project Plan"
+        description: "Briefly describe your project's goals, and how you plan to use DeterLab"
+        required: "no"
+        rows: "10"
+        cols: "80"
+        required: "yes"
+      proj_id:
+        label: "Project ID"
+        description: "A 6-to-12-character identifier-- numbers and letters only-- that will be used a group-id name for members of your project"
+        required: "no"
+        len: "12"
+        required: "yes"
+      proj_url:
+        label: "Project Web Site"
+        description: "A page in a web site about your project, or your sponsoring organization"
+        required: "no"
+        len: "40"
+      proj_org_type:
+        label: "Project Organization Type"
+        description: "Select one broad category that best fits your project"
+        required: "yes"
+        options:
+          AAAA: "-pick one-"
+          Academic: "Academic"
+          Industry: "Industry"
+          Government: "Government"
+          Internal: "Internal"
+      proj_res_focus:
+        label: "Project Research Focus"
+        description: "Select one reaserch area that best fits your project"
+        required: "yes"
+        options:
+          AAAA: "-pick one-"
+          Architecture: "Architecture"
+          Botnets: "Botnets"
+          Class: "Class"
+          Comprehensive: "Comprehensive"
+          Congestion: "Congestion"
+          DDoS: "DDoS"
+          DNS: "DNS"
+          Evaluation: "Evaluation"
+          Forensics: "Forensics"
+          Infrastructure: "Infrastructure"
+          Internal: "Internal"
+          Intrusions: "Intrusions"
+          Malware: "Malware"
+          Metrics: "Metrics"
+          Monitoring: "Monitoring"
+          Multicast: "Multicast"
+          Overlays: "Overlays"
+          Privacy: "Privacy"
+          Routing: "Routing"
+          Scanning: "Scanning"
+          Spam: "Spam"
+          Spoofing: "Spoofing"
+          Testbeds: "Testbeds"
+          Traceback: "Traceback"
+          Trust: "Trust"
+          Watermarking: "Watermarking"
+          Wireless: "Wireless"
+          Worms: "Worms"
+          Other: "Other"
+      proj_funding:
+        label: "Project Funding or Support"
+        description: "Select one type of funding or support that best fits your project"
+        required: "yes"
+        options:
+          AAAA: "-pick one-"
+          Government_Research_Grant: "Government Research Grant"
+          Other_Govnerment_Contract: "Other Govnerment Contract"
+          Academic_Institution_Support: "Academic Institution Support"
+          Corporate_Funding: "Corporate Funding"
+          Private_Funding: "Private Funding"
+          Other: "Other"
+      proj_listing:
+        label: "Project Listing"
+        description: "Include your project on the public list of DeterLab projects. See https://www.isi.deterlab.net/projectlist.php for details."
+        required: "no"
+        options:
+          Yes: "Yes"
+          No: "No"

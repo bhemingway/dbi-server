@@ -3,7 +3,7 @@ class LoginController < ApplicationController
 # ----------
 # error handling
 # ----------
-  rescue_from RuntimeError, Exception, :with => :error
+#  rescue_from RuntimeError, Exception, :with => :error
 
 
   # error = end point for API errors
@@ -1114,4 +1114,23 @@ logger.debug session['saveProfileStatus']
     render :index
   end
 
+  # newproject = new project application form, part 0 (intro)
+  def newproject
+    render :index
+  end
+
+  # newproject1 = new project application form, part 1 (project leader info)
+  def newproject1
+    render :index
+  end
+
+  # newproject2 = new project application form, part 2 (project info)
+  def newproject2
+    render :index
+  end
+
+  # newproject3 = new project application form, part 3 (submit info)
+  def newproject3
+    render :index
+  end
 end

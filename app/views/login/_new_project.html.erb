@@ -1,0 +1,65 @@
+<!-- START _new_project.html.erb -->
+
+<% # figure out which step this is: 0=intro, 1=project leader, 2=project
+   myaction = params[:action]
+   step = myaction[/\d+$/]
+   step = 0 if step.nil?
+   key = 'newproject.subtitle' + step.to_s 
+   step_string = t(key)
+   next_step = (step.to_i + 1.to_i)
+   url = '/newproject' + next_step.to_s
+ %>
+
+<h2>
+<%= t('newproject.title')%>
+</h2>
+<h3>
+<%= step_string %>
+</h3>
+<p>
+<%=
+   # need to pass in the "back" link to the next page, if any
+   @back_url = ''
+   if !step.to_i.zero?
+     url = '/newproject' 
+     if step.to_i > 1
+       prev_step = 0
+       prev_step = (step.to_i - 1.to_i) 
+       url += prev_step.to_s
+     end
+     @back_url = url
+
+     # figure out the previous description
+     key = 'newproject.next' + prev_step.to_s + '_link_text'
+     @back_desc = t(key)
+   end
+
+   # contents depends on which step this is
+   case step.to_i
+   when 0
+     simple_format t('newproject.intro')
+   when 1
+     render 'new_project_1'
+   when 2
+     render 'new_project_2'
+   when 3
+     render 'new_project_3'
+   end
+ %>
+<% # need a "next" nav element if this is the start of the chain
+   if step.to_i.zero?
+ %>
+ <table width="100%"> <!-- keep button and description together -->
+   <tr>
+     <td width="50%"></td>
+     <td width="50%" align="right">
+       <%= # figure out the previous description
+           key = 'newproject.next' + next_step.to_s + '_link_text'
+           raw('<cite>' + t(key) + '</cite>')
+        %>
+       <%= link_to t('newproject.next_prompt'), url %>
+     </td>
+   </tr>
+ </table>
+<% end %>
+<!-- END _new_project.html.erb -->

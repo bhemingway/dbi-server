@@ -51,7 +51,8 @@ common: &common
 
   front:
     url1: "http://www.isi.edu/deter/docs/DETER_Tutorial-TF-Jan2011.pdf"
-    url2: "https://www.isi.deterlab.net/reqaccount.php3"
+    #url2: "https://www.isi.deterlab.net/reqaccount.php3"
+    url2: "/newproject"
 
   profile:
     # note: this is a string because it is destined to be part of HTML, a td width
