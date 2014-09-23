@@ -459,4 +459,13 @@ END
       :confirm => 'Are you sure? Any changes will be lost.'
   end
 
+  # get the translation strings for this particular location and for javascript
+  def current_translations
+    I18n.backend.send(:init_translations) unless I18n.backend.initialized?
+    # now you can safely dump the translations to json
+
+    @translations ||= I18n.backend.send(:translations)
+    @translations[I18n.locale].with_indifferent_access["js_text"]
+  end
+
 end # module ApplicationHelper

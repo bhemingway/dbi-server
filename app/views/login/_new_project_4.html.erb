@@ -1,0 +1,25 @@
+<!-- START _new_project_3.html.erb -->
+
+      <div id="node-1" class="page-ntype published not-promoted not-sticky full-view author-admin clear-block">
+
+        <table>
+          <tr><th>Field</th><th>Value</th><th>Description</th></tr>
+          <%= # loop through sessions hash, only printing out field data
+	      a = Array.new
+	      params.keys.sort.each do |k|
+		next unless (k[0,2] == 'f_')
+		k1 = k[2..-1]
+		v2 = params[k]
+		v2 = "{redacted}" if (k1[0,8] == 'password')
+		v2 = "{blank}" if v2.blank?
+		tk = 'newproject.form.' + k1 + '.description'
+		d  = t(tk)
+	        a.push("<tr><td><b>#{k1}</b></td><td>#{v2}</td><td>#{d}</td></tr>")
+	      end
+	      raw(a.join("\n"))
+           %>
+        </table>
+
+     </div> <!-- end of node-1 -->
+
+<!-- END _new_project_3.html.erb -->

@@ -84,4 +84,6 @@ Dbi::Application.routes.draw do
   match '/newproject1' => 'login#newproject1'
   match '/newproject2' => 'login#newproject2'
   match '/newproject3' => 'login#newproject3'
+  match '/newproject4' => 'login#newproject4'
+  match '/newproject5' => 'login#newproject5'
 end

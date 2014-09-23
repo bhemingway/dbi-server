@@ -15,6 +15,14 @@ common: &common
   # the inactivity timeout in seconds
   timeoutsecs: 300
 
+  # urls interpolated into localized text via "{tag~url}" notation
+  urls:
+    get_started: "http://info.deterlab.net/get_started_deterlab"
+    usage: "https://trac.deterlab.net/wiki/Policy"
+    login: "/login"
+    contact: "http://info.deterlab.net/contact_deterlab"
+    education: "https://education.deterlab.net/"
+
   headlinenav:
     deterprojecturl: "http://deter-project.org/"
     contacturl: "http://info.deterlab.net/contact_deterlab"

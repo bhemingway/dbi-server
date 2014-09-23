@@ -1114,23 +1114,33 @@ logger.debug session['saveProfileStatus']
     render :index
   end
 
-  # newproject = new project application form, part 0 (intro)
+  # newproject = new project application form, part 0 (info)
   def newproject
     render :index
   end
 
-  # newproject1 = new project application form, part 1 (project leader info)
+  # newproject = new project application form, part 1 (id self)
   def newproject1
     render :index
   end
 
-  # newproject2 = new project application form, part 2 (project info)
+  # newproject = new project application form, part 2 (intro)
   def newproject2
     render :index
   end
 
-  # newproject3 = new project application form, part 3 (submit info)
+  # newproject3 = new project application form, part 3 (project leader info)
   def newproject3
+    render :index
+  end
+
+  # newproject4 = new project application form, part 4 (project info)
+  def newproject4
+    render :index
+  end
+
+  # newproject5 = new project application form, part 5 (submit info)
+  def newproject5
     render :index
   end
 end

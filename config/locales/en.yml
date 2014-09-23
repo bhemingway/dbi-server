@@ -1,4 +1,5 @@
 # WARNING: de-tab this file whenever you change it
+# Thu Sep 11 20:03:59 UTC 2014 BFH new structure for new projects
 # Mon Aug 12 13:35:59 UTC 2013 BFH forgot password support
 # Sat Aug  3 15:37:02 UTC 2013 BFH timeout apology support
 # Thu Jul 25 14:15:43 UTC 2013 BFH polishing the UI
@@ -9,6 +10,16 @@ en:
   # generic message for confirmation, if needed
   are_you_sure: "Are you sure?"
 
+  #
+  # strings used by javascript alert boxes to interact with user
+  #
+  js_text:
+    # new project, page 0
+    np0_checks: "Please read all the documents and check the corresponding boxes before continuing."
+
+  #
+  # usual DETER UI elements
+  #
   headerlinenav:
 
     login: Login
@@ -197,27 +208,43 @@ en:
     cont_link_text: "Containers"
     rez_link_text: "Resources"
 
+  # new project page
   newproject:
     title: "Start Using DeterLab: New Project Application Form"
-    subtitle0: "Submit This Form to Request a New Project"
-    subtitle1: "Step 1 of 3: Enter Project Leader Information"
-    subtitle2: "Step 2 of 3: Enter Project Information"
-    subtitle3: "Step 3 of 3: Submit the New Project Application Form"
+    subtitle0: "Get Started in Deterlab"
+    subtitle1: "Tell Us About Yourself"
+    subtitle2: "Submit This Form to Request a New Project"
+    subtitle3: "Step 3 of 5: Enter Project Leader Information"
+    subtitle4: "Step 4 of 5: Enter Project Information"
+    subtitle5: "Step 5 of 5: Submit the New Project Application Form"
+
+    info:
+      cb1_text: "I would like to apply for an account to use DeterLab"
+      cb2_text: "I have read the Usage Policy and Usage Guide"
+
     intro: |+
-      To start using DeterLab, you need to apply for a project and user account using this web form. Before doing so, please first read the instructions on what type of DeterLab access you need - Get Started in DeterLab - and read the DeterLab Usage Policy. Then use the appropriate web form to submit your request.
+      To start using DeterLab, you need to apply for a user account using a web form that you can start just below. But first, please read our Usage Guide to the basic concepts of DeterLab usage - {Get Started in DeterLab~get_started} - which will help you identify which type of DeterLab access you should apply for. Also please read the {DeterLab Usage Policy~usage} to ensure that your plans match the appropriate uses of DeterLab. Then when you're ready click "Next" button below and you'll be guided through the application process.
 
-      For PIs, project leaders, and sponsors only, the form below is the mechanism to provide DETER project staff with key information required to confirm eligibility to use DeterLab and to set up a user account. A DETER project staff member will contact you using the email address you provide. An organization-affiliated email address is required. Other email addresses (Gmail, Hotmail, email addresses from ISPs) are not accepted.
+      If you already have a DeterLab account, and want to apply for additional DeterLab resources, please {login~login} and then follow one of the options described here: Extend Your Usage of DeterLab.
 
-      If you already have a DeterLab account and need to create a new project, please log in first. If you are still not quite ready to start and need additional assistance, please contact us using the link at the bottom of this page.
+      Please note that your application requires an organization-affiliated email address, for DeterLab staff to be able to contact you to conclude the application process. Other email addresses (Gmail, Hotmail, email addresses from ISPs) will not be accepted.
 
-      If you already have a DETER account, please log on first!  Use the link at the top of the page.
+    usage_type: |+
+      Please select from the options below that best describe the type of usage you are applying for, based on the {DeterLab Usage Guide~usage}. If none of the options fits your case, please {contact us~contact} to get assistance with the application process.
 
     next_prompt: "Next"
     back_prompt: "Back"
-    next_link_text: "Back to New Project Overview"
-    next1_link_text: "Enter Project Leader information (step 1 of 3)"
-    next2_link_text: "Enter Project information (step 2 of 3)"
-    next3_link_text: "Submit new project request (step 3 of 3)"
+    next0_link_text: "Back to New Project Overview"
+    next1_link_text: "Tell Us About Yourself"
+    next2_link_text: "Enter Project Leader information (step 2 of 5)"
+    next3_link_text: "Enter Project information (step 3 of 5)"
+    next4_link_text: "Submit new project request (step 4 of 5)"
+    usage_types:
+      - "I am a research group leader, and I want to sign up for a DeterLab workspace for my research project team members."
+      - "I am a member of a research project team that is already using DeterLab, and I want to get access to my team's workspace."
+      - "I am an academic or research advisor of a student, and I would like to sponsor the student's individual research work in DeterLab."
+      - "I am a student doing my own research, with an academic or research advisor who has already sponsored my work in DeterLab."
+      - "I am university faculty or staff or who would like to start using DeterLab's {educational facilities~education} to teach a course at my educational institution."
 
     form:
       name:

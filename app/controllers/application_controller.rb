@@ -13,4 +13,21 @@ class ApplicationController < ActionController::Base
     @_current_user ||= session[:current_user_id] &&
       User.find_by_id(session[:current_user_id])
   end
+
+  # interpolate links into translation strings: {tag~url} -> <a href="url">tag</a>
+  def add_urls(text)
+    text.scan(/\{[^\}]+\}/).each do |m|
+        parts = m.split('~')
+	tag = parts[0]
+	tag.tr! '{',''
+	url_name = parts[1]
+	url_name.tr! '}',''
+	url = AppConfig.urls[url_name]
+	href = "<a href=\"#{url}\">#{tag}</a>"
+	text.sub! m,href
+    end
+
+    text.html_safe
+  end
+  helper_method :add_urls
 end

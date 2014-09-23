@@ -1,4 +1,4 @@
-<!-- START _new_project_1.html.erb -->
+<!-- START _new_project_2.html.erb -->
 
 <% # figure out which step this is: 0=intro, 1=project leader, 2=project
    myaction = params[:action]
@@ -14,12 +14,14 @@
    # figure out the next description
    key = 'newproject.next' + next_step.to_s + '_link_text'
    next_desc = t(key)
+
+logger.debug params.inspect
  %>
 
       <div id="node-1" class="page-ntype published not-promoted not-sticky full-view author-admin clear-block">
         <!-- new project request form definition begins -->
-        <%= form_tag(url)  do %>
-	<%= # preserve fields from the first form
+        <%= form_tag(url, "id" => "form2")  do %>
+	<%= # preserve fields from the previous form
             hides = Array.new
             params.each do |k, v|
               next unless (k[0,2] == 'f_')
@@ -30,25 +32,25 @@
 	<table class="dbi-profile">
 	  <tr>
 	    <td>
-	      <%= t('newproject.form.proj_name.label') %>
+	      <%= t('newproject.form.name.label') %>
 	    </td>
 	    <td>
 	      <%= 
 		 options['tabindex'] += 1
-		 options['size'] = t('newproject.form.proj_name.len')
-		 if t('newproject.form.proj_name.required') == 'yes'
+		 options['size'] = t('newproject.form.name.len')
+		 if t('newproject.form.name.required') == 'yes'
 		   options['required'] = 'required'
 		   tag = req_tag
 		 else
 		   options.delete('required') if options.has_key?('required')
 		   tag = ""
 		 end
-		 text_field_tag 'f_proj_name', params['f_proj_name'], options
+		 text_field_tag 'f_name', params['f_name'], options
 	        %>
 	    </td>
 	    <td width="40">
-	      <% if t('newproject.form.proj_name.description') %>
-	      <a href="#" onclick="javascript:alert('<%= t('newproject.form.proj_name.description').gsub("'", %q(\\\'))%>'); return false;"><%= image_tag('info.png',{'size' => "20x20", 'alt' => "Help"})%></a>
+	      <% if t('newproject.form.name.description') %>
+	      <a href="#" onclick="javascript:alert('<%= t('newproject.form.name.description').gsub("'", %q(\\\'))%>'); return false;"><%= image_tag('info.png',{'size' => "20x20", 'alt' => "Help"})%></a>
 	      <% end %>
 	      <%= raw(tag) %>
 	    </td>
@@ -56,28 +58,25 @@
 
 	  <tr>
 	    <td>
-	      <%= t('newproject.form.proj_plan.label') %>
+	      <%= t('newproject.form.email.label') %>
 	    </td>
 	    <td>
 	      <%= 
 		 options['tabindex'] += 1
-		 options.delete("size") if options.has_key?('size')
-		 options['rows'] = t('newproject.form.proj_plan.rows')
-		 options['cols'] = t('newproject.form.proj_plan.cols')
-		 if t('newproject.form.proj_plan.required') == 'yes'
+		 options['size'] = t('newproject.form.email.len')
+		 if t('newproject.form.email.required') == 'yes'
 		   options['required'] = 'required'
 		   tag = req_tag
 		 else
 		   options.delete('required') if options.has_key?('required')
 		   tag = ""
 		 end
-		 text_area_tag 'f_proj_plan', params['f_proj_plan'], options
+		 text_field_tag 'f_email', params['f_email'], options
 	        %>
-		<% options.delete("rows"); options.delete("cols") %>
 	    </td>
 	    <td>
-	      <% if t('newproject.form.proj_plan.description') %>
-	      <a href="#" onclick="javascript:alert('<%= t('newproject.form.proj_plan.description').gsub("'", %q(\\\'))%>'); return false;"><%= image_tag('info.png',{'size' => "20x20", 'alt' => "Help"})%></a>
+	      <% if t('newproject.form.email.description') %>
+	      <a href="#" onclick="javascript:alert('<%= t('newproject.form.email.description').gsub("'", %q(\\\'))%>'); return false;"><%= image_tag('info.png',{'size' => "20x20", 'alt' => "Help"})%></a>
 	      <% end %>
 	      <%= raw(tag) %>
 	    </td>
@@ -85,25 +84,25 @@
 
 	  <tr>
 	    <td>
-	      <%= t('newproject.form.proj_id.label') %>
+	      <%= t('newproject.form.telno.label') %>
 	    </td>
 	    <td>
-	      <%= 
+	      <%=
 		 options['tabindex'] += 1
-		 options['size'] = t('newproject.form.proj_id.len')
-		 if t('newproject.form.proj_id.required') == 'yes'
+		 options['size'] = t('newproject.form.telno.len')
+		 if t('newproject.form.telno.required') == 'yes'
 		   options['required'] = 'required'
 		   tag = req_tag
 		 else
 		   options.delete('required') if options.has_key?('required')
 		   tag = ""
 		 end
-		 text_field_tag 'f_proj_id', params['f_proj_id'], options
+		 text_field_tag 'f_telno', params['f_telno'], options
 	        %>
 	    </td>
 	    <td>
-	      <% if t('newproject.form.proj_id.description') %>
-	      <a href="#" onclick="javascript:alert('<%= t('newproject.form.proj_id.description').gsub("'", %q(\\\'))%>'); return false;"><%= image_tag('info.png',{'size' => "20x20", 'alt' => "Help"})%></a>
+	      <% if t('newproject.form.telno.description') %>
+	      <a href="#" onclick="javascript:alert('<%= t('newproject.form.telno.description').gsub("'", %q(\\\'))%>'); return false;"><%= image_tag('info.png',{'size' => "20x20", 'alt' => "Help"})%></a>
 	      <% end %>
 	      <%= raw(tag) %>
 	    </td>
@@ -111,38 +110,12 @@
 
 	  <tr>
 	    <td>
-	      <%= t('newproject.form.proj_url.label') %>
+	      <%= t('newproject.form.job.label') %>
 	    </td>
 	    <td>
 	      <%= 
 		 options['tabindex'] += 1
-		 options['size'] = t('newproject.form.proj_url.len')
-		 if t('newproject.form.proj_url.required') == 'yes'
-		   options['required'] = 'required'
-		   tag = req_tag
-		 else
-		   options.delete('required') if options.has_key?('required')
-		   tag = ""
-		 end
-		 text_field_tag 'f_proj_url', params['f_proj_url'], options
-	        %>
-	    </td>
-	    <td>
-	      <% if t('newproject.form.proj_url.description') %>
-	      <a href="#" onclick="javascript:alert('<%= t('newproject.form.proj_url.description').gsub("'", %q(\\\'))%>'); return false;"><%= image_tag('info.png',{'size' => "20x20", 'alt' => "Help"})%></a>
-	      <% end %>
-	      <%= raw(tag) %>
-	    </td>
-	  </tr>
-
-	  <tr>
-	    <td>
-	      <%= t('newproject.form.proj_org_type.label') %>
-	    </td>
-	    <td>
-	      <%= 
-		 options['tabindex'] += 1
-		 options.delete('size') if options.has_key?('size')
+		 options['size'] = t('newproject.form.job.len')
 		 if t('newproject.form.job.required') == 'yes'
 		   options['required'] = 'required'
 		   tag = req_tag
@@ -150,12 +123,12 @@
 		   options.delete('required') if options.has_key?('required')
 		   tag = ""
 		 end
-	         select_tag 'f_proj_org_type', options_for_select(t('newproject.form.proj_org_type.options').invert.sort), options
+		 text_field_tag 'f_job', params['f_job'], options
 	        %>
 	    </td>
 	    <td>
-	      <% if t('newproject.form.proj_org_type.description') %>
-	      <a href="#" onclick="javascript:alert('<%= t('newproject.form.proj_org_type.description').gsub("'", %q(\\\'))%>'); return false;"><%= image_tag('info.png',{'size' => "20x20", 'alt' => "Help"})%></a>
+	      <% if t('newproject.form.job.description') %>
+	      <a href="#" onclick="javascript:alert('<%= t('newproject.form.job.description').gsub("'", %q(\\\'))%>'); return false;"><%= image_tag('info.png',{'size' => "20x20", 'alt' => "Help"})%></a>
 	      <% end %>
 	      <%= raw(tag) %>
 	    </td>
@@ -163,13 +136,13 @@
 
 	  <tr>
 	    <td>
-	      <%= t('newproject.form.proj_res_focus.label') %>
+	      <%= t('newproject.form.org_name.label') %>
 	    </td>
 	    <td>
 	      <%= 
 		 options['tabindex'] += 1
-		 options.delete('size') if options.has_key?('size')
-		 if t('newproject.form.proj_res_focus.required') == 'yes'
+		 options['size'] = t('newproject.form.org_name.len')
+		 if t('newproject.form.org_name.required') == 'yes'
 		   options['required'] = 'required'
 		   tag = req_tag
 		 else
@@ -177,38 +150,11 @@
 		   tag = ""
 		 end
 		 text_field_tag 'f_job', params['f_job'], options
-	         select_tag 'f_proj_res_focus', options_for_select(t('newproject.form.proj_res_focus.options').invert.sort), options
 	        %>
 	    </td>
 	    <td>
-	      <% if t('newproject.form.proj_res_focus.description') %>
-	      <a href="#" onclick="javascript:alert('<%= t('newproject.form.proj_res_focus.description').gsub("'", %q(\\\'))%>'); return false;"><%= image_tag('info.png',{'size' => "20x20", 'alt' => "Help"})%></a>
-	      <% end %>
-	    </td>
-	  </tr>
-
-	  <tr>
-	    <td>
-	      <%= t('newproject.form.proj_funding.label') %>
-	    </td>
-	    <td>
-	      <%= 
-		 options['tabindex'] += 1
-		 options.delete('size') if options.has_key?('size')
-		 if t('newproject.form.proj_funding.required') == 'yes'
-		   options['required'] = 'required'
-		   tag = req_tag
-		 else
-		   options.delete('required') if options.has_key?('required')
-		   tag = ""
-		 end
-		 text_field_tag 'f_job', params['f_job'], options
-	         select_tag 'f_proj_funding', options_for_select(t('newproject.form.proj_funding.options').invert.sort), options
-	        %>
-	    </td>
-	    <td>
-	      <% if t('newproject.form.proj_funding.description') %>
-	      <a href="#" onclick="javascript:alert('<%= t('newproject.form.proj_funding.description').gsub("'", %q(\\\'))%>'); return false;"><%= image_tag('info.png',{'size' => "20x20", 'alt' => "Help"})%></a>
+	      <% if t('newproject.form.org_name.description') %>
+	      <a href="#" onclick="javascript:alert('<%= t('newproject.form.org_name.description').gsub("'", %q(\\\'))%>'); return false;"><%= image_tag('info.png',{'size' => "20x20", 'alt' => "Help"})%></a>
 	      <% end %>
 	      <%= raw(tag) %>
 	    </td>
@@ -216,26 +162,257 @@
 
 	  <tr>
 	    <td>
-	      <%= t('newproject.form.proj_listing.label') %>
+	      <%= t('newproject.form.org_abbrev.label') %>
 	    </td>
 	    <td>
-	      <%= 
+	      <%=
 		 options['tabindex'] += 1
-		 options.delete('size') if options.has_key?('size')
-		 if t('newproject.form.proj_listing.required') == 'yes'
+		 options['size'] = t('newproject.form.org_abbrev.len')
+		 if t('newproject.form.org_abbrev.required') == 'yes'
 		   options['required'] = 'required'
 		   tag = req_tag
 		 else
 		   options.delete('required') if options.has_key?('required')
 		   tag = ""
 		 end
-		 text_field_tag 'f_job', params['f_job'], options
-	         select_tag 'f_proj_listing', options_for_select(t('newproject.form.proj_listing.options').invert.sort), options
+		 text_field_tag 'f_org_abbrev', params['f_org_abbrev'], options
 	        %>
 	    </td>
 	    <td>
-	      <% if t('newproject.form.proj_listing.description') %>
-	      <a href="#" onclick="javascript:alert('<%= t('newproject.form.proj_listing.description').gsub("'", %q(\\\'))%>'); return false;"><%= image_tag('info.png',{'size' => "20x20", 'alt' => "Help"})%></a>
+	      <% if t('newproject.form.org_abbrev.description') %>
+	      <a href="#" onclick="javascript:alert('<%= t('newproject.form.org_abbrev.description').gsub("'", %q(\\\'))%>'); return false;"><%= image_tag('info.png',{'size' => "20x20", 'alt' => "Help"})%></a>
+	      <% end %>
+	      <%= raw(tag) %>
+	    </td>
+	  </tr>
+
+	  <tr>
+	    <td>
+	      <%= t('newproject.form.org_url.label') %>
+	    </td>
+	    <td>
+	      <%= 
+		 options['tabindex'] += 1
+		 options['size'] = t('newproject.form.org_url.len')
+		 if t('newproject.form.org_url.required') == 'yes'
+		   options['required'] = 'required'
+		   tag = req_tag
+		 else
+		   options.delete('required') if options.has_key?('required')
+		   tag = ""
+		 end
+		 text_field_tag 'f_org_url', params['f_org_url'], options
+	        %>
+	    </td>
+	    <td>
+	      <% if t('newproject.form.org_url.description') %>
+	      <a href="#" onclick="javascript:alert('<%= t('newproject.form.org_url.description').gsub("'", %q(\\\'))%>'); return false;"><%= image_tag('info.png',{'size' => "20x20", 'alt' => "Help"})%></a>
+	      <% end %>
+	      <%= raw(tag) %>
+	    </td>
+	  </tr>
+
+	  <tr>
+	    <td><hr></td>
+	    <td colspan="1" align="center">
+	      <center><%= t('newproject.form.postal.label') %></center>
+	    </td>
+	    <td>
+	      <% if t('newproject.form.postal.description') %>
+	      <a href="#" onclick="javascript:alert('<%= t('newproject.form.postal.description').gsub("'", %q(\\\'))%>'); return false;"><%= image_tag('info.png',{'size' => "20x20", 'alt' => "Help"})%></a>
+	      <% end %>
+	    </td>
+	  </tr>
+
+	  <tr>
+	    <td>
+	      <%= t('newproject.form.postal.addr1.label') %>
+	    </td>
+	    <td colspan="2">
+	      <%=
+		 options['tabindex'] += 1
+		 options['size'] = t('newproject.form.postal.addr1.len')
+		 if t('newproject.form.postal.addr1.required') == 'yes'
+		   options['required'] = 'required'
+		   tag = req_tag
+		 else
+		   options.delete('required') if options.has_key?('required')
+		   tag = ""
+		 end
+		 text_field_tag 'f_addr1', params['f_addr1'], options
+	       %>
+	      <%= raw(tag) %>
+	    </td>
+	  </tr>
+
+	  <tr>
+	    <td>
+	      <%= t('newproject.form.postal.addr2.label') %>
+	    </td>
+	    <td colspan="2">
+	      <%=
+		 options['tabindex'] += 1
+		 options['size'] = t('newproject.form.postal.addr2.len')
+		 if t('newproject.form.postal.addr2.required') == 'yes'
+		   options['required'] = 'required'
+		   tag = req_tag
+		 else
+		   options.delete('required') if options.has_key?('required')
+		   tag = ""
+		 end
+		 text_field_tag 'f_addr2', params['f_addr2'], options
+	       %>
+	      <%= raw(tag) %>
+	    </td>
+	  </tr>
+
+	  <tr>
+	    <td>
+	      <%= t('newproject.form.postal.city.label') %>
+	    </td>
+	    <td colspan="2">
+	      <%=
+		 options['tabindex'] += 1
+		 options['size'] = t('newproject.form.postal.city.len')
+		 if t('newproject.form.postal.city.required') == 'yes'
+		   options['required'] = 'required'
+		   tag = req_tag
+		 else
+		   options.delete('required') if options.has_key?('required')
+		   tag = ""
+		 end
+		 text_field_tag 'f_city', params['f_city'], options
+	       %>
+	      <%= raw(tag) %>
+
+	      <%= t('newproject.form.postal.state.label') %>
+	      <%=
+		 options['tabindex'] += 1
+		 options['size'] = t('newproject.form.postal.state.len')
+		 if t('newproject.form.postal.state.required') == 'yes'
+		   options['required'] = 'required'
+		   tag = req_tag
+		 else
+		   options.delete('required') if options.has_key?('required')
+		   tag = ""
+		 end
+		 text_field_tag 'f_state', params['f_state'], options
+	       %>
+	      <%= raw(tag) %>
+	    </td>
+	  </tr>
+
+	  <tr>
+	    <td>
+	      <%= t('newproject.form.postal.zip.label') %>
+	    </td>
+	    <td colspan="2">
+	      <%=
+		 options['tabindex'] += 1
+		 options['size'] = t('newproject.form.postal.zip.len')
+		 if t('newproject.form.postal.zip.required') == 'yes'
+		   options['required'] = 'required'
+		   tag = req_tag
+		 else
+		   options.delete('required') if options.has_key?('required')
+		   tag = ""
+		 end
+		 text_field_tag 'f_zip', params['f_zip'], options
+	       %>
+	      <%= raw(tag) %>
+
+	      <%= t('newproject.form.postal.country.label') %>
+	      <%=
+		 options['tabindex'] += 1
+		 options['size'] = t('newproject.form.postal.country.len')
+		 if t('newproject.form.postal.country.required') == 'yes'
+		   options['required'] = 'required'
+		   tag = req_tag
+		 else
+		   options.delete('required') if options.has_key?('required')
+		   tag = ""
+		 end
+		 text_field_tag 'f_country', params['f_country'], options
+	       %>
+	      <%= raw(tag) %>
+	    </td>
+	  </tr>
+
+	  <tr><td><hr></td><td colspan="2"></td></tr>
+
+	  <tr>
+	    <td>
+	      <%= t('newproject.form.user_name.label') %>
+	    </td>
+	    <td>
+	      <%= 
+		 options['tabindex'] += 1
+		 options['size'] = t('newproject.form.user_name.len')
+		 if t('newproject.form.user_name.required') == 'yes'
+		   options['required'] = 'required'
+		   tag = req_tag
+		 else
+		   options.delete('required') if options.has_key?('required')
+		   tag = ""
+		 end
+		 text_field_tag 'f_user_name', params['f_user_name'], options
+	        %>
+	    </td>
+	    <td>
+	      <% if t('newproject.form.user_name.description') %>
+	      <a href="#" onclick="javascript:alert('<%= t('newproject.form.user_name.description').gsub("'", %q(\\\'))%>'); return false;"><%= image_tag('info.png',{'size' => "20x20", 'alt' => "Help"})%></a>
+	      <% end %>
+	      <%= raw(tag) %>
+	    </td>
+	  </tr>
+
+	  <tr>
+	    <td>
+	      <%= t('newproject.form.password1.label') %>
+	    </td>
+	    <td>
+	      <%= 
+		 options['tabindex'] += 1
+		 options['size'] = t('newproject.form.password1.len')
+		 if t('newproject.form.password1.required') == 'yes'
+		   options['required'] = 'required'
+		   tag = req_tag
+		 else
+		   options.delete('required') if options.has_key?('required')
+		   tag = ""
+		 end
+		 password_field_tag 'f_password1', params['f_password1'], options
+	        %>
+	    </td>
+	    <td>
+	      <% if t('newproject.form.password1.description') %>
+	      <a href="#" onclick="javascript:alert('<%= t('newproject.form.password1.description').gsub("'", %q(\\\'))%>'); return false;"><%= image_tag('info.png',{'size' => "20x20", 'alt' => "Help"})%></a>
+	      <% end %>
+	      <%= raw(tag) %>
+	    </td>
+	  </tr>
+
+	  <tr>
+	    <td>
+	      <%= t('newproject.form.password2.label') %>
+	    </td>
+	    <td>
+	      <%= 
+		 options['tabindex'] += 1
+		 options['size'] = t('newproject.form.password2.len')
+		 if t('newproject.form.password2.required') == 'yes'
+		   options['required'] = 'required'
+		   tag = req_tag
+		 else
+		   options.delete('required') if options.has_key?('required')
+		   tag = ""
+		 end
+		 password_field_tag 'f_password2', params['f_password2'], options
+	        %>
+	    </td>
+	    <td>
+	      <% if !t('newproject.form.password2.description').blank? %>
+	      <a href="#" onclick="javascript:alert('<%= t('newproject.form.password2.description').gsub("'", %q(\\\'))%>'); return false;"><%= image_tag('info.png',{'size' => "20x20", 'alt' => "Help"})%></a>
 	      <% end %>
 	      <%= raw(tag) %>
 	    </td>
@@ -264,4 +441,4 @@
       </tr>
     </table> <!-- navigation table -->
 <% end %>
-<!-- END _new_project_1.html.erb -->
+<!-- END _new_project_2.html.erb -->
