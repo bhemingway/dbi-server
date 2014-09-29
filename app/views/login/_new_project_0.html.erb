@@ -11,18 +11,15 @@
    step = 0.to_i if step.nil?
    next_step = (step.to_i + 1.to_i)
    url = '/newproject' + next_step.to_s
-   req_tag = '<span style="color: red;"><font size="+3">*</font></span>'
    options = Hash.new
    options['tabindex'] = 0
    options['required'] = 'required'
 
-   # figure out the next description
-   key = 'newproject.next' + next_step.to_s + '_link_text'
-   next_desc = t(key)
  %>
 
     <div id="node-1" class="page-ntype published not-promoted not-sticky full-view author-admin clear-block">
     <%= simple_format add_urls(t('newproject.intro')) %>
+    <%= form_tag(url, "id" => "form0")  do %>
     <p>
     <%= check_box_tag('cb1','cb1', false) %> <%= t('newproject.info.cb1_text') %>
     <br>
@@ -35,19 +32,13 @@
         <td width="50%">
 	  <!-- button_to t('newproject.back_prompt'), @back_url, "method" => "get" -->
           <%= link_to 'Cancel', '/', :class => 'cancel' %>
-	  <cite>
-            <%= @back_desc %>
-	  </cite>
 	</td>
-	<td>
-	  <cite>
-            <%= next_desc %>
-	  </cite>
-	</td>
-	<td align="right">
-          <!-- <%= submit_tag t('newproject.next_prompt'), :onclick => "return np0ok();" %> -->
-          <%= button_to t('newproject.next_prompt'), url, :onclick => "return np0ok();", :method => "get" %>
+	<td width="50%">
+	  <p align="right">
+            <%= submit_tag t('newproject.next_prompt'), :onclick=> "return np0ok();" %>
+	  </p>
 	</td>
       </tr>
     </table> <!-- navigation table -->
+    <% end %> <!-- end of form0 -->
 <!-- END _new_project_0.html.erb -->

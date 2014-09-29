@@ -39,7 +39,7 @@ Sun Jul 14 16:16:58 UTC 2013 BFH v0.1, adapt http://info.deterlab.net
         </div> <!-- end sitename --> <!-- END SLOGAN -->
       </div>
      </div><!-- END HEADERINNER -->
-   <div id="navigation">
+   <div id="navigation" <%= (rc == 2) ? '' : raw('style="display: none;"') %>>
      <del class="wrap">
        <ul>
          <li class="leaf first active-trail">
@@ -114,6 +114,10 @@ Sun Jul 14 16:16:58 UTC 2013 BFH v0.1, adapt http://info.deterlab.net
 
        if params[:action] == 'error' || session[:error]
            render 'login_error'
+       elsif params[:action] =~ /^usage$/
+           render 'usage'
+       elsif params[:action] =~ /^news$/
+           render 'news'
        elsif params[:action] =~ /^newproject/
            render 'new_project'
        elsif params[:action] == 'pwrdforgot1' 
@@ -178,11 +182,14 @@ Sun Jul 14 16:16:58 UTC 2013 BFH v0.1, adapt http://info.deterlab.net
     <div class="block right-region deter-block clear-block" id="block-deter-3">
       <h3><%=t('rightgutter.information.header')%></h3>
       <div class="item-list">
-        <ul>
-          <li class="leaf"><a href="<%= AppConfig.rightgutter['usageurl'] %>"><%= t('rightgutter.usage')%></a></li>
-          <li class="leaf"><a href="<%= AppConfig.rightgutter['newsurl'] %>"><%= t('rightgutter.news')%></a></li>
-          <li class="leaf"><%= t('rightgutter.downtime')%><br><%= t('rightgutter.downtimetext')%></li>
-        </ul>
+	<ul>
+	  <li class="leaf"><%= link_to t('rightgutter.information.usage'), '/usage' %></li>
+	  <li class="leaf"><%= link_to t('rightgutter.information.news'), '/news' %><br></li>
+	</ul>
+      </div>
+      <%= t('rightgutter.downtime_title')%>
+      <div class="description">
+        <%= t('rightgutter.downtime_text')%>
       </div>
     </div>
   </div><!-- END SIDEBAR RIGHT -->
@@ -194,6 +201,7 @@ Sun Jul 14 16:16:58 UTC 2013 BFH v0.1, adapt http://info.deterlab.net
     <div id="footer">
       <div class="block contentfooter-region menu-block clear-block" id="block-menu-menu-footer-links">
 	<table align="center" bgcolor="black">
+	  <tr>
 	  <td>
 	    <a href='https://www.isi.deterlab.net'>
 	      <%= image_tag(AppConfig.footer['deterlablogo'],"size" => "133x40", "alt" => "isi.deterlab.net - the network testbed")%>
@@ -207,7 +215,7 @@ Sun Jul 14 16:16:58 UTC 2013 BFH v0.1, adapt http://info.deterlab.net
               <li class="leaf"><a href="<%=AppConfig.footer['contacturl']%>" class="active"><%=t('footer.contact')%></a></li>
 	      <li class="leaf last">
                 <a href="<%=AppConfig.footer['deterprojecturl']%>" class="active">
-		  DeterLab Version <%= deterVersion %>
+		  DeterLab v<%= deterVersion %>
 		</a>
 	      </li>
 	    </ul>

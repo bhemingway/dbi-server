@@ -5,7 +5,21 @@
    step = myaction[/\d+$/]
    step = 0 if step.nil?
    key = 'newproject.subtitle' + step.to_s 
-   step_string = t(key)
+   step_string = nil
+
+   # choose the correct sub-sub title for either of these steps
+   if step.nil?
+     step_string = 'Programming error: step is nil!'
+   elsif step.to_i == 2 or step.to_i == 3
+     if params.has_key?('f_usage_type')
+       key += '.'
+       key += params['f_usage_type']
+     else
+       step_string = 'Programming error: f_usage_type is nil!'
+     end
+   end
+
+   step_string = t(key) if step_string.nil?
    next_step = (step.to_i + 1.to_i)
    url = '/newproject' + next_step.to_s
  %>
@@ -20,7 +34,6 @@
 <%=
    # need to pass in the "back" link to the next page, if any
    @back_url = ''
-   @back_desc = ''
    if !step.to_i.zero?
      prev_step = 0
      url = '/newproject' 
@@ -29,10 +42,6 @@
        url += prev_step.to_s
      end
      @back_url = url
-
-     # figure out the previous description
-     key = 'newproject.next' + prev_step.to_s + '_link_text'
-     @back_desc = t(key)
    end
 
    # contents depends on which step this is

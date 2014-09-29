@@ -21,6 +21,10 @@ class LoginController < ApplicationController
 #  end
 # ---------
 
+  def index
+    getDeterVersion
+  end
+
   def new
     session[:deterLoginStatus] = '(new)'
     render :index
@@ -28,7 +32,14 @@ class LoginController < ApplicationController
 
   # get the current DeterLab version for display via a SOAP transaction
   def getDeterVersion
-    logger.debug "getDeterVersion..."
+    logger.debug "getDeterVersion...START OF CALL"
+
+    # expire the version after 15 minutes
+    if session[:deter_version_date].nil? or session[:deter_version_date] < 15.minutes.ago
+      session[:deter_version] = nil
+    end
+    
+    # if no valid cache'd version, fetch it
     if session[:deter_version].nil? || session[:deter_version].blank? 
         logger.debug "getDeterVersion...calling SOAP"
         client = Savon.client(
@@ -45,13 +56,17 @@ class LoginController < ApplicationController
           )
 
         response = client.call(:get_version)
-        session[:deter_version] = response.to_hash[:get_version_response][:return][:version]
+        session[:deter_version] = response.to_hash[:get_version_response][:return][:version] + '/' +
+                                  response.to_hash[:get_version_response][:return][:patch_level]
+        logger.debug "getDeterVersion...used SOAP"
+
 	client = nil
 	response = nil
-        logger.debug "getDeterVersion...used SOAP"
+	session[:deter_version_date] = Time.now
     else 
         logger.debug "getDeterVersion...used cached version in session"
     end
+    logger.debug "getDeterVersion: returning " + session[:deter_version].inspect
     session[:deter_version]
   end
 
@@ -1143,4 +1158,15 @@ logger.debug session['saveProfileStatus']
   def newproject5
     render :index
   end
+
+  # usage = current status of system, via API
+  def usage
+    render :index
+  end
+
+  # news = recent announcements from DeterLab
+  def news
+    render :index
+  end
+
 end

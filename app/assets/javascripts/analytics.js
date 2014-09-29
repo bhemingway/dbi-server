@@ -1,5 +1,13 @@
 // analytics.js -- app-specific javascript
 
+// make the Bootstrap popovers work
+$(document).ready(function() {
+  $('.has-tooltip').tooltip();
+  $('.has-popover').popover({
+    trigger: 'hover'
+  });
+});
+
 // function which checks to see of the 0th page of the New Projects set is good to go
 function np0ok()  {
     var rc = 0;

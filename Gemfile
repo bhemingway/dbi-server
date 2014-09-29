@@ -35,6 +35,7 @@ gem 'coffee-rails', '~> 3.2.1'
 gem 'therubyracer', :platforms => :ruby
 #gem 'mocha'
 gem 'uglifier', '>= 1.0.3'
+gem 'boostrap-sass'
 # BFH ---
 
 gem 'jquery-rails'

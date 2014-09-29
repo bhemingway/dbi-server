@@ -70,8 +70,8 @@ en:
   rightgutter:
     loggedin: "Logged in."
     notloggedin: "Not logged in."
-    downtime: "Downtime"
-    downtimetext: "Regularly Scheduled downtime: Wednesdays: 5PM-7PM, Saturdays: 10AM-1PM Pacific Time."
+    downtime_title: "Scheduled Downtime:"
+    downtime_text: "Wednesdays: 5PM-7PM, Saturdays: 10AM-1PM Pacific Time."
     # pair with mainnav.deterprojecturl in config.yml
     contact: "Contact DeterLab"
     # pair with rightgutter.docsurl in config.yml
@@ -82,14 +82,10 @@ en:
     support: "Technical Support"
     information:
       header: "Important Information"
-      # pair with rightgutter.usageurl in config.yml
       usage: "Current Usage Statistics"
-      # pair with rightgutter.newsurl in config.yml
       news: "Recent Announcements from DeterLab Operations"
-    
 
   front:
-
     title: "Welcome to DeterLab"
 
     para1: "Login to access your DeterLab account"
@@ -213,10 +209,18 @@ en:
     title: "Start Using DeterLab: New Project Application Form"
     subtitle0: "Get Started in Deterlab"
     subtitle1: "Tell Us About Yourself"
-    subtitle2: "Submit This Form to Request a New Project"
-    subtitle3: "Step 3 of 5: Enter Project Leader Information"
-    subtitle4: "Step 4 of 5: Enter Project Information"
-    subtitle5: "Step 5 of 5: Submit the New Project Application Form"
+    subtitle2: 
+      leader: "You are applying as a group leader"
+      member: "You are applying as a member of a research project team"
+      academic: "You are applying as an academic or research advisor"
+      student: "You are applying as a student"
+      staff: "You are applying as a university faculty or staff member"
+    subtitle3: 
+      leader: "You are applying as a group leader (continued)"
+      member: "You are applying as a member of a research project team (continued)"
+      academic: "You are applying as an academic or research advisor (continued)"
+      student: "You are applying as a student (continued)"
+      staff: "You are applying as a university faculty or staff member (continued)"
 
     info:
       cb1_text: "I would like to apply for an account to use DeterLab"
@@ -229,22 +233,17 @@ en:
 
       Please note that your application requires an organization-affiliated email address, for DeterLab staff to be able to contact you to conclude the application process. Other email addresses (Gmail, Hotmail, email addresses from ISPs) will not be accepted.
 
-    usage_type: |+
+    usage_type_text: |+
       Please select from the options below that best describe the type of usage you are applying for, based on the {DeterLab Usage Guide~usage}. If none of the options fits your case, please {contact us~contact} to get assistance with the application process.
 
     next_prompt: "Next"
     back_prompt: "Back"
-    next0_link_text: "Back to New Project Overview"
-    next1_link_text: "Tell Us About Yourself"
-    next2_link_text: "Enter Project Leader information (step 2 of 5)"
-    next3_link_text: "Enter Project information (step 3 of 5)"
-    next4_link_text: "Submit new project request (step 4 of 5)"
     usage_types:
-      - "I am a research group leader, and I want to sign up for a DeterLab workspace for my research project team members."
-      - "I am a member of a research project team that is already using DeterLab, and I want to get access to my team's workspace."
-      - "I am an academic or research advisor of a student, and I would like to sponsor the student's individual research work in DeterLab."
-      - "I am a student doing my own research, with an academic or research advisor who has already sponsored my work in DeterLab."
-      - "I am university faculty or staff or who would like to start using DeterLab's {educational facilities~education} to teach a course at my educational institution."
+      leader: "I am a research group leader, and I want to sign up for a DeterLab workspace for my research project team members."
+      member: "I am a member of a research project team that is already using DeterLab, and I want to get access to my team's workspace."
+      academic: "I am an academic or research advisor of a student, and I would like to sponsor the student's individual research work in DeterLab."
+      student: "I am a student doing my own research, with an academic or research advisor who has already sponsored my work in DeterLab."
+      staff: "I am university faculty or staff or who would like to start using DeterLab's {educational facilities~education} to teach a course at my educational institution."
 
     form:
       name:
@@ -409,5 +408,5 @@ en:
         description: "Include your project on the public list of DeterLab projects. See https://www.isi.deterlab.net/projectlist.php for details."
         required: "no"
         options:
-          Yes: "Yes"
-          No: "No"
+          - "Yes"
+          - "No"
