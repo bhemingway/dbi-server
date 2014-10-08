@@ -1,5 +1,10 @@
 <!-- START _new_project_2.html.erb -->
 
+<script type="text/javascript">
+  <!-- window.I18n = <%= I18n.backend.send(:translations).to_json.html_safe %> this requires prefixing with locale -->
+  window.I18n = <%= current_translations.to_json.html_safe %>
+</script>
+
 <% # figure out which step this is: 0=intro, 1=project leader, 2=project
    myaction = params[:action]
    step = myaction[/\d+$/]
@@ -8,7 +13,8 @@
    url = '/newproject' + next_step.to_s
    options = Hash.new
    options['tabindex'] = 0
-   options['required'] = 'required'
+   # options['required'] = 'required' -- let the javascript handle this
+   options['onclick'] = 'np2ok();'
  %>
 
       <div id="node-1" class="page-ntype published not-promoted not-sticky full-view author-admin clear-block">
@@ -88,7 +94,7 @@
 	      <%= 
 		 options['tabindex'] += 1
 		 options['size'] = t('newproject.form.org_name.len')
-		 text_field_tag 'f_job', params['f_job'], options
+		 text_field_tag 'f_org_name', params['f_org_name'], options
 	        %>
 	    </td>
 	    <td>
@@ -255,13 +261,14 @@
     <table width="100%"> <!-- keep the navigation tidy -->
       <tr>
         <td>
-	  <%= link_to t('newproject.back_prompt'), @back_url %>
-	  <!-- cancel_link -->
+          <%= submit_tag t('newproject.back_prompt'), :onclick=> "return submitto('" + @back_url + "');" %>
 	</td>
 	<td>
-	  <p align="right">
-            <%= submit_tag t('newproject.next_prompt') %>
-	  </p>
+         <div data-toggle="popover" id="next_button_div_2" title="<%= t('newproject.form.initial_error_text') %>">
+	   <p align="right">
+             <%= submit_tag t('newproject.next_prompt'), :disabled => true, :id => "next_button_2" :onclick => "np2ok();" %> 
+	   </p>
+	 </div>
 	</td>
       </tr>
     </table> <!-- navigation table -->

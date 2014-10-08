@@ -13,32 +13,35 @@
    url = '/newproject' + next_step.to_s
    options = Hash.new
    options['tabindex'] = 0
-   options['required'] = 'required'
-
+   #options['required'] = 'required'
  %>
 
     <div id="node-1" class="page-ntype published not-promoted not-sticky full-view author-admin clear-block">
     <%= simple_format add_urls(t('newproject.intro')) %>
     <%= form_tag(url, "id" => "form0")  do %>
     <p>
-    <%= check_box_tag('cb1','cb1', false) %> <%= t('newproject.info.cb1_text') %>
+    <%= check_box_tag('cb1','cb1', false, :onclick => "np0ok();") %> <%= t('newproject.info.cb1_text') %>
     <br>
-    <%= check_box_tag('cb2','cb2', false) %> <%= t('newproject.info.cb2_text') %>
+    <%= check_box_tag('cb2','cb2', false, :onclick => "np0ok();") %> <%= t('newproject.info.cb2_text') %>
     </p>
     </div> <!-- end of node-1 -->
 
     <table width="100%"> <!-- keep the navigation tidy -->
       <tr>
         <td width="50%">
-	  <!-- button_to t('newproject.back_prompt'), @back_url, "method" => "get" -->
-          <%= link_to 'Cancel', '/', :class => 'cancel' %>
+          <%= submit_tag 'Cancel', :onclick => "return cancel();" %>
 	</td>
 	<td width="50%">
-	  <p align="right">
-            <%= submit_tag t('newproject.next_prompt'), :onclick=> "return np0ok();" %>
-	  </p>
+         <div data-toggle="popover" id="next_button_div_0" title="<%= t('newproject.form.initial_error_text') %>">
+	   <p align="right">
+             <%= submit_tag t('newproject.next_prompt'), :disabled => true, :id => "next_button_0" :onclick => "np0ok();" %> 
+	   </p>
+	 </div>
 	</td>
       </tr>
     </table> <!-- navigation table -->
+    <% unless params[:alert].nil? && params[:alert].blank? %>
+    <span style="color:red;"><%= params[:alert] %></span>
+    <% end %>
     <% end %> <!-- end of form0 -->
 <!-- END _new_project_0.html.erb -->

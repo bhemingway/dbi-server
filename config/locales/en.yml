@@ -15,7 +15,36 @@ en:
   #
   js_text:
     # new project, page 0
-    np0_checks: "Please read all the documents and check the corresponding boxes before continuing."
+    p0_cb1_err: "Please check the first box"
+    p0_cb2_err: "Please check the second box"
+    # new project, page 1
+    p1_usage_type_err: "Please choose an option"
+    # new project, page 2
+    p2_name_err: "Fill in your name"
+    p2_email_err: "Fill in your email address"
+    p2_telno_err: "Fill in your telephone number"
+    p2_job_err: "Fill in your job description"
+    p2_org_name_err: "Fill in your employer's name"
+    p2_org_abbrev_err: "Fill in the abbreviation of your employer's name"
+    p2_org_url_err: "Fill in your employer's URL (web address)"
+    p2_addr1_err: "Fill in line 1 of your postal address"
+    p2_addr2_err: "Fill in line 2 of your postal address"
+    p2_city_err: "Fill in the town or city of your postal address"
+    p2_state_err: "Fill in state code of your postal address"
+    p2_zip_err: "Fill in the zip or postal code of your postal address"
+    p2_country_err: "Fill in the country of your postal address"
+    p2_user_name_err: "Fill in your requested DETERLAB user name"
+    p2_password1_err: "Fill in your requested DETERLAB password"
+    p2_password2_err: "Confirm your requested DETERLAB password"
+    p2_password_mismatch_err: "Password and confirmation do not match"
+    # new project, page 3
+    p3_proj_name_err: "Fill in your project name"
+    p3_proj_plan_err: "Fill in your project plan"
+    p3_proj_url_err: "Fill in your project's URL (web address)"
+    p3_proj_org_type_err: "Fill in your project's organization type"
+    p3_proj_res_focus_err: "Fill in your project's research focus"
+    p3_proj_funding_err: "Fill in your project's research focus"
+    p3_proj_listing_err: "Fill in your project's listing option"
 
   #
   # usual DETER UI elements
@@ -206,6 +235,7 @@ en:
 
   # new project page
   newproject:
+    out_of_order: "Please start with the first form and go through all of them in order"
     title: "Start Using DeterLab: New Project Application Form"
     subtitle0: "Get Started in Deterlab"
     subtitle1: "Tell Us About Yourself"
@@ -246,6 +276,7 @@ en:
       staff: "I am university faculty or staff or who would like to start using DeterLab's {educational facilities~education} to teach a course at my educational institution."
 
     form:
+      initial_error_text: "Please fill in the form before going on."
       name:
         label: "Full Name"
         description: "Your full name including title"

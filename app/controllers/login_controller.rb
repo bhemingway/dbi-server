@@ -1131,31 +1131,55 @@ logger.debug session['saveProfileStatus']
 
   # newproject = new project application form, part 0 (info)
   def newproject
+    # no prerequisite
     render :index
   end
 
   # newproject = new project application form, part 1 (id self)
   def newproject1
-    render :index
+
+    # prerequisite: form0 => cb1 & cb2
+    flag = 0
+    params.each do |k, v|
+      flag += 1 if k.match('cb1') or k.match('cb2')
+    end
+    if flag.zero?
+      redirect_to "action" => 'newproject', "alert" => t('newproject.out_of_order')
+    else
+      render :index
+    end
   end
 
-  # newproject = new project application form, part 2 (intro)
+  # newproject = new project application form, part 2 (project leader info)
   def newproject2
-    render :index
+    # prerequisite: form1 => usage_type
+    flag = 0
+    params.each do |k, v|
+      flag += 1 if k.match('usage_type')
+    end
+    if flag.zero?
+      redirect_to "action" => 'newproject', "alert" => t('newproject.out_of_order')
+    else
+      render :index
+    end
   end
 
-  # newproject3 = new project application form, part 3 (project leader info)
+  # newproject3 = new project application form, part 3 (project info)
   def newproject3
-    render :index
+    # prerequisite: form2 => f_name
+    flag = 0
+    params.each do |k, v|
+      flag += 1 if k.match('f_name')
+    end
+    if flag.zero?
+      redirect_to "action" => 'newproject', "alert" => t('newproject.out_of_order')
+    else
+      render :index
+    end
   end
 
-  # newproject4 = new project application form, part 4 (project info)
+  # newproject4 = new project application form, part 4 (submit info)
   def newproject4
-    render :index
-  end
-
-  # newproject5 = new project application form, part 5 (submit info)
-  def newproject5
     render :index
   end
 

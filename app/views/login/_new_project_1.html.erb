@@ -13,7 +13,7 @@
    url = '/newproject' + next_step.to_s
    options = Hash.new
    options['tabindex'] = 0
-   options['required'] = 'required'
+   #options['required'] = 'required'
  %>
 
     <div id="node-1" class="page-ntype published not-promoted not-sticky full-view author-admin clear-block">
@@ -28,7 +28,7 @@
 	desc = t(tkey)
 
 	str += "<tr><td>"
-        str += radio_button_tag 'f_usage_type', r, false
+        str += radio_button_tag 'f_usage_type', r, false, :onclick => "np1ok();"
 	str += "</td><td>"
 	str += add_urls(desc)
 	str += '</td></tr>'
@@ -43,12 +43,14 @@
     <table width="100%"> <!-- keep the navigation tidy -->
       <tr>
         <td width="50%">
-          <%= link_to 'Cancel', '/', :class => 'cancel' %>
+          <%= submit_tag t('newproject.back_prompt'), :onclick=> "return submitto('" + @back_url + "');" %>
 	</td>
 	<td width="50%">
-	  <p align="right">
-            <%= submit_tag t('newproject.next_prompt') %>
-	  </p>
+         <div data-toggle="popover" id="next_button_div_1" title="<%= t('newproject.form.initial_error_text') %>">
+	   <p align="right">
+             <%= submit_tag t('newproject.next_prompt'), :disabled => true, :id => "next_button_1" :onclick => "np2ok();" %> 
+	   </p>
+	 </div>
 	</td>
       </tr>
     </table> <!-- navigation table -->
