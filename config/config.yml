@@ -1,3 +1,4 @@
+# Mon Oct 27 19:09:58 UTC 2014 BFH add service URLs
 # Thu Jul 25 14:21:14 UTC 2013 BFH polishing UI, especially mainnav
 # Tue Jul 16 13:46:55 UTC 2013 BFH first cut, to match John's en.yml
 
@@ -15,7 +16,13 @@ common: &common
   # the inactivity timeout in seconds
   timeoutsecs: 300
 
-  # urls interpolated into localized text via "{tag~url}" notation
+  # URLs to web services provided by the DeteLab server
+  services:
+    user: "https://users.isi.deterlab.net:52323/axis2/services/Users?wsdl"
+    info: "https://users.isi.deterlab.net:52323/axis2/services/ApiInfo?wsdl"
+    proj: "https://users.isi.deterlab.net:52323/axis2/services/Projects?wsdl"
+
+  # URLs interpolated into localized text via "{tag~url}" notation
   urls:
     get_started: "http://info.deterlab.net/get_started_deterlab"
     usage: "https://trac.deterlab.net/wiki/Policy"

@@ -68,7 +68,7 @@ return
 	    # build a SOAP transaction pathway
 	    client = nil # just in case
             client = Savon.client(
-              :wsdl => "https://users.isi.deterlab.net:52323/axis2/services/Users?wsdl",
+              :wsdl => AppConfig.services['user'],
               :log_level => :debug, 
               :log => true, 
               :pretty_print_xml => true,
@@ -217,7 +217,7 @@ return
 
       # first, we need a secure SOAP transaction pathway
       client = Savon.client(
-        :wsdl => "https://users.isi.deterlab.net:52323/axis2/services/Users?wsdl",
+        :wsdl => AppConfig.services['user'],
         :log_level => :debug, 
         :log => true, 
         :pretty_print_xml => true,

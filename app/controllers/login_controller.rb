@@ -43,7 +43,7 @@ class LoginController < ApplicationController
     if session[:deter_version].nil? || session[:deter_version].blank? 
         logger.debug "getDeterVersion...calling SOAP"
         client = Savon.client(
-          :wsdl => "https://users.isi.deterlab.net:52323/axis2/services/ApiInfo?wsdl",
+          :wsdl => AppConfig.services['info'],
           :log_level => :debug, 
           :log => true, 
           :pretty_print_xml => true,
@@ -176,7 +176,7 @@ class LoginController < ApplicationController
 
 	# build a SOAP transaction pathway
         client = Savon.client(
-          :wsdl => "https://users.isi.deterlab.net:52323/axis2/services/Users?wsdl",
+          :wsdl => AppConfig.services['user'],
           :log_level => :debug, 
           :log => true, 
           :pretty_print_xml => true,
@@ -264,7 +264,7 @@ class LoginController < ApplicationController
 		# now that you have certs, create a more secure SOAP transaction pathway
 		client = nil # does this destroy the object? I hope so. I don't know.
                 client = Savon.client(
-                  :wsdl => "https://users.isi.deterlab.net:52323/axis2/services/Users?wsdl",
+          	  :wsdl => AppConfig.services['user'],
                   :log_level => :debug, 
                   :log => true, 
                   :pretty_print_xml => true,
@@ -466,7 +466,7 @@ logger.debug changes.inspect
 	    # build a SOAP transaction pathway
 	    client = nil # just in case
             client = Savon.client(
-              :wsdl => "https://users.isi.deterlab.net:52323/axis2/services/Users?wsdl",
+              :wsdl => AppConfig.services['user'],
               :log_level => :debug, 
               :log => true, 
               :pretty_print_xml => true,
@@ -601,7 +601,7 @@ logger.debug session['saveProfileStatus']
     unless session[:pwrderror]
         # make the SOAP call to change the password for this user
         client = Savon.client(
-          :wsdl => "https://users.isi.deterlab.net:52323/axis2/services/Users?wsdl",
+          :wsdl => AppConfig.services['user'],
           :log_level => :debug, 
           :log => true, 
           :pretty_print_xml => true,
@@ -685,7 +685,7 @@ logger.debug session['saveProfileStatus']
     unless session[:pwrderror]
         # make the SOAP call to change the password for this user
         client = Savon.client(
-          :wsdl => "https://users.isi.deterlab.net:52323/axis2/services/Users?wsdl",
+          :wsdl => AppConfig.services['user'],
           :log_level => :debug, 
           :log => true, 
           :pretty_print_xml => true,
@@ -752,7 +752,7 @@ logger.debug session['saveProfileStatus']
     unless session[:pwrderror]
         # make the SOAP call to change the password for this user
         client = Savon.client(
-          :wsdl => "https://users.isi.deterlab.net:52323/axis2/services/Users?wsdl",
+          :wsdl => AppConfig.services['user'],
           :log_level => :debug, 
           :log => true, 
           :pretty_print_xml => true,
@@ -824,7 +824,7 @@ logger.debug session['saveProfileStatus']
     # get the list of projects associated with this user with viewProjects()
     client = nil # does this destroy the object? I hope so. I don't know.
     pclient = Savon.client(
-        :wsdl => "https://users.isi.deterlab.net:52323/axis2/services/Projects?wsdl",
+        :wsdl => AppConfig.services['proj'],
         :log_level => :debug, 
         :log => true, 
         :pretty_print_xml => true,
@@ -880,7 +880,7 @@ logger.debug session['saveProfileStatus']
 
     # create a SOAP client for the Users service, so we can get people's names
     client = Savon.client(
-        :wsdl => "https://users.isi.deterlab.net:52323/axis2/services/Users?wsdl",
+        :wsdl => AppConfig.services['user'],
         :log_level => :debug, 
         :log => true, 
         :pretty_print_xml => true,
@@ -1046,7 +1046,7 @@ logger.debug session['saveProfileStatus']
 
     # create a SOAP client for the Users service, so we can get people's names
     client = Savon.client(
-        :wsdl => "https://users.isi.deterlab.net:52323/axis2/services/Users?wsdl",
+        :wsdl => AppConfig.services['user'],
         :log_level => :debug, 
         :log => true, 
         :pretty_print_xml => true,
