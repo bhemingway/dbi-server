@@ -15,9 +15,15 @@
    options['tabindex'] = 0
    # options['required'] = 'required' -- let the javascript handle this
    options['onclick'] = 'np2ok();'
+
+   # get the appropriate static text based on usage type
+   tk = 'newproject.form.header2.' + params['f_usage_type']
  %>
 
       <div id="node-1" class="page-ntype published not-promoted not-sticky full-view author-admin clear-block">
+        <!-- static text variables by role -->
+	<%= simple_format add_urls(t(tk)) %>
+
         <!-- new project request form definition begins -->
         <%= form_tag(url, "id" => "form2")  do %>
 	<%= # preserve fields from the previous form
@@ -233,6 +239,7 @@
 	      <%= 
 		 options['tabindex'] += 1
 		 options['size'] = t('newproject.form.password1.len')
+		 #options['required'] = 'required'  # if this is required, can't go back :-(
 		 password_field_tag 'f_password1', params['f_password1'], options
 	        %>
 	    </td>
@@ -261,7 +268,7 @@
     <table width="100%"> <!-- keep the navigation tidy -->
       <tr>
         <td>
-          <%= submit_tag t('newproject.back_prompt'), :onclick=> "return submitto('" + @back_url + "');" %>
+          <%= submit_tag t('newproject.back_prompt'), :id => ("back_" + @back_url), :name => ("back_" + @back_url)  %>
 	</td>
 	<td>
          <div data-toggle="popover" id="next_button_div_2" title="<%= t('newproject.form.initial_error_text') %>">

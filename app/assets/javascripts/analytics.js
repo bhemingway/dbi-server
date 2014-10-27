@@ -1,17 +1,38 @@
 // analytics.js -- app-specific javascript
 
-// make the Bootstrap popovers work
-$(document).ready(function() {
-  $('.has-tooltip').tooltip();
-  $('.has-popover').popover({
-    trigger: 'hover'
-  });
+/* To initialize BS3 tooltips set this below */
+$(function () { 
+    $("[data-toggle='tooltip']").tooltip(); 
+});;
+/* To initialize BS3 popovers set this below */
+$(function () { 
+    $("[data-toggle='popover']").popover(); 
 });
+
+// function which does the appropriate validation, if any, onload for body tag
+function check_onload() {
+    if ($("#login_newproject").length) {
+	return np0ok();
+    }
+    if ($("#login_newproject1").length) {
+	return np1ok();
+    }
+    if ($("#login_newproject2").length) {
+	return np2ok();
+    }
+    if ($("#login_newproject3").length) {
+	return np3ok();
+    }
+    return true;
+}
 
 // function which submits to the previous form if going backwards
 function submitto(url) {
-    alert('submitting to ' + url);
-    return false;
+    var myurl = window.location.href;
+    alert('starting at ' + myurl + ' submitting to ' + url);
+    window.location.href = url;
+    //$.get(url);
+    //return true;
 }
 
 // function which does the canceling if the user cancels
@@ -22,28 +43,29 @@ function cancel() {
 
 // function which checks to see if the 0th page of the New Projects set is good to go
 function np0ok()  {
-    var rc = 0;
-
-    // start with a clean slate
-    document.getElementById("next_button_div_0").title = '';
-    document.getElementById("next_button_0").disabled = true;
+    var msgs = [];
+    var div = document.getElementById("next_button_div_0");
+    var button = document.getElementById("next_button_0");
 
     // check the form elements for completeness
-    if (document.getElementById("cb1").checked == true) {
-    	rc += 1;
-    } else {
-        document.getElementById("next_button_div_0").title = I18n['p0_cb1_err'] + '\n';
+    if (document.getElementById("f_cb1").checked == false) {
+        msgs.push(I18n['p0_cb1_err']);
     }
 
-    if (document.getElementById("cb2").checked == true) {
-    	rc += 1;
-    } else {
-        document.getElementById("next_button_div_0").title += I18n['p0_cb2_err'];
+    if (document.getElementById("f_cb2").checked == false) {
+        msgs.push(I18n['p0_cb2_err']);
     }
 
-    // did they check both boxes? If so, proceed
-    if (rc == 2) {
-        document.getElementById("next_button_0").disabled = false;
+    // are there errors? then report them otherwise clear the form to go forward
+    if (msgs.length > 0) {
+        //div.title = I18n['newproject.form.error_title'];
+        //div.content = msgs.join("\n");
+        div.title = msgs.join("\n");
+        button.disabled = true;
+    } else {
+        div.title = '';
+        div.content = ''
+        button.disabled = false;
     }
 
     return true; // always Ok
@@ -141,6 +163,8 @@ function np2ok()  {
     if (no_text(document.getElementById("f_user_name").value)) {
         msgs.push(I18n['p2_user_name_err']);
     }
+/*
+could not validate password in Javascript because rails gives me nil in all cases
     if (no_text(document.getElementById("f_password1").value)) {
         msgs.push(I18n['p2_password1_err']);
     }
@@ -150,6 +174,7 @@ function np2ok()  {
     if (document.getElementById("f_password2").value != document.getElementById("f_password2").value) {
         msgs.push(I18n['p2_password_mismatch_err']);
     }
+*/
 
     // did their input generate any errors? then complain else proceed
     if (msgs.length > 0) {

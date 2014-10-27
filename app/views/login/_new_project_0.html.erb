@@ -14,15 +14,25 @@
    options = Hash.new
    options['tabindex'] = 0
    #options['required'] = 'required'
+   cb1_val = params['f_cb1'].nil? ? false : true
+   cb2_val = params['f_cb2'].nil? ? false : true
  %>
 
     <div id="node-1" class="page-ntype published not-promoted not-sticky full-view author-admin clear-block">
     <%= simple_format add_urls(t('newproject.intro')) %>
     <%= form_tag(url, "id" => "form0")  do %>
+	<%= # preserve fields from the previous form
+            hides = Array.new
+            params.each do |k, v|
+              next unless (k[0,2] == 'f_')
+	      hides.push(hidden_field_tag(k, v))
+            end
+	    raw(hides.join("\n"))
+	 %>
     <p>
-    <%= check_box_tag('cb1','cb1', false, :onclick => "np0ok();") %> <%= t('newproject.info.cb1_text') %>
+    <%= check_box_tag('f_cb1','f_cb1', false, :checked => cb1_val, :onclick => "np0ok();") %> <%= t('newproject.info.cb1_text') %>
     <br>
-    <%= check_box_tag('cb2','cb2', false, :onclick => "np0ok();") %> <%= t('newproject.info.cb2_text') %>
+    <%= check_box_tag('f_cb2','f_cb2', false, :checked => cb2_val, :onclick => "np0ok();") %> <%= t('newproject.info.cb2_text') %>
     </p>
     </div> <!-- end of node-1 -->
 
@@ -32,11 +42,16 @@
           <%= submit_tag 'Cancel', :onclick => "return cancel();" %>
 	</td>
 	<td width="50%">
-         <div data-toggle="popover" id="next_button_div_0" title="<%= t('newproject.form.initial_error_text') %>">
+         <div                  id="next_button_div_0"
+	      data-original-title="<%= t('newproject.form.error_title') %>"
+	             data-content="<%= t('newproject.form.initial_error_text') %>" 
+		      data-toggle="popover"
+		            class="has-popover"
+              >
 	   <p align="right">
-             <%= submit_tag t('newproject.next_prompt'), :disabled => true, :id => "next_button_0", :onclick => "np0ok();" %> 
+             <%= submit_tag t('newproject.next_prompt'), :disabled => true, :id => "next_button_0", :onfocus => "np0ok();" %>
 	   </p>
-	 </div>
+         </div>
 	</td>
       </tr>
     </table> <!-- navigation table -->

@@ -148,7 +148,7 @@
     <table width="100%"> <!-- keep the navigation tidy -->
       <tr>
         <td width="50%">
-          <%= submit_tag t('newproject.back_prompt'), :onclick=> "return submitto('" + @back_url + "');" %>
+          <%= submit_tag t('newproject.back_prompt'), :id => ("back_" + @back_url), :name => ("back_" + @back_url)  %>
 	</td>
 	<td width="50%">
          <div data-toggle="popover" id="next_button_div_3" title="<%= t('newproject.form.initial_error_text') %>">

@@ -19,6 +19,14 @@
     <div id="node-1" class="page-ntype published not-promoted not-sticky full-view author-admin clear-block">
     <%= simple_format add_urls(t('newproject.usage_type_text')) %>
     <%= form_tag(url, "id" => "form1")  do %>
+	<%= # preserve fields from the previous form
+            hides = Array.new
+            params.each do |k, v|
+              next unless (k[0,2] == 'f_')
+	      hides.push(hidden_field_tag(k, v))
+            end
+	    raw(hides.join("\n"))
+	 %>
     <p>
     <table>
     <%= 
@@ -43,7 +51,7 @@
     <table width="100%"> <!-- keep the navigation tidy -->
       <tr>
         <td width="50%">
-          <%= submit_tag t('newproject.back_prompt'), :onclick=> "return submitto('" + @back_url + "');" %>
+          <%= submit_tag t('newproject.back_prompt'), :id => ("back_" + @back_url), :name => ("back_" + @back_url)  %>
 	</td>
 	<td width="50%">
          <div data-toggle="popover" id="next_button_div_1" title="<%= t('newproject.form.initial_error_text') %>">

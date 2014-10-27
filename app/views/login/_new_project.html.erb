@@ -22,6 +22,14 @@
    step_string = t(key) if step_string.nil?
    next_step = (step.to_i + 1.to_i)
    url = '/newproject' + next_step.to_s
+
+   # figure out the get string which will reproduce whatever the previous form needs
+   prevs = Array.new
+   params.each do |k, v|
+     next unless (k[0,2] == 'f_')
+     prevs.push("#{k}=#{v}")
+   end
+   argStr = prevs.join('&')
  %>
 
 <h2>
@@ -30,7 +38,6 @@
 <h3>
 <%= step_string %>
 </h3>
-<p>
 <%=
    # need to pass in the "back" link to the next page, if any
    @back_url = ''
@@ -41,7 +48,7 @@
        prev_step = (step.to_i - 1.to_i) 
        url += prev_step.to_s
      end
-     @back_url = url
+     @back_url = url + '?' + argStr
    end
 
    # contents depends on which step this is

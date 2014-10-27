@@ -276,6 +276,17 @@ en:
       staff: "I am university faculty or staff or who would like to start using DeterLab's {educational facilities~education} to teach a course at my educational institution."
 
     form:
+      header2:
+        leader: |+
+          As a Principal Investigator (PI) or project leader, you'll be repsonsible for managing the shared workspace for your team. Please start by providing some information about yourself, and then continue to the next step to describe the project.
+
+          If you already have a DeterLab account, but want to create a new project, please start by logging in: {Login and Continue Application~login}
+
+        member: "I am a member of a research project team that is already using DeterLab, and I want to get access to my team's workspace."
+        academic: "I am an academic or research advisor of a student, and I would like to sponsor the student's individual research work in DeterLab."
+        student: "I am a student doing my own research, with an academic or research advisor who has already sponsored my work in DeterLab."
+        staff: "I am university faculty or staff or who would like to start using DeterLab's {educational facilities~education} to teach a course at my educational institution."
+      error_title: "Issues With This Form:"
       initial_error_text: "Please fill in the form before going on."
       name:
         label: "Full Name"

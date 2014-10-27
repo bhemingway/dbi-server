@@ -1139,11 +1139,16 @@ logger.debug session['saveProfileStatus']
   def newproject1
 
     # prerequisite: form0 => cb1 & cb2
+    backurl = nil
     flag = 0
     params.each do |k, v|
       flag += 1 if k.match('cb1') or k.match('cb2')
+      x = /^back_(.+)$/.match(k)
+      backurl = x[1] unless x.nil?
     end
-    if flag.zero?
+    if !backurl.nil?
+      redirect_to backurl
+    elsif flag.zero?
       redirect_to "action" => 'newproject', "alert" => t('newproject.out_of_order')
     else
       render :index
@@ -1153,11 +1158,16 @@ logger.debug session['saveProfileStatus']
   # newproject = new project application form, part 2 (project leader info)
   def newproject2
     # prerequisite: form1 => usage_type
+    backurl = nil
     flag = 0
     params.each do |k, v|
       flag += 1 if k.match('usage_type')
+      x = /^back_(.+)$/.match(k)
+      backurl = x[1] unless x.nil?
     end
-    if flag.zero?
+    if !backurl.nil?
+      redirect_to backurl
+    elsif flag.zero?
       redirect_to "action" => 'newproject', "alert" => t('newproject.out_of_order')
     else
       render :index
@@ -1167,11 +1177,16 @@ logger.debug session['saveProfileStatus']
   # newproject3 = new project application form, part 3 (project info)
   def newproject3
     # prerequisite: form2 => f_name
+    backurl = nil
     flag = 0
     params.each do |k, v|
       flag += 1 if k.match('f_name')
+      x = /^back_(.+)$/.match(k)
+      backurl = x[1] unless x.nil?
     end
-    if flag.zero?
+    if !backurl.nil?
+      redirect_to backurl
+    elsif flag.zero?
       redirect_to "action" => 'newproject', "alert" => t('newproject.out_of_order')
     else
       render :index

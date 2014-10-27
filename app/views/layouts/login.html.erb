@@ -48,7 +48,7 @@ jQuery.extend(Drupal.settings, { "basePath": "/" });
     </script>
   <%= csrf_meta_tags %>
 </head>
-<body class="page-node page-page page-node-view anonymous-user right">
+<body class="page-node page-page page-node-view anonymous-user right" id="<%= controller_name %>_<%= action_name %>" onload="javascript:check_onload()">
 
 <%= yield %>
 
