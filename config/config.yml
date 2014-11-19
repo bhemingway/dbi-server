@@ -18,9 +18,21 @@ common: &common
 
   # URLs to web services provided by the DeteLab server
   services:
-    user: "https://users.isi.deterlab.net:52323/axis2/services/Users?wsdl"
-    info: "https://users.isi.deterlab.net:52323/axis2/services/ApiInfo?wsdl"
-    proj: "https://users.isi.deterlab.net:52323/axis2/services/Projects?wsdl"
+    # standard public URLs
+#    std_user: "https://users.isi.deterlab.net:52323/axis2/services/Users?wsdl"
+#    std_info: "https://users.isi.deterlab.net:52323/axis2/services/ApiInfo?wsdl"
+#    std_proj: "https://users.isi.deterlab.net:52323/axis2/services/Projects?wsdl"
+    std_user: "https://128.9.160.249:52323/axis2/services/Users?wsdl"
+    std_info: "https://128.9.160.249:52323/axis2/services/ApiInfo?wsdl"
+    std_proj: "https://128.9.160.249:52323/axis2/services/Projects?wsdl"
+
+    # private development URLs
+#    user: "https://192.168.16.34:52323/axis2/services/Users?wsdl"
+#    info: "https://192.168.16.34:52323/axis2/services/ApiInfo?wsdl"
+#    proj: "https://192.168.16.34:52323/axis2/services/Projects?wsdl"
+    user: "https://128.9.160.249:52323/axis2/services/Users?wsdl"
+    info: "https://128.9.160.249:52323/axis2/services/ApiInfo?wsdl"
+    proj: "https://128.9.160.249:52323/axis2/services/Projects?wsdl"
 
   # URLs interpolated into localized text via "{tag~url}" notation
   urls:
